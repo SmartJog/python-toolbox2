@@ -1,12 +1,9 @@
-=======
 python-toolbox2
-=======
+===============
 
 python-toolbox2 provides a generic interface for:
  * actions description and execution which manipulate multiple workers,
- * workers description and execution which manipulate different tools such
-as ffmpeg for example.
-
+ * workers description and execution which manipulate different tools such as ffmpeg for example.
 
 License
 =======
