@@ -1,0 +1,30 @@
+toolbox2
+toolbox2
+%%mtime
+
+%!target : man
+%!encoding : utf-8
+%!postproc(man): "^(\.TH.*) 1 "  "\1 1 "
+
+= NAME =
+
+toolbox2 - Test and use toolbox2 module
+
+= SYNOPSIS =
+
+**toolbox2** [OPTIONS]
+
+= DESCRIPTION =
+
+**toolbox2** is a simple tool to test and use toolbox2 module
+
+= OPTIONS =
+
+: -**p**, --**path**
+Path of the file containing a json encoded action description.
+
+
+= AUTHOR =
+
+The toolbox2 module and this manual page have been written by the
+**SmartJog** company.

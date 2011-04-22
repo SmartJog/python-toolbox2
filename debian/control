@@ -1,0 +1,15 @@
+Source: python-toolbox2
+XS-Python-Version: >= 2.5
+Priority: optional
+Section: python
+Maintainer: Philippe Bridant <philippe.bridant@smartjog.com>
+Uploaders: Matthieu Bouron <matthieu.bouron@smartjog.com>
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 7), python-central (>= 0.6), txt2tags
+Standards-Version: 3.9.1
+
+Package: python-toolbox2
+XB-Python-Version: ${python:Versions}
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: SmartJog toolbox2 python module
+ Module that provide generic interfaces to describe and manage actions.

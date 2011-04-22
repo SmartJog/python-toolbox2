@@ -1,0 +1,53 @@
+#!/usr/bin/python
+from __future__ import with_statement
+
+import sys
+import time
+import logging
+
+from optparse import OptionParser
+
+try:
+    import simplejson as json
+except:
+    import json
+
+from toolbox2 import Loader, LoaderException
+from toolbox2.action import ActionException
+
+
+if __name__ == '__main__':
+
+    usage = "usage: %prog [options]"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-p", "--path", dest="path", help="Path of file contaning a json encoded action description.")
+
+    (options, args) = parser.parse_args()
+
+    loader = Loader()
+
+    logging.basicConfig()
+    logger = logging.getLogger('toolbox2')
+    logger.setLevel(logging.DEBUG)
+
+    if options.path is not None:
+        with open(options.path) as fileobj:
+            buf = fileobj.read()
+            settings = json.loads(buf)
+
+        Action = loader.get_class(settings['action'])
+        action = Action(logger, '/tmp/', str(time.time()), settings)
+
+        try:
+            logger.info('Running %s' % settings['action'])
+            action.run()
+            for index, path in settings['out']['tmp_path'].iteritems():
+                logger.info('Output #%s: %s -> %s' % (index, path, settings['out']['path'][index]))
+
+        except ActionException:
+            logging.exception('An error occured')
+            sys.exit(1)
+    else:
+        parser.print_help()
+
+    sys.exit(0)
