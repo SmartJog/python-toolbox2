@@ -2,3 +2,4 @@ Version 0.1.0~dev
 
 	* Initial release, closes: #4188.
 	* Add support for kt-toolbox extract action, closes: #4234.
+	* Add support for manzanita rewrap action, closes: #4239.

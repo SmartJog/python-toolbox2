@@ -1,5 +1,5 @@
 python-toolbox2 (0.1.0~dev-1) unstable; urgency=low
 
-  * Initial release, closes: #4188, #4234.
+  * Initial release, closes: #4188, #4234, #4239.
 
  -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 21 Apr 2011 18:03:49 +0200
