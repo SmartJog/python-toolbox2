@@ -74,7 +74,7 @@ class KTToolboxWorker(Worker):
             self.progress = progress
 
     def get_error(self):
-        lines = self.stdout.split('\n')
+        lines = self.stderr.split('\n')
         error_lines = []
         lines.reverse()
 
