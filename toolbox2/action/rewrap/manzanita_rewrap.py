@@ -47,16 +47,6 @@ class ManzanitaRewrapAction(Action):
         self._add_output_tmp_path(1, os.path.join(self.tmp_dir, output_filename))
         self.output_file = self._get_output_tmp_path(1)
 
-        # Compute sjfs output path
-        output_dir = self.params.get('output', '')
-        if output_dir != '':
-            output_dir = '/'.join([sjfs.SJFS_BASEDIR, output_dir])
-            output_dir = os.path.realpath(output_dir)
-        else:
-            output_dir = os.path.dirname(self.input_file)
-
-        self._add_output_path(1, os.path.join(output_dir, output_filename))
-
         stream_count = 0
         video_streams = []
         audio_streams = []

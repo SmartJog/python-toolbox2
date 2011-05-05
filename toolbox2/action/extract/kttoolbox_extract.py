@@ -54,5 +54,4 @@ class KTToolboxAction(Action):
         for path, _, files in os.walk(self.tmp_output_dir):
             for filename in files:
                 self._add_output_tmp_path(index, os.path.join(path, filename))
-                self._add_output_path(index, os.path.join(self.output_dir, filename))
                 index += 1

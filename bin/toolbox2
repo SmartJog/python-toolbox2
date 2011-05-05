@@ -42,7 +42,7 @@ if __name__ == '__main__':
             logger.info('Running %s' % settings['action'])
             action.run()
             for index, path in settings['out']['tmp_path'].iteritems():
-                logger.info('Output #%s: %s -> %s' % (index, path, settings['out']['path'][index]))
+                logger.info('Output #%s: %s' % (index, path))
 
         except ActionException:
             logging.exception('An error occured')

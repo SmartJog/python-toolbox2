@@ -122,10 +122,6 @@ class Action(object):
             raise ActionException('Missing output tmp_path at index %s: %s' % (index, exc))
         return path
 
-    def _add_output_path(self, index, path):
-        index = str(index)
-        self.params['out']['path'][index] = path
-
     def clean(self):
         """
         Clean action working directory. This method must be called manually by user.
