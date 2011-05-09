@@ -20,6 +20,9 @@ class Command(object):
     def _reset_sigpipe_handler(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
+    def _preexec_fn(self):
+        self._reset_sigpipe_handler()
+
     def run(self, args):
         if (os.path.isdir(self.base_dir) == False):
             os.makedirs(self.base_dir)
@@ -28,7 +31,7 @@ class Command(object):
                                         cwd=self.base_dir,
                                         bufsize=-1,
                                         close_fds=True,
-                                        preexec_fn=self._reset_sigpipe_handler,
+                                        preexec_fn=self._preexec_fn,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
 
