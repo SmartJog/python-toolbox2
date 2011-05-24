@@ -1,5 +1,9 @@
-python-toolbox2 (0.1.0~dev-1) unstable; urgency=low
+python-toolbox2 (0.1.0-1) unstable; urgency=low
 
+  [ Matthieu Bouron ]
   * Initial release, closes: #4188, #4234, #4239, #4253.
 
- -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 21 Apr 2011 18:03:49 +0200
+  [ Stéphane Kanschine ]
+  * Update packaging for Squeeze, refs: #3584.
+
+ -- Stéphane Kanschine <stephane.kanschine@smartjog.com>  Tue, 24 May 2011 14:43:03 +0200
