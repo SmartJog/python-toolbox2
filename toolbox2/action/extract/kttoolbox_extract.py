@@ -27,6 +27,7 @@ class KTToolboxAction(Action):
         self.output_file = None
         self.tmp_output_dir = os.path.join(self.tmp_dir, 'extract')
         self.output_dir = None
+        self.kttoolbox_worker = None
 
         if not os.path.isdir(self.tmp_output_dir):
             os.makedirs(self.tmp_output_dir)
@@ -47,11 +48,11 @@ class KTToolboxAction(Action):
         worker = KTToolboxWorker(self.log, self.kttoolbox_params)
         worker.add_input_file(self.input_file)
         worker.add_output_file(self.tmp_output_dir)
+        self.kttoolbox_worker = worker
         self.workers.append(worker)
 
     def _finalize(self):
         index = 1
-        for path, _, files in os.walk(self.tmp_output_dir):
-            for filename in files:
-                self._add_output_tmp_path(index, os.path.join(path, filename))
-                index += 1
+        for _id, path in self.kttoolbox_worker.stls.iteritems():
+            self._add_output_path(index, path)
+            index = index + 1

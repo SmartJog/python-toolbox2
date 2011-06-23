@@ -49,6 +49,7 @@ class KTToolboxWorker(Worker):
         self.stdout = ''
         self.stderr = ''
         self.tool = 'kt-toolbox'
+        self.stls = {}
 
         self.args = params.get('args', [])
         self.action = params.get('action', 'VBITOSTL')
@@ -72,6 +73,12 @@ class KTToolboxWorker(Worker):
             if progress > 99:
                 progress = 99
             self.progress = progress
+
+        res = re.findall('output-(\d+): (.*)', self.stdout)
+        for output in res:
+            _id = output[0]
+            path = output[1]
+            self.stls[_id] = path
 
     def get_error(self):
         lines = self.stderr.split('\n')

@@ -7,3 +7,5 @@ Version 0.1.0~dev
 	* Do not manage output paths in toolbox2 actions, closes: #4253.
 	* Add preexec_fn method to Command class.
 	* Change output key from tmp_path to path and add infos setting.
+	* Fetch STL files using kt-toolbox output in kttoolbox extract
+	  action.
