@@ -10,3 +10,4 @@ Version 0.1.0~dev
 	* Fetch STL files using kt-toolbox output in kttoolbox extract
 	  action.
 	* Support track_id_path setting in kttoolbox extract action.
+	* Support basename option in kttoolbox worker.

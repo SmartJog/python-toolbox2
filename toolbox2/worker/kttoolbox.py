@@ -6,6 +6,7 @@ from toolbox2.worker import Worker, WorkerException
 
 
 option_map = {
+    'basename': {'-b': ''},
     'vbi_teletext_line_number': {'-gxf-lt': ''},
     'original_program_title': {'-stl-op': ''},
     'original_episode_title': {'-stl-oe': ''},
