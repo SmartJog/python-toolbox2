@@ -9,3 +9,4 @@ Version 0.1.0~dev
 	* Change output key from tmp_path to path and add infos setting.
 	* Fetch STL files using kt-toolbox output in kttoolbox extract
 	  action.
+	* Support track_id_path setting in kttoolbox extract action.
