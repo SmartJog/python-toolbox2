@@ -6,3 +6,4 @@ Version 0.1.0~dev
 	* Fix module importation in action sub packages.
 	* Do not manage output paths in toolbox2 actions, closes: #4253.
 	* Add preexec_fn method to Command class.
+	* Change output key from tmp_path to path and add infos setting.

@@ -41,8 +41,10 @@ if __name__ == '__main__':
         try:
             logger.info('Running %s' % settings['action'])
             action.run()
-            for index, path in settings['out']['tmp_path'].iteritems():
+            for index, path in action.get_output_paths().iteritems():
                 logger.info('Output #%s: %s' % (index, path))
+
+            logger.info('Extras infos: %s' % action.get_infos())
 
         except ActionException:
             logging.exception('An error occured')

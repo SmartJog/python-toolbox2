@@ -51,7 +51,8 @@ class Action(object):
         if 'path' not in self.params:
             self.params['out']['path'] = {}
 
-        self.params['out']['tmp_path'] = {}
+        if 'infos' not in self.params:
+            self.params['infos'] = {}
 
     def _check(self):
         """
@@ -110,17 +111,31 @@ class Action(object):
             raise ActionException('Missing input path at index %s: %s' % (index, exc))
         return path
 
-    def _add_output_tmp_path(self, index, path):
+    def _add_output_path(self, index, path):
         index = str(index)
-        self.params['out']['tmp_path'][index] = path
+        self.params['out']['path'][index] = path
 
-    def _get_output_tmp_path(self, index):
+    def _get_output_path(self, index, relative=False):
         index = str(index)
         try:
-            path = self.params['out']['tmp_path'][index]
+            path = self.params['out']['path'][index]
+            if relative:
+                path = path.replace(self.tmp_dir, '')
         except TypeError, exc:
-            raise ActionException('Missing output tmp_path at index %s: %s' % (index, exc))
+            raise ActionException('Missing output path at index %s: %s' % (index, exc))
         return path
+
+    def get_output_paths(self):
+        return self.params['out']['path']
+
+    def get_tmp_dir(self):
+        return self.tmp_dir
+
+    def _add_infos(self, key, value):
+        self.params['infos'][key] = value
+
+    def get_infos(self):
+        return self.params['infos']
 
     def clean(self):
         """
