@@ -29,7 +29,7 @@ class KTToolboxAction(Action):
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-        self.kttoolbox_params = self.params.get('kttoolbox', {})
+        self.kttoolbox_params = self.params.get(self.name, {})
 
     def _check(self):
         """
