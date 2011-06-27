@@ -51,7 +51,7 @@ class KTToolboxAction(Action):
     def _finalize(self):
         index = 1
         for _id, path in self.kttoolbox_worker.stls.iteritems():
-            output = self.kttoolbox_params.get('track_%s_path' % _id, None)
+            output = self.kttoolbox_params.get('teletext_track_output_path_%s' % _id, None)
 
             if output:
                 dest = os.path.realpath(self.tmp_dir + '/' + output)
@@ -66,7 +66,7 @@ class KTToolboxAction(Action):
                 os.rename(path, dest)
                 path = dest
 
-            self._add_infos('%s-track_%s_path' % (self.name, _id), path)
+            self._add_infos('%s-teletext_track_output_path_%s' % (self.name, _id), path)
 
             self._add_output_path(index, path)
             index = index + 1

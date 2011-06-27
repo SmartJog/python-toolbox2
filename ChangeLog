@@ -12,3 +12,5 @@ Version 0.1.0~dev
 	* Support track_id_path setting in kttoolbox extract action.
 	* Support basename option in kttoolbox worker.
 	* Change settings namespace in kttoolbox extract action.
+	* Rename track_id_path setting to teletext_track_output_path_id
+	  in kttoolbox extract action.
