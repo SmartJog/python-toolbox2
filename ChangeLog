@@ -1,4 +1,4 @@
-Version 0.1.1~dev
+Version 0.1.1 Released on 2011/07/21
 
 	* Replace _{add|get}_output_tmp_path with _{add|get}_output_path
 	  in manzanita rewrap action, closes: #4495.
