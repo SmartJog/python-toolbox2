@@ -44,8 +44,8 @@ class ManzanitaRewrapAction(Action):
         filename, _ = os.path.splitext(filename)
         output_filename = '%s.ts' % filename
 
-        self._add_output_tmp_path(1, os.path.join(self.tmp_dir, output_filename))
-        self.output_file = self._get_output_tmp_path(1)
+        self._add_output_path(1, os.path.join(self.tmp_dir, output_filename))
+        self.output_file = self._get_output_path(1)
 
         stream_count = 0
         video_streams = []
