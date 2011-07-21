@@ -3,7 +3,7 @@ Version 0.1.1~dev
 	* Replace _{add|get}_output_tmp_path with _{add|get}_output_path
 	  in manzanita rewrap action, closes: #4495.
 
-Version 0.1.0
+Version 0.1.0 Released on 2011/07/21
 
 	* Initial release, closes: #4188.
 	* Add support for kt-toolbox extract action, closes: #4234.
