@@ -115,6 +115,15 @@ class Action(object):
         index = str(index)
         self.params['out']['path'][index] = path
 
+    def _get_output_extension(self, index):
+        index = str(index)
+        if not 'ext' in self.params['out']:
+            return False
+        if not index in self.params['out']['ext']:
+            return False
+
+        return self.params['out']['ext'][index]
+
     def _get_output_path(self, index, relative=False):
         index = str(index)
         try:
