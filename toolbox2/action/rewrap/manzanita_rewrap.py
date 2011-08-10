@@ -42,7 +42,10 @@ class ManzanitaRewrapAction(Action):
         # Compute tmp output path
         filename = os.path.basename(self.input_file)
         filename, _ = os.path.splitext(filename)
-        output_filename = '%s.ts' % filename
+        extension = self._get_output_extension(1)
+        if not extension:
+            extension = '.ts'
+        output_filename = '%s%s' % (filename, extension)
 
         self._add_output_path(1, os.path.join(self.tmp_dir, output_filename))
         self.output_file = self._get_output_path(1)

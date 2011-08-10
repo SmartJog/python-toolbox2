@@ -1,6 +1,8 @@
 Version 0.2.0~dev
 
 	* Add _get_output_extension to action API, refs: #4588.
+	* Let user specify output file extension in manzanita
+	  rewrap action, closes: #4588
 
 Version 0.1.1 Released on 2011/07/21
 

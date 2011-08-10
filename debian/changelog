@@ -1,8 +1,8 @@
 python-toolbox2 (0.2.0~dev-1) unstable; urgency=low
 
-  * New upstream release.
+  * New upstream release, closes: #4588.
 
- -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Wed, 10 Aug 2011 19:27:01 +0200
+ -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Wed, 10 Aug 2011 19:27:52 +0200
 
 python-toolbox2 (0.1.1-2) unstable; urgency=low
 
