@@ -1,4 +1,4 @@
-python-toolbox2 (0.1.1-2~dev) unstable; urgency=low
+python-toolbox2 (0.1.1-2) unstable; urgency=low
 
   * Update debian/control Build-Depends.
   * Update debian/compat version.
