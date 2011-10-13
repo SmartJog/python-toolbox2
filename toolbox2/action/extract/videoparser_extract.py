@@ -22,8 +22,8 @@ class VideoparserAction(Action):
     description = 'videoparser extract tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params):
-        Action.__init__(self, log, base_dir, _id, params)
+    def __init__(self, log, base_dir, _id, params, ressources):
+        Action.__init__(self, log, base_dir, _id, params, ressources)
         self.input_file = None
         self.snapshot = None
         self.videoparser_worker = None
@@ -31,12 +31,9 @@ class VideoparserAction(Action):
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-    def _check(self):
-        pass
-
     def _setup(self):
 
-        self.input_file = self._get_input_path(1)
+        self.input_file = self.get_input_ressource(1).get('path')
         self.snapshot = os.path.join(self.tmp_dir, 'snapshot.jpg')
         params = {'-travisf': None, '-S': self.snapshot}
         worker = VideoparserWorker(self.log, params)
@@ -47,7 +44,7 @@ class VideoparserAction(Action):
 
     def _callback(self, worker, user_callback):
         if self.videoparser_worker == worker:
-            self.params['infos'] = worker.metadatas
+            self.update_metadata(worker.metadatas)
         Action._callback(self, worker, user_callback)
 
     def _finalize(self):

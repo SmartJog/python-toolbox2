@@ -19,14 +19,19 @@ class Action(object):
     description = ''
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params):
+    def __init__(self, log, base_dir, _id, params=None, ressources=None):
         self.id = _id
         self.log = log
         self.base_dir = base_dir
-        self.params = params
+        self.params = params or {}
 
-        if not isinstance(params, dict):
-            raise ActionException('Action params must an instance of dict: %s given' % type(params))
+        self.ressources = {
+            'inputs': {},
+            'outputs': {},
+            'metadata': {}
+        }
+
+        self.ressources.update(ressources or {})
 
         self.workers = []
         self.worker_idx = 0
@@ -44,21 +49,6 @@ class Action(object):
 
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
-
-        if 'out' not in self.params:
-            self.params['out'] = {}
-
-        if 'path' not in self.params:
-            self.params['out']['path'] = {}
-
-        if 'infos' not in self.params:
-            self.params['infos'] = {}
-
-    def _check(self):
-        """
-        Check action parameters.
-        """
-        raise NotImplementedError
 
     def _setup(self):
         """
@@ -79,77 +69,74 @@ class Action(object):
         runtime.
         """
         self.worker_count = len(self.workers)
-        for self.worker_idx, action in enumerate(self.workers):
-            self._execute_worker(action, callback)
+        for self.worker_idx, worker in enumerate(self.workers):
+            self._execute_worker(worker, callback)
 
         self.progress = 100
         self._callback(self.workers[-1], callback)
 
-    def _execute_worker(self, action, callback=None):
+    def _execute_worker(self, worker, callback=None):
 
-        action.run(self.tmp_dir)
+        worker.run(self.tmp_dir)
 
         ret = None
         while ret is None:
-            ret = action.wait_noloop()
-            # Fetch progress from action
-            self.progress = action.progress / self.worker_count + (math.ceil(self.worker_idx) / self.worker_count) * 100
+            ret = worker.wait_noloop()
+            # Fetch progress from worker
+            self.progress = worker.progress / self.worker_count + (math.ceil(self.worker_idx) / self.worker_count) * 100
             self.progress = int(self.progress)
             self.running_time = time.time() - self.started_at
-            self._callback(action, callback)
+            self._callback(worker, callback)
             time.sleep(self.loop_interval)
         if ret != 0:
-            raise WorkerException(action.get_error())
+            raise WorkerException(worker.get_error())
 
     def _callback(self, worker, user_callback):
-        infos = {}
-        infos['progress'] = self.progress
-        infos['running_time'] = self.running_time
         if callable(user_callback):
-            user_callback(infos, self.params['infos'])
+            user_callback(self)
 
-    def _get_input_path(self, index):
+    def add_ressource(self, section, index, ressource):
         index = str(index)
-        try:
-            path = self.params['in']['path'][index]
-        except TypeError, exc:
-            raise ActionException('Missing input path at index %s: %s' % (index, exc))
-        return path
+        if section not in self.ressources:
+            self.ressources[section] = {}
+        if index in self.ressources[section]:
+            raise ActionException('Ressource (section = %s) (index = %s) already exist' % (section, index))
+        self.ressources[section][index] = ressource
 
-    def _add_output_path(self, index, path):
+    def get_ressource(self, section, index):
         index = str(index)
-        self.params['out']['path'][index] = path
+        if section not in self.ressources:
+            raise ActionException('Section %s does not exist' % section)
+        if index not in self.ressources[section]:
+            raise ActionException('Ressource (section = %s) (index = %s) does not exist' % (section, index))
+        return self.ressources[section][index]
 
-    def _get_output_extension(self, index):
-        index = str(index)
-        if not 'ext' in self.params['out']:
-            return False
-        if not index in self.params['out']['ext']:
-            return False
+    def add_input_ressource(self, index, ressource):
+        return self.add_ressource('inputs', index, ressource)
 
-        return self.params['out']['ext'][index]
+    def get_input_ressource(self, index):
+        return self.get_ressource('inputs', index)
 
-    def _get_output_path(self, index, relative=False):
-        index = str(index)
-        try:
-            path = self.params['out']['path'][index]
-            if relative:
-                path = path.replace(self.tmp_dir, '')
-        except TypeError, exc:
-            raise ActionException('Missing output path at index %s: %s' % (index, exc))
-        return path
+    def add_output_ressource(self, index, ressource):
+        return self.add_ressource('outputs', index, ressource)
 
-    def get_output_paths(self):
-        return self.params['out']['path']
+    def get_output_ressource(self, index):
+        return self.get_ressource('outputs', index)
 
-    def get_tmp_dir(self):
-        return self.tmp_dir
+    def get_input_ressources(self):
+        return self.ressources['inputs']
 
-    def _add_infos(self, key, value):
-        self.params['infos'][key] = value
+    def get_output_ressources(self):
+        return self.ressources['outputs']
 
-    def get_infos(self):
-        return self.params['infos']
+    def get_metadata(self):
+        return self.ressources['metadata']
+
+    def add_metadata(self, key, value):
+        self.ressources['metadata'][key] = value
+
+    def update_metadata(self, metadata):
+        self.ressources['metadata'].update(metadata)
 
     def clean(self):
         """
@@ -164,13 +151,12 @@ class Action(object):
 
     def run(self, callback=None):
         """
-        Run action by calling _check, _setup and _execute methods. If an error
+        Run action by calling _setup and _execute methods. If an error
         occured raise an ActionException.
         """
         self.started_at = time.time()
 
         try:
-            self._check()
             self._setup()
             self._execute(callback)
             self._finalize()

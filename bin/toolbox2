@@ -36,15 +36,16 @@ if __name__ == '__main__':
             settings = json.loads(buf)
 
         Action = loader.get_class(settings['action'])
-        action = Action(logger, '/tmp/', str(time.time()), settings)
+        action = Action(logger, '/tmp/', str(time.time()), settings['params'], settings['ressources'])
 
         try:
             logger.info('Running %s' % settings['action'])
             action.run()
-            for index, path in action.get_output_paths().iteritems():
-                logger.info('Output #%s: %s' % (index, path))
+            for index, ressource in action.get_output_ressources().iteritems():
+                logger.info('Output #%s: %s' % (index, ressource))
 
-            logger.info('Extras infos: %s' % action.get_infos())
+            logger.info('Params: %s' % action.params)
+            logger.info('Metadata: %s' % action.get_metadata())
 
         except ActionException:
             logging.exception('An error occured')

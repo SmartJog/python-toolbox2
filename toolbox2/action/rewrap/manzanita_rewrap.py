@@ -25,30 +25,30 @@ class ManzanitaRewrapAction(Action):
     description = 'Manzanita rewrap tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params):
-        Action.__init__(self, log, base_dir, _id, params)
+    def __init__(self, log, base_dir, _id, params, ressources):
+        Action.__init__(self, log, base_dir, _id, params, ressources)
         self.input_file = None
         self.output_file = None
-
-    def _check(self):
-        pass
 
     def _setup(self):
 
         # FIXME: more customization needed for output paths
         # Set input_file
-        self.input_file = self._get_input_path(1)
+        self.input_file = self.get_input_ressource(1).get('path')
+        if not self.input_file:
+            raise ManzanitaRewrapException('No path specified for input (index = 1)')
 
         # Compute tmp output path
         filename = os.path.basename(self.input_file)
         filename, _ = os.path.splitext(filename)
-        extension = self._get_output_extension(1)
+        if self.get_output_ressource(1):
+            extension = self.get_output_ressource(1).get('extension')
         if not extension:
             extension = '.ts'
         output_filename = '%s%s' % (filename, extension)
 
-        self._add_output_path(1, os.path.join(self.tmp_dir, output_filename))
-        self.output_file = self._get_output_path(1)
+        self.output_file = os.path.join(self.tmp_dir, output_filename)
+        self.add_output_ressource(1, {'path': self.output_file})
 
         stream_count = 0
         video_streams = []
