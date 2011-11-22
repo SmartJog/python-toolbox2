@@ -1,4 +1,4 @@
-Version 0.2.0~dev
+Version 0.2.0 Released on 2011/11/22
 
 	* Add _get_output_extension to action API, refs: #4588.
 	* Let user specify output file extension in manzanita
