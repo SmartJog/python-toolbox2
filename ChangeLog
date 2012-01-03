@@ -1,6 +1,7 @@
 Version 0.3.0~dev
 
 	* Add a memory limit to command execution, refs: #5365.
+	* Add callback method to action API, refs: #5365.
 
 Version 0.2.0 Released on 2011/11/22
 

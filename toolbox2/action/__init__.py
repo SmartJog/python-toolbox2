@@ -83,8 +83,7 @@ class Action(object):
             self._execute_worker(action, callback)
 
         self.progress = 100
-        if callable(callback):
-            callback(self.progress)
+        self._callback(self.workers[-1], callback)
 
     def _execute_worker(self, action, callback=None):
 
@@ -97,11 +96,14 @@ class Action(object):
             self.progress = action.progress / self.worker_count + (math.ceil(self.worker_idx) / self.worker_count) * 100
             self.progress = int(self.progress)
             self.running_time = time.time() - self.started_at
-            if callable(callback):
-                callback(self.progress)
+            self._callback(action, callback)
             time.sleep(self.loop_interval)
         if ret != 0:
             raise WorkerException(action.get_error())
+
+    def _callback(self, worker, user_callback):
+        if callable(user_callback):
+            user_callback(self.progress)
 
     def _get_input_path(self, index):
         index = str(index)
