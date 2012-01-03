@@ -35,6 +35,7 @@ class Worker(object):
         self.time = 0
         self.timeleft = 0
         self.progress = 0
+        self.memory_limit = 0
 
     def add_input_file(self, path, params=None):
         """
@@ -99,7 +100,7 @@ class Worker(object):
         self.log.info('Running command: %s', cmd)
 
         self.command = Command(base_dir)
-        self.command.run(args)
+        self.command.run(args, self.memory_limit)
 
         self.is_running = True
 
