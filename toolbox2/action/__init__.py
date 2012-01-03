@@ -102,8 +102,11 @@ class Action(object):
             raise WorkerException(action.get_error())
 
     def _callback(self, worker, user_callback):
+        infos = {}
+        infos['progress'] = self.progress
+        infos['running_time'] = self.running_time
         if callable(user_callback):
-            user_callback(self.progress)
+            user_callback(infos, self.params['infos'])
 
     def _get_input_path(self, index):
         index = str(index)
