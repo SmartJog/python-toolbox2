@@ -72,9 +72,9 @@ class Command(object):
                         stdout = fd.read(read)
                     elif fd == self.process.stderr:
                         stderr = fd.read(read)
-                    if stdout != '' or stderr != '':
-                        if callback:
-                            callback(stdout, stderr)
+                if stdout != '' or stderr != '':
+                    if callback:
+                        callback(stdout, stderr)
             if not loop:
                 break
 
