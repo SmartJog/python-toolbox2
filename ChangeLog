@@ -6,6 +6,7 @@ Version 0.3.0~dev
 	  action information, closes: #5365.
 	* Add videoparser_extract action, closes: #5365.
 	* Fix duplicate stdout/stderr output returned by command.
+	* Fix classes names of video_extract module.
 
 Version 0.2.0 Released on 2011/11/22
 

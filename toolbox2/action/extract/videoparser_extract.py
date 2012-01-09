@@ -7,11 +7,11 @@ from toolbox2.action import Action, ActionException
 from toolbox2.worker.videoparser import VideoparserWorker
 
 
-class KTToolboxActionException(ActionException):
+class VideoparserActionException(ActionException):
     pass
 
 
-class KTToolboxAction(Action):
+class VideoparserAction(Action):
     """
     Extract audio/video metadata from media files using sj videoparser.
     """
