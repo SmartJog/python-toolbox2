@@ -4,6 +4,8 @@ Version 0.5.0~dev
 	* Add stdout and stderr buffers to Worker class and implement
 	  get_error method.
 	* Remove get_error implementation from all workers which use it.
+	* Add Toolbox2Exception class and make all custom exceptions inherit
+	  from this class.
 
 Version 0.4.0 Released on 2012/01/16
 

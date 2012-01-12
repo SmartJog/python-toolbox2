@@ -12,8 +12,7 @@ try:
 except:
     import json
 
-from toolbox2 import Loader, LoaderException
-from toolbox2.action import ActionException
+from toolbox2 import Loader, Toolbox2Exception
 
 
 if __name__ == '__main__':
@@ -47,7 +46,7 @@ if __name__ == '__main__':
             logger.info('Params: %s' % action.params)
             logger.info('Metadata: %s' % action.get_metadata())
 
-        except ActionException:
+        except Toolbox2Exception:
             logging.exception('An error occured')
             sys.exit(1)
     else:

@@ -4,10 +4,11 @@ import os
 import time
 import math
 import shutil
+from toolbox2.exception import Toolbox2Exception
 from toolbox2.worker import WorkerException
 
 
-class ActionException(Exception):
+class ActionException(Toolbox2Exception):
     pass
 
 

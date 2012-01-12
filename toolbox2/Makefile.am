@@ -2,6 +2,7 @@ toolbox2dir = $(pyexecdir)/toolbox2
 nobase_toolbox2_PYTHON = \
 	__init__.py \
 	command.py \
+	exception.py \
 	action/__init__.py \
 	action/extract/__init__.py \
 	action/extract/kttoolbox_extract.py \

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from toolbox2.action import Action
+from toolbox2.exception import Toolbox2Exception
 
 from toolbox2.action.extract import *
 from toolbox2.action.rewrap import *
@@ -26,7 +27,7 @@ def find_subclasses(cls, _seen=None):
                 yield sub
 
 
-class LoaderException(Exception):
+class LoaderException(Toolbox2Exception):
     pass
 
 

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from toolbox2.command import Command
+from toolbox2.exception import Toolbox2Exception
 
 
-class WorkerException(Exception):
+class WorkerException(Toolbox2Exception):
     pass
 
 
