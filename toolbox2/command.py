@@ -6,6 +6,7 @@ import resource
 import subprocess
 import select
 import signal
+import errno
 
 
 class CommandException(Exception):
@@ -55,23 +56,24 @@ class Command(object):
 
             self.process.poll()
 
-            fd_r, fd_w, fd_x, = select.select([self.process.stdout, self.process.stderr],
-                                              [],
-                                              [],
-                                              timeout)
+            file_r, file_w, file_x, = select.select([self.process.stdout, self.process.stderr],
+                                                    [],
+                                                    [],
+                                                    timeout)
 
-            if not fd_r and not fd_w and not fd_x:
+            if not file_r and not file_w and not file_x:
                 self.process.kill()
                 raise CommandException('Process (pid = %s) has timed out' %
                                         (self.process.pid))
             else:
                 stdout = ''
                 stderr = ''
-                for fd in fd_r:
-                    if fd == self.process.stdout:
-                        stdout = fd.read(read)
-                    elif fd == self.process.stderr:
-                        stderr = fd.read(read)
+                for _file in file_r:
+                    buf = self._read_all(_file)
+                    if _file == self.process.stdout:
+                        stdout = buf
+                    elif _file == self.process.stderr:
+                        stderr = buf
                 if stdout != '' or stderr != '':
                     if callback:
                         callback(stdout, stderr)
@@ -79,3 +81,24 @@ class Command(object):
                 break
 
         return self.process.returncode
+
+    def _read_no_intr(self, _file, size):
+        while True:
+            try:
+                return _file.read(size)
+            except (OSError, IOError), e:
+                if e.errno == errno.EINTR:
+                    continue
+                elif e.errno == errno.EAGAIN or e.errno == errno.EWOULDBLOCK:
+                    return ''
+                else:
+                    raise
+
+    def _read_all(self, _file,):
+        buf = ''
+        while True:
+            content = self._read_no_intr(_file, 4096)
+            buf += content
+            if content == '':
+                break
+        return buf
