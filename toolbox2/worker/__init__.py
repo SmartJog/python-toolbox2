@@ -104,21 +104,21 @@ class Worker(object):
 
         self.is_running = True
 
-    def wait(self, read=4096, timeout=3600):
+    def wait(self):
         """
         Wait running process. If an error occurs raise a WorkerException,
         otherwise returns 0
         """
-        ret = self.command.wait(self._handle_output, read, timeout)
+        ret = self.command.wait(self._handle_output)
         if ret != 0:
             error = self.get_error()
             raise WorkerException(error)
         return ret
 
-    def wait_noloop(self, read=4096, timeout=3600):
+    def wait_noloop(self):
         """
         Wait (non-blocking) running process and return its exit code.
         If process has not exited yet, this method returns None otherwise,
         it returns its exit code.
         """
-        return self.command.wait(self._handle_output, read, timeout, loop=False)
+        return self.command.wait(self._handle_output, loop=False)

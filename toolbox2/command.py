@@ -8,6 +8,9 @@ import select
 import signal
 import errno
 
+COMMAND_DEFAULT_TIMEOUT = 3600
+COMMAND_DEFAULT_READ_SIZE = 4096
+
 
 class CommandException(Exception):
     pass
@@ -19,6 +22,14 @@ class Command(object):
         self.base_dir = base_dir
         self.process = None
         self.memory_limit = 0
+        self.timeout = COMMAND_DEFAULT_TIMEOUT
+        self.read_size = COMMAND_DEFAULT_READ_SIZE
+
+    def set_timeout(self, timeout):
+        self.timeout = timeout
+
+    def set_read_size(self, read_size):
+        self.read_size = read_size
 
     def _reset_sigpipe_handler(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
@@ -50,7 +61,7 @@ class Command(object):
         fl = fcntl.fcntl(self.process.stderr, fcntl.F_GETFL)
         fcntl.fcntl(self.process.stderr, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
-    def wait(self, callback=None, read=4096, timeout=3600, loop=True):
+    def wait(self, callback=None, loop=True):
 
         while self.process.returncode is None:
 
@@ -59,7 +70,7 @@ class Command(object):
             file_r, file_w, file_x, = select.select([self.process.stdout, self.process.stderr],
                                                     [],
                                                     [],
-                                                    timeout)
+                                                    self.timeout)
 
             if not file_r and not file_w and not file_x:
                 self.process.kill()
@@ -97,7 +108,7 @@ class Command(object):
     def _read_all(self, _file,):
         buf = ''
         while True:
-            content = self._read_no_intr(_file, 4096)
+            content = self._read_no_intr(_file, self.read_size)
             buf += content
             if content == '':
                 break
