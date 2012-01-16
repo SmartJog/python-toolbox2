@@ -1,8 +1,9 @@
-python-toolbox2 (0.4.0~dev-1) unstable; urgency=low
+python-toolbox2 (0.4.0-1) unstable; urgency=low
 
   * New upstream release, closes: #5458.
+  * Add myself to Uploaders.
 
- -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Fri, 13 Jan 2012 11:37:03 +0100
+ -- Rémi Cardona <remi.cardona@smartjog.com>  Mon, 16 Jan 2012 11:03:40 +0100
 
 python-toolbox2 (0.3.0-1) unstable; urgency=low
 
