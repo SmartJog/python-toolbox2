@@ -44,7 +44,7 @@ class VideoparserAction(Action):
 
     def _callback(self, worker, user_callback):
         if self.videoparser_worker == worker:
-            self.update_metadata(worker.metadatas)
+            self.update_metadata(worker.metadata)
         Action._callback(self, worker, user_callback)
 
     def _finalize(self):

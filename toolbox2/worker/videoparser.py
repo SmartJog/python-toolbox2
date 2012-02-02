@@ -18,7 +18,7 @@ class VideoparserWorker(Worker):
         self.stdout_buf = ''
         self.full_desc = False
         self.tool = 'videoparser'
-        self.metadatas = {}
+        self.metadata = {}
         self.error_lines = 4
         self.memory_limit = 150 * 1024 * 1024
 
@@ -35,17 +35,17 @@ class VideoparserWorker(Worker):
                     if res[0][0] == 'full_desc':
                         self.full_desc = True
                     else:
-                        self.metadatas[res[0][0]] = res[0][1]
+                        self.metadata[res[0][0]] = res[0][1]
 
             else:
                 if len(res) > 0:
                     if res[0][0] == 'full_desc':
                         self.full_desc = False
-                        self.metadatas['full_desc'] = self.metadatas['full_desc'].rstrip('\n')
+                        self.metadata['full_desc'] = self.metadata['full_desc'].rstrip('\n')
                     else:
-                        if 'full_desc' not in self.metadatas:
-                            self.metadatas['full_desc'] = ''
-                        self.metadatas['full_desc'] += '%s\n' % re.sub(', from.*', '', line)
+                        if 'full_desc' not in self.metadata:
+                            self.metadata['full_desc'] = ''
+                        self.metadata['full_desc'] += '%s\n' % re.sub(', from.*', '', line)
 
     def get_args(self):
         args = Worker.get_args(self)
