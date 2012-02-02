@@ -34,7 +34,6 @@ class FFmpegWorker(Worker):
         Worker.__init__(self, log, params)
         self.nbframes = 0
         self.tool = 'ffmpeg'
-        self.args = params.get('args', [])
 
     def add_input_file(self, path, params=None):
         Worker.add_input_file(self, path, params)
@@ -60,10 +59,10 @@ class FFmpegWorker(Worker):
         for input_file in self.input_files:
             args += input_file.get_args()
 
+        args += Worker.get_args(self)
+
         for output_file in self.output_files:
             args += output_file.get_args()
-
-        args += self.args
 
         return args
 
