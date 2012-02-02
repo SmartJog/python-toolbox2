@@ -107,6 +107,12 @@ class Worker(object):
         """
         raise NotImplementedError
 
+    def _finalize(self):
+        """
+        This method is called at end of command or job.
+        """
+        pass
+
     def run(self, base_dir):
         """
         Compute and launch command line.
@@ -129,6 +135,7 @@ class Worker(object):
         otherwise returns 0
         """
         ret = self.command.wait(self._handle_output)
+        self._finalize()
         if ret != 0:
             error = self.get_error()
             raise WorkerException(error)
@@ -140,4 +147,7 @@ class Worker(object):
         If process has not exited yet, this method returns None otherwise,
         it returns its exit code.
         """
-        return self.command.wait(self._handle_output, loop=False)
+        ret = self.command.wait(self._handle_output, loop=False)
+        if ret != None:
+            self._finalize()
+        return ret
