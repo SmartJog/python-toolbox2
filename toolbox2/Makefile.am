@@ -5,6 +5,7 @@ nobase_toolbox2_PYTHON = \
 	exception.py \
 	action/__init__.py \
 	action/extract/__init__.py \
+	action/extract/avinfo_extract.py \
 	action/extract/kttoolbox_extract.py \
 	action/extract/videoparser_extract.py \
 	action/rewrap/__init__.py \
