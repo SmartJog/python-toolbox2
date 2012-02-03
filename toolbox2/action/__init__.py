@@ -89,6 +89,8 @@ class Action(object):
             self.running_time = time.time() - self.started_at
             self._callback(worker, callback)
             time.sleep(self.loop_interval)
+            if ret is None:
+                time.sleep(self.loop_interval)
         if ret != 0:
             raise WorkerException(worker.get_error())
 
