@@ -98,7 +98,8 @@ class ManzanitaRewrapAction(Action):
 
         # Setup demuxing worker
         demux = FFmpegWorker(self.log, {'args': []})
-        demux.add_input_file(self.input_file, {'nbframes': nbframes})
+        demux.set_nb_frames(nbframes)
+        demux.add_input_file(self.input_file)
 
         for video_stream in video_streams:
             demux.add_output_file(video_stream['path'], {'args': ['-vsync', '0', '-vcodec', 'copy', '-y']})

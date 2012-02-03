@@ -32,26 +32,22 @@ class FFmpegWorker(Worker):
 
     def __init__(self, log, params):
         Worker.__init__(self, log, params)
-        self.nbframes = 0
+        self.nb_frames = 0
         self.tool = 'ffmpeg'
-
-    def add_input_file(self, path, params=None):
-        Worker.add_input_file(self, path, params)
-        if 'nbframes' in params:
-            if params['nbframes'] > self.nbframes:
-                self.nbframes = params['nbframes']
-            del params['nbframes']
 
     def _handle_output(self, stdout, stderr):
         self.stdout += stdout
         self.stderr += stderr
 
         res = re.findall('frame=\s*(\d+)', self.stderr)
-        if len(res) > 0 and self.nbframes > 0:
+        if len(res) > 0 and self.nb_frames > 0:
             frame = float(res[-1])
-            self.progress = (frame / self.nbframes) * 100
+            self.progress = (frame / self.nb_frames) * 100
             if self.progress > 99:
                 self.progress = 99
+
+    def set_nb_frames(self, nb_frames):
+        self.nb_frames = nb_frames
 
     def get_args(self):
         args = []
