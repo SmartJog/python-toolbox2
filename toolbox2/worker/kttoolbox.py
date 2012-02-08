@@ -47,11 +47,9 @@ class KTToolboxWorker(Worker):
 
     def __init__(self, log, params):
         Worker.__init__(self, log, params)
-        self.stdout = ''
-        self.stderr = ''
         self.tool = 'kt-toolbox'
         self.stls = {}
-
+        self.error_lines = 4
         self.args = params.get('args', [])
         self.action = params.get('action', 'VBITOSTL')
         self.options = []
@@ -80,23 +78,6 @@ class KTToolboxWorker(Worker):
             _id = output[0]
             path = output[1]
             self.stls[_id] = path
-
-    def get_error(self):
-        lines = self.stderr.split('\n')
-        error_lines = []
-        lines.reverse()
-
-        i = 0
-        max_lines = 4
-        for line in lines:
-            if not line == '':
-                i += 1
-                error_lines.append(line)
-            if i >= max_lines:
-                break
-
-        error_lines.reverse()
-        return "\n".join(error_lines)
 
     def get_args(self):
         args = []

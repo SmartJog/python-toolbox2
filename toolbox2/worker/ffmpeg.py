@@ -32,8 +32,6 @@ class FFMpegWorker(Worker):
 
     def __init__(self, log, params):
         Worker.__init__(self, log, params)
-        self.stdout = ''
-        self.stderr = ''
         self.nbframes = 0
         self.tool = 'ffmpeg'
         self.args = params.get('args', [])
@@ -55,23 +53,6 @@ class FFMpegWorker(Worker):
             self.progress = (frame / self.nbframes) * 100
             if self.progress > 99:
                 self.progress = 99
-
-    def get_error(self):
-        lines = self.stderr.split('\n')
-        error_lines = []
-        lines.reverse()
-
-        i = 0
-        max_lines = 1
-        for line in lines:
-            if not line == '':
-                i += 1
-                error_lines.append(line)
-            if i >= max_lines:
-                break
-
-        error_lines.reverse()
-        return "\n".join(error_lines)
 
     def get_args(self):
         args = []

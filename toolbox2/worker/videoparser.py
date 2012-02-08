@@ -15,12 +15,11 @@ class VideoparserWorker(Worker):
     """
     def __init__(self, log, params):
         Worker.__init__(self, log, params)
-        self.stdout = ''
-        self.stderr = ''
         self.stdout_buf = ''
         self.full_desc = False
         self.tool = 'videoparser'
         self.metadatas = {}
+        self.error_lines = 4
         self.memory_limit = 150 * 1024 * 1024
 
     def _handle_output(self, stdout, stderr):
@@ -55,23 +54,6 @@ class VideoparserWorker(Worker):
             args += input_file.get_args()
 
         return args
-
-    def get_error(self):
-        lines = self.stderr.split('\n')
-        error_lines = []
-        lines.reverse()
-
-        i = 0
-        max_lines = 4
-        for line in lines:
-            if not line == '':
-                i += 1
-                error_lines.append(line)
-            if i >= max_lines:
-                break
-
-        error_lines.reverse()
-        return "\n".join(error_lines)
 
     def _setup(self, base_dir):
         pass

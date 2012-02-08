@@ -89,33 +89,12 @@ class ManzanitaWorker(Worker):
 
     def __init__(self, log, params):
         Worker.__init__(self, log, params)
-        self.stdout = ''
-        self.stderr = ''
         self.tool = 'mp2tsms'
+        self.error_lines = 4
 
     def _handle_output(self, stdout, stderr):
         self.stdout += stdout
         self.stderr += stderr
-
-    def get_error(self):
-        lines = self.stdout.split('\n')
-        error_lines = []
-        lines.reverse()
-
-        i = 0
-        max_lines = 4
-        for line in lines:
-            if not line == '':
-                i += 1
-                error_lines.append(line)
-            if i >= max_lines:
-                break
-
-        error_lines.reverse()
-        return "\n".join(error_lines)
-
-    def _setup(self, _):
-        pass
 
 
 class ManzanitaDemuxWorker(ManzanitaWorker):
