@@ -37,6 +37,10 @@ class Worker(object):
         self.progress = 0
         self.memory_limit = 0
 
+        self.stdout = ''
+        self.stderr = ''
+        self.error_lines = 1
+
     def add_input_file(self, path, params=None):
         """
         Add an input file with associated parameters.
@@ -78,9 +82,23 @@ class Worker(object):
 
     def get_error(self):
         """
-        Virtual method to fetch and return error from exited process.
+        Return the last lines from stderr. The number of lines returned
+        could be configured with Worker.error_lines attribute.
         """
-        raise NotImplementedError
+        lines = self.stderr.split('\n')
+        lines.reverse()
+
+        i = 0
+        error_lines = []
+        for line in lines:
+            if not line == '':
+                i += 1
+                error_lines.append(line)
+            if i >= self.error_lines:
+                break
+
+        error_lines.reverse()
+        return '\n'.join(error_lines)
 
     def _setup(self, base_dir):
         """
