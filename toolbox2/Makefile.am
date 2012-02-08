@@ -12,6 +12,7 @@ nobase_toolbox2_PYTHON = \
 	action/transcode/__init__.py \
 	worker/__init__.py \
 	worker/ffmpeg.py \
+	worker/ffprobe.py \
 	worker/kttoolbox.py \
 	worker/manzanita.py \
 	worker/videoparser.py

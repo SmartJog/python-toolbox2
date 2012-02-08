@@ -10,6 +10,6 @@ Standards-Version: 3.9.1
 Package: python-toolbox2
 XB-Python-Version: ${python:Versions}
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends}, ${python:Depends}, ffmpeg-static (>= 0.10)
 Description: SmartJog toolbox2 python module
  Module that provide generic interfaces to describe and manage actions.
