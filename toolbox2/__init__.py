@@ -13,7 +13,9 @@ def find_subclasses(cls, _seen=None):
     if not isinstance(cls, type):
         raise TypeError('find_subclasses must be called with new-style classes, not %.100r' % cls)
 
-    if _seen is None: _seen = set()
+    if _seen is None:
+        _seen = set()
+
     try:
         subs = cls.__subclasses__()
     except TypeError:
@@ -46,12 +48,13 @@ class Loader(object):
                 if cls.name in self.actions:
                     raise LoaderException('Identifier %s already used for class: %s' % (cls.name, cls))
 
-                self.actions[cls.name] = {'name': cls.name,
-                                          'description': cls.description,
-                                          'category': cls.category,
-                                          'required_params': cls.required_params,
-                                          'class': cls,
-                                          }
+                self.actions[cls.name] = {
+                    'name': cls.name,
+                    'description': cls.description,
+                    'category': cls.category,
+                    'required_params': cls.required_params,
+                    'class': cls,
+                }
 
     def get_class(self, name):
         try:
