@@ -7,7 +7,7 @@ import sjfs
 
 from toolbox2.action import Action, ActionException
 from toolbox2.worker.manzanita import ManzanitaMuxWorker
-from toolbox2.worker.ffmpeg import FFMpegWorker
+from toolbox2.worker.ffmpeg import FFmpegWorker
 
 sys.path.append('/usr/share/libtoolbox')
 import mediaparser
@@ -97,7 +97,7 @@ class ManzanitaRewrapAction(Action):
             nbframes = 0
 
         # Setup demuxing worker
-        demux = FFMpegWorker(self.log, {'args': []})
+        demux = FFmpegWorker(self.log, {'args': []})
         demux.add_input_file(self.input_file, {'nbframes': nbframes})
 
         for video_stream in video_streams:

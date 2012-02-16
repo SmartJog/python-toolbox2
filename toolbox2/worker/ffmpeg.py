@@ -5,11 +5,11 @@ import re
 from toolbox2.worker import Worker, WorkerException
 
 
-class FFMpegWorkerException(WorkerException):
+class FFmpegWorkerException(WorkerException):
     pass
 
 
-class FFMpegWorker(Worker):
+class FFmpegWorker(Worker):
 
     class InputFile(Worker.InputFile):
         def __init__(self, path, params):
