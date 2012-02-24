@@ -67,6 +67,7 @@ class FFmpegWorker(Worker):
         self.audio_opts = self.params.get('audio_opts', [])
         self.format_opts = self.params.get('format_opts', [])
         self.video_filter_chain = []
+        self.keep_vbi_lines = False
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -224,3 +225,76 @@ class FFmpegWorker(Worker):
 
     def copy_video(self):
         self.video_opts.append(('-vcodec', 'copy'))
+
+    def transcode_imx(self, options=None):
+        if not options:
+            options = {}
+        bitrate = options.get('bitrate', 50000)
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        tag = None
+        bufsize = 0
+
+        if not (avinfo.video_is_SD_PAL() or avinfo.video_is_SD_NTSC()):
+            raise FFmpegWorkerException('Only PAL and NTSC systems are supported')
+
+        if bitrate not in [30000, 50000]:
+            raise FFmpegWorkerException('Only IMX 30 and 50 is supported')
+
+        self.video_opts = []
+        self.video_opts += [
+            ('-g', 0),
+            ('-flags', '+ildct+low_delay'),
+            ('-dc', 10),
+            ('-intra_vlc', 1),
+            ('-non_linear_quant', 1),
+            ('-qscale', 1),
+            ('-vcodec', 'mpeg2video'),
+            ('-ps', 1),
+            ('-qmin', 1),
+            ('-qmax', 12),
+            ('-lmin', '1*QP2LAMBDA'),
+            ('-rc_max_vbv_use', 1),
+            ('-pix_fmt', 'yuv422p'),
+            ('-top', 1),
+        ]
+
+        if avinfo.video_is_SD_PAL() and bitrate == 30000:
+            tag = 'mx3p'
+            bufsize = 1200000
+        elif avinfo.video_is_SD_NTSC() and bitrate == 30000:
+            tag = 'mx3n'
+            bufsize = 1001000
+        elif avinfo.video_is_SD_PAL() and bitrate == 50000:
+            tag = 'mx5p'
+            bufsize = 2000000
+        elif avinfo.video_is_SD_NTSC() and bitrate == 50000:
+            tag = 'mx5n'
+            bufsize = 1668334
+
+        self.video_opts += [
+            ('-minrate', '%sk' % bitrate),
+            ('-maxrate', '%sk' % bitrate),
+            ('-b:v', '%sk' % bitrate),
+            ('-bufsize', bufsize),
+            ('-rc_init_occupancy', bufsize),
+            ('-vtag', tag),
+        ]
+
+        self.video_filter_chain = []
+        if avinfo.video_is_SD_NTSC():
+            self.video_filter_chain.append(('fieldorder', 'fieldorder=tff'))
+
+        if not avinfo.video_has_vbi:
+            if avinfo.video_is_SD_PAL():
+                self.video_filter_chain.append(('add_vbi', 'pad=720:608:00:32'))
+            elif avinfo.video_is_SD_NTSC():
+                self.video_filter_chain.append(('add_vbi', 'pad=720:512:00:32'))
+
+        self.keep_vbi_lines = True
