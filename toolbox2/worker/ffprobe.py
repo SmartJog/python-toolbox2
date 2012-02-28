@@ -34,10 +34,6 @@ class FFprobeWorker(Worker):
             '-count_packets': None,
         })
 
-    def _handle_output(self, stdout, stderr):
-        self.stdout += stdout
-        self.stderr += stderr
-
     def get_args(self):
         args = Worker.get_args(self)
 

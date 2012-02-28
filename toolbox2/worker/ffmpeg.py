@@ -36,8 +36,7 @@ class FFmpegWorker(Worker):
         self.tool = 'ffmpeg-static'
 
     def _handle_output(self, stdout, stderr):
-        self.stdout += stdout
-        self.stderr += stderr
+        Worker._handle_output(self, stdout, stderr)
 
         res = re.findall('frame=\s*(\d+)', self.stderr)
         if len(res) > 0 and self.nb_frames > 0:

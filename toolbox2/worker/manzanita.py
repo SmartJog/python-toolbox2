@@ -92,10 +92,6 @@ class ManzanitaWorker(Worker):
         self.tool = 'mp2tsms'
         self.error_lines = 4
 
-    def _handle_output(self, stdout, stderr):
-        self.stdout += stdout
-        self.stderr += stderr
-
 
 class ManzanitaDemuxWorker(ManzanitaWorker):
 

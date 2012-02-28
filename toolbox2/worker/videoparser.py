@@ -23,8 +23,7 @@ class VideoparserWorker(Worker):
         self.memory_limit = 150 * 1024 * 1024
 
     def _handle_output(self, stdout, stderr):
-        self.stdout += stdout
-        self.stderr += stderr
+        Worker._handle_output(self, stdout, stderr)
         self.stdout_buf += stdout
 
         while '\n' in self.stdout_buf:

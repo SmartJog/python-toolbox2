@@ -77,10 +77,10 @@ class Worker(object):
 
     def _handle_output(self, stdout, stderr):
         """
-        Virtual method to handle stdout and stderr from running process.
-        Compute progress and timeleft here.
+        Store stdout and stderr from command line.
         """
-        raise NotImplementedError
+        self.stdout += stdout
+        self.stderr += stderr
 
     def get_args(self):
         """

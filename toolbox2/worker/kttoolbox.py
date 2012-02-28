@@ -63,8 +63,7 @@ class KTToolboxWorker(Worker):
                 self.options.append(option_value)
 
     def _handle_output(self, stdout, stderr):
-        self.stdout += stdout
-        self.stderr += stderr
+        Worker._handle_output(self, stdout, stderr)
 
         res = re.findall('Progress: (\d+)%', self.stdout)
         if len(res) > 0:
