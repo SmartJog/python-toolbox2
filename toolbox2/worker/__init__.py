@@ -25,6 +25,15 @@ class Worker(object):
         pass
 
     def __init__(self, log, params):
+        """
+        Create a new worker.
+
+        :param log: logger instance to use
+        :type log: logging.Logger
+
+        :param params: worker parameters
+        :type params: dict
+        """
         self.log = log
         self.params = params or {}
         self.command = None
@@ -45,12 +54,24 @@ class Worker(object):
     def add_input_file(self, path, params=None):
         """
         Add an input file with associated parameters.
+
+        :param path: absolute path of the input file.
+        :type path: string
+
+        :param params: parameters associated with input file
+        :type params: dict
         """
         self.input_files.append(self.InputFile(path, params))
 
     def add_output_file(self, path, params=None):
         """
         Add an output file with associated parameters.
+
+        :param path: absolute path of the input file.
+        :type path: string
+
+        :param params: parameters associated with input file
+        :type params: dict
         """
         self.output_files.append(self.OutputFile(path, params))
 
@@ -103,13 +124,14 @@ class Worker(object):
 
     def _setup(self, base_dir):
         """
-        Virtual method called by run method.
+        Initialize the worker. This method must be implemented by subclasses.
         """
         raise NotImplementedError
 
     def _finalize(self):
         """
-        This method is called at end of command or job.
+        Do some processing at the end of the worker job. This method
+        should be implemented by subclasses.
         """
         pass
 

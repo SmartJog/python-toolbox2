@@ -12,6 +12,7 @@ Version 0.5.0~dev
 	* Only sleep when required in Action._execute_worker.
 	* Use ffmpeg-static instead of ffmpeg in ffmpeg worker.
 	* Add avinfo extract action, closes: #5545.
+	* Update code documentation.
 
 Version 0.4.0 Released on 2012/01/16
 
