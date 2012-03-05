@@ -64,8 +64,8 @@ class Action(object):
         self.ended_at = 0
 
         self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
-        self.debug = params.get('debug', False)
-        self.loop_interval = params.get('loop_interval', 1)
+        self.debug = self.params.get('debug', False)
+        self.loop_interval = self.params.get('loop_interval', 1)
 
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
