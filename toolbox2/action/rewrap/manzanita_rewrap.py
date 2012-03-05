@@ -25,7 +25,7 @@ class ManzanitaRewrapAction(Action):
     description = 'Manzanita rewrap tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params, ressources):
+    def __init__(self, log, base_dir, _id, params=None, ressources=None):
         Action.__init__(self, log, base_dir, _id, params, ressources)
         self.input_file = None
         self.output_file = None

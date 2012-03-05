@@ -21,7 +21,7 @@ class KTToolboxAction(Action):
     description = 'kt-toolbox extract tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params, ressources):
+    def __init__(self, log, base_dir, _id, params=None, ressources=None):
         Action.__init__(self, log, base_dir, _id, params, ressources)
         self.input_file = None
         self.kttoolbox_worker = None
