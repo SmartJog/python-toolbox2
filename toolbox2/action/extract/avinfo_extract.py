@@ -71,10 +71,11 @@ class AVInfo(object):
 
     def _init_timecode(self):
         self.timecode = '00:00:00:00'
-        if 'timecode' in self.format['tags']:
-            self.timecode = self.format['tags']['timecode']
-        elif 'timecode_at_mark_in' in self.format['tags']:
-            self.timecode = self.format['tags']['timecode_at_mark_in']
+        metadata = self.format.get('tags', {})
+        if 'timecode' in metadata:
+            self.timecode = metadata['timecode']
+        elif 'timecode_at_mark_in' in metadata:
+            self.timecode = metadata['timecode_at_mark_in']
         elif len(self.video_streams) > 0 and 'timecode' in self.video_streams[0]:
             self.timecode = self.video_streams[0]['timecode']
         else:
