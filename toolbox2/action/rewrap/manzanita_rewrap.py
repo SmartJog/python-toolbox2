@@ -72,14 +72,17 @@ class ManzanitaRewrapAction(Action):
         for stream in streams['audio']:
             stream_count += 1
             path = os.path.join(self.tmp_dir, 'stream_%s' % stream_count)
-            args = ['-y']
-            args += ['-ar', stream['samplerate'], '-ac', stream['channels']]
-            args += ['-acodec', 'copy']
+            args = [
+                ('-y'),
+                ('-ar', stream['samplerate']),
+                ('-ac', stream['channels']),
+                ('-acodec', 'copy'),
+            ]
             if stream['codec'].startswith('pcm_'):
                 codec = stream['codec'][len('pcm_'):]
-                args += ['-f', codec]
+                args += [('-f', codec)]
             elif stream['codec'] == 'mp2':
-                args += ['-f', 'mp2']
+                args += [('-f', 'mp2')]
             elif stream['codec'] == 'libfaad':
                 path += '.aac'
             else:
@@ -102,10 +105,10 @@ class ManzanitaRewrapAction(Action):
         demux.add_input_file(self.input_file)
 
         for video_stream in video_streams:
-            demux.add_output_file(video_stream['path'], {'args': ['-vsync', '0', '-vcodec', 'copy', '-y']})
+            demux.add_output_file(video_stream['path'], {'video_opts': [('-vsync', '0'), ('-vcodec', 'copy'), ('-y')]})
 
         for audio_stream in audio_streams:
-            demux.add_output_file(audio_stream['path'], {'args': audio_stream['demux_args']})
+            demux.add_output_file(audio_stream['path'], {'audio_opts': audio_stream['demux_args']})
 
         if 'manzanita' not in self.params:
             self.params['manzanita'] = {}

@@ -12,7 +12,7 @@ class FFmpegWorkerException(WorkerException):
 class FFmpegWorker(Worker):
 
     class InputFile(Worker.InputFile):
-        def __init__(self, path, params):
+        def __init__(self, path, params=None):
             Worker.InputFile.__init__(self, path, params)
 
         def get_args(self):
@@ -22,18 +22,32 @@ class FFmpegWorker(Worker):
         def __init__(self, path, params=None):
             Worker.OutputFile.__init__(self, path, params)
             self.params = params or {}
-            if 'args' in self.params:
-                self.args = self.params['args']
-            else:
-                self.args = []
+            self.video_opts = self.params.get('video_opts', [])
+            self.audio_opts = self.params.get('audio_opts', [])
+            self.format_opts = self.params.get('format_opts', [])
 
         def get_args(self):
-            return self.args + [self.path]
+            args = []
+            all_opts = self.video_opts + self.audio_opts + self.format_opts
+
+            for option in all_opts:
+                if isinstance(option, list):
+                    args += option
+                if isinstance(option, tuple):
+                    args += list(option)
+                else:
+                    raise FFmpegWorkerException('FFmpeg options must be of type tuple or list')
+
+            return args + [self.path]
 
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.nb_frames = 0
         self.tool = 'ffmpeg'
+        self.video_opts = self.params.get('video_opts', [])
+        self.audio_opts = self.params.get('audio_opts', [])
+        self.format_opts = self.params.get('format_opts', [])
+        self.video_filter_chain = []
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -54,7 +68,18 @@ class FFmpegWorker(Worker):
         for input_file in self.input_files:
             args += input_file.get_args()
 
-        args += Worker.get_args(self)
+        if self.video_filter_chain:
+            args += ['-vf']
+            args += [','.join([flt[1] for flt in self.video_filter_chain])]
+
+        for opts in [self.video_opts, self.audio_opts, self.format_opts]:
+            for opt in opts:
+                if isinstance(opt, list):
+                    args += opt
+                if isinstance(opt, tuple):
+                    args += list(opt)
+                else:
+                    raise FFmpegWorkerException('FFmpeg options must be of type tuple or list')
 
         for output_file in self.output_files:
             args += output_file.get_args()
@@ -62,7 +87,10 @@ class FFmpegWorker(Worker):
         return args
 
     def make_thumbnail(self):
-        self.params.update({
-            '-filter:v': 'thumbnail',
-            '-frames:v': 1,
-        })
+        self.video_opts += [
+            ('-frames:v', 1),
+        ]
+
+        self.video_filter_chain += [
+            ('thumbnail', 'thumbnail'),
+        ]
