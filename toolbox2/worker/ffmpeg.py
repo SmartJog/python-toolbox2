@@ -339,3 +339,40 @@ class FFmpegWorker(Worker):
             ('-s', '1920x1080'),
             ('-vtag', 'xd5c'),
         ]
+
+    def mux_mxf(self, basedir, options=None):
+        if not options:
+            options = {}
+        mapping = options.get('mapping', 'default')
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        audio_rate = self.get_opt_value('-ar')
+        if not audio_rate:
+            self.audio_opts += [('-ar', 48000)]
+        elif audio_rate != 48000:
+            raise FFmpegWorkerException('Only 48000Hz audio is supported in mxf for now')
+
+        self.video_opts += [('-map', '0:v')]
+
+        if mapping == 'rdd9':
+            self.split_audio_channels = True
+            self.format_opts += [('-f', 'mxf')]
+            for stream in avinfo.audio_streams:
+                index = len(avinfo.video_streams)
+                for channel_index in range(stream['channels']):
+                    self.audio_opts += [('-map', '0:%s' % stream['index'])]
+                    self.audio_opts += [('-map_channel', '%s.%s.%s:0.%s' % (0, stream['index'], channel_index, index))]
+                    index += 1
+        else:
+            self.format_opts += [('-f', 'mxf')]
+            self.audio_opts += [('-map', '0:a')]
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.mxf')
+        self.add_output_file(path)
