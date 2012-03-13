@@ -3,8 +3,6 @@
 import os
 import sys
 
-import sjfs
-
 from toolbox2.action import Action, ActionException
 from toolbox2.worker.manzanita import ManzanitaMuxWorker
 from toolbox2.worker.ffmpeg import FFmpegWorker
@@ -37,6 +35,7 @@ class ManzanitaRewrapAction(Action):
         self.input_file = self.get_input_ressource(1).get('path')
         if not self.input_file:
             raise ManzanitaRewrapException('No path specified for input (index = 1)')
+        nb_video_frames = self.get_input_ressource(1).get('nb_video_frames', 0)
 
         # Compute tmp output path
         filename = os.path.basename(self.input_file)
@@ -90,18 +89,9 @@ class ManzanitaRewrapAction(Action):
 
             audio_streams.append({'path': path, 'infos': stream, 'demux_args': args})
 
-        # Fetch video nbframes in order to compute demuxing progress
-        fid = sjfs.get_fid(0, self.input_file)
-        if fid:
-            nbframes = sjfs.get_key(fid, 'video_nbframes', 'media')
-            if nbframes is not None:
-                nbframes = int(nbframes)
-        else:
-            nbframes = 0
-
         # Setup demuxing worker
         demux = self._new_worker(FFmpegWorker, {'args': []})
-        demux.set_nb_frames(nbframes)
+        demux.set_nb_frames(nb_video_frames)
         demux.add_input_file(self.input_file)
 
         for video_stream in video_streams:
