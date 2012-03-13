@@ -63,7 +63,7 @@ class FFmpegWorker(Worker):
         self.nb_frames = nb_frames
 
     def get_args(self):
-        args = []
+        args = ['-y']
 
         for input_file in self.input_files:
             args += input_file.get_args()
