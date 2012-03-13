@@ -113,7 +113,7 @@ class ManzanitaDemuxWorker(ManzanitaWorker):
         def get_args(self):
             return [self.stream_id, self.path]
 
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         ManzanitaWorker.__init__(self, log, params)
 
     def get_args(self):

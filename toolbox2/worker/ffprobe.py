@@ -14,7 +14,7 @@ class FFprobeWorker(Worker):
     """
     FFprobe worker.
     """
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.tool = 'ffprobe-static'
         self.metadata = {}

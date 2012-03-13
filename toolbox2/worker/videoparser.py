@@ -13,7 +13,7 @@ class VideoparserWorker(Worker):
     """
     videoparser worker.
     """
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.stdout_buf = ''
         self.full_desc = False

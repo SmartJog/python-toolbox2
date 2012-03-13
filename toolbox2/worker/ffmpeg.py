@@ -30,7 +30,7 @@ class FFmpegWorker(Worker):
         def get_args(self):
             return self.args + [self.path]
 
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.nb_frames = 0
         self.tool = 'ffmpeg-static'

@@ -45,7 +45,7 @@ class KTToolboxWorker(Worker):
         def get_args(self):
             return ['-o', self.path]
 
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.tool = 'kt-toolbox'
         self.stls = {}

@@ -24,7 +24,7 @@ class Worker(object):
     class OutputFile(File):
         pass
 
-    def __init__(self, log, params):
+    def __init__(self, log, params=None):
         """
         Create a new worker.
 
