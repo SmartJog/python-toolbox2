@@ -15,6 +15,7 @@ nobase_toolbox2_PYTHON = \
 	worker/ffprobe.py \
 	worker/kttoolbox.py \
 	worker/manzanita.py \
+	worker/omneon.py \
 	worker/videoparser.py
 
 nodist_toolbox2_PYTHON = action/__init__.py

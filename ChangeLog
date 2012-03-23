@@ -18,6 +18,7 @@ Version 0.6.0~dev
 	* Support mov muxing in ffmpeg worker, refs: #5763.
 	* Support SD letterboxing in ffmpeg worker, refs: #5763.
 	* Add transcode and mux method to ffmpeg worker, refs: #5763.
+	* Add omneon workers, refs: #5763.
 
 Version 0.5.0 Released on 2012/03/29
 
