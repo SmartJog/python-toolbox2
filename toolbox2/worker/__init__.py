@@ -89,7 +89,7 @@ class Worker(object):
         args = []
         for key, value in self.params.iteritems():
             args.append(key)
-            if not value is None:
+            if value != None and value != '':
                 args.append(value)
 
         return args
