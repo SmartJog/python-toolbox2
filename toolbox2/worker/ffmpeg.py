@@ -33,7 +33,7 @@ class FFmpegWorker(Worker):
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.nb_frames = 0
-        self.tool = 'ffmpeg-static'
+        self.tool = 'ffmpeg'
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)

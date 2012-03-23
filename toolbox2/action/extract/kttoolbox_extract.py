@@ -41,7 +41,7 @@ class KTToolboxAction(Action):
         if self.input_file is None:
             raise KTToolboxActionException('No specified path for input (index = 1)')
 
-        worker = KTToolboxWorker(self.log, self.kttoolbox_params)
+        worker = self._new_worker(KTToolboxWorker, self.kttoolbox_params)
         worker.add_input_file(self.input_file)
         worker.add_output_file(self.tmp_dir)
 

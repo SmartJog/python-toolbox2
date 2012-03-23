@@ -4,8 +4,13 @@ import os
 import time
 import math
 import shutil
+import ConfigParser
+from ConfigParser import SafeConfigParser
 from toolbox2.exception import Toolbox2Exception
 from toolbox2.worker import WorkerException
+
+
+TOOLBOX2_CONFIG_FILE = '@sysconfdir@/python-toolbox2.conf'
 
 
 class ActionException(Toolbox2Exception):
@@ -62,6 +67,14 @@ class Action(object):
 
         self.started_at = 0
         self.ended_at = 0
+
+        try:
+            self.conf = None
+            with open(TOOLBOX2_CONFIG_FILE, 'r') as fp:
+                self.conf = SafeConfigParser()
+                self.conf.readfp(fp)
+        except (Exception, IOError), exc:
+            self.log.warning('%s', exc)
 
         self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
         self.debug = self.params.get('debug', False)
@@ -138,6 +151,21 @@ class Action(object):
         """
         if callable(user_callback):
             user_callback(self)
+
+    def _new_worker(self, worker_class, *args, **kwargs):
+        """
+        Return a worker instance of a given class. If configuration specifies
+        a custom worker tool path, created instance will use it.
+        """
+        worker = worker_class(self.log, *args, **kwargs)
+        try:
+            if self.conf:
+                path = self.conf.get('tools', worker.tool)
+                worker.tool = path
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), exc:
+            self.log.warning('%s', exc)
+
+        return worker
 
     def add_ressource(self, section, index, ressource):
         """

@@ -36,7 +36,7 @@ class VideoparserAction(Action):
         self.input_file = self.get_input_ressource(1).get('path')
         self.snapshot = os.path.join(self.tmp_dir, 'snapshot.jpg')
         params = {'-travisf': None, '-S': self.snapshot}
-        worker = VideoparserWorker(self.log, params)
+        worker = self._new_worker(VideoparserWorker, params)
         worker.add_input_file(self.input_file)
 
         self.videoparser_worker = worker

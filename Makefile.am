@@ -1,1 +1,1 @@
-SUBDIRS = bin doc toolbox2
+SUBDIRS = bin conf doc toolbox2

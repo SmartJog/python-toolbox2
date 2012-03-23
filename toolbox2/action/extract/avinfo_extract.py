@@ -141,12 +141,12 @@ class AVInfoAction(Action):
         self.input_file = self.get_input_ressource(1).get('path')
         self.thumbnail = os.path.join(self.tmp_dir, 'thumbnail.jpg')
 
-        self.probe_worker = FFprobeWorker(self.log, {})
+        self.probe_worker = self._new_worker(FFprobeWorker)
         self.probe_worker.add_input_file(self.input_file)
         self.workers.append(self.probe_worker)
 
         if self.do_thumbnail:
-            self.ffmpeg_worker = FFmpegWorker(self.log, {})
+            self.ffmpeg_worker = self._new_worker(FFmpegWorker)
             self.ffmpeg_worker.add_input_file(self.input_file)
             self.ffmpeg_worker.add_output_file(self.thumbnail)
             self.ffmpeg_worker.make_thumbnail()
@@ -154,7 +154,7 @@ class AVInfoAction(Action):
             self.add_output_ressource('thumbnail', self.thumbnail)
 
         if self.do_count_frames or self.do_count_packets:
-            self.probe2_worker = FFprobeWorker(self.log, {})
+            self.probe2_worker = self._new_worker(FFprobeWorker)
             self.probe2_worker.add_input_file(self.input_file)
             if self.do_count_packets:
                 self.probe2_worker.count_packets()

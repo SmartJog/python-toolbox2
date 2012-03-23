@@ -3,7 +3,6 @@ nobase_toolbox2_PYTHON = \
 	__init__.py \
 	command.py \
 	exception.py \
-	action/__init__.py \
 	action/extract/__init__.py \
 	action/extract/avinfo_extract.py \
 	action/extract/kttoolbox_extract.py \
@@ -17,3 +16,14 @@ nobase_toolbox2_PYTHON = \
 	worker/kttoolbox.py \
 	worker/manzanita.py \
 	worker/videoparser.py
+
+nodist_toolbox2_PYTHON = action/__init__.py
+
+edit = $(SED) \
+	-e 's|@sysconfdir[@]|$(sysconfdir)|g'
+
+$(nodist_toolbox2_PYTHON): $(nodist_toolbox2_PYTHON:=.in) Makefile
+	$(edit) $(srcdir)/$@.in > $(builddir)/$@
+
+BUILT_SOURCES = $(nodist_toolbox2_PYTHON)
+EXTRA_DIST = $(nodist_toolbox2_PYTHON:=.in)

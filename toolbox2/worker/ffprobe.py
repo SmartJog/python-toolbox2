@@ -16,7 +16,7 @@ class FFprobeWorker(Worker):
     """
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
-        self.tool = 'ffprobe-static'
+        self.tool = 'ffprobe'
         self.metadata = {}
         self.params.update({
             '-print_format': 'json',

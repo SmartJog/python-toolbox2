@@ -97,7 +97,7 @@ class ManzanitaRewrapAction(Action):
             nbframes = 0
 
         # Setup demuxing worker
-        demux = FFmpegWorker(self.log, {'args': []})
+        demux = self._new_worker(FFmpegWorker, {'args': []})
         demux.set_nb_frames(nbframes)
         demux.add_input_file(self.input_file)
 
@@ -114,7 +114,7 @@ class ManzanitaRewrapAction(Action):
             self.params['manzanita']['global'] = {}
 
         # Setup manzanita muxing worker
-        mux = ManzanitaMuxWorker(self.log, self.params['manzanita']['global'])
+        mux = self._new_worker(ManzanitaMuxWorker, self.params['manzanita']['global'])
 
         if 'stream' not in self.params['manzanita']:
             self.params['manzanita']['stream'] = {}
