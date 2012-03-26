@@ -80,8 +80,9 @@ class AVInfo(object):
             self.timecode = self.video_streams[0]['timecode']
         else:
             for stream in self.data_streams:
-                if 'timecode' in stream['tags']:
-                    self.timecode = stream['tags']['timecode']
+                stream_metadata = stream.get('tags', {})
+                if 'timecode' in stream_metadata:
+                    self.timecode = stream_metadata['timecode']
                     break
 
     def video_has_VBI(self):
