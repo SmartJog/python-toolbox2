@@ -342,6 +342,13 @@ class FFmpegWorker(Worker):
             ('-vtag', 'xd5c'),
         ]
 
+    def transcode(self, codec, options=None):
+        if codec == 'copy':
+            return self.copy_video()
+
+        method = getattr(self, "transcode_%s" % codec)
+        return method(options)
+
     def mux_mxf(self, basedir, options=None):
         if not options:
             options = {}
@@ -396,6 +403,10 @@ class FFmpegWorker(Worker):
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mov')
         self.add_output_file(path)
+
+    def mux(self, basedir, container, options=None):
+        method = getattr(self, 'mux_%s' % container)
+        return method(basedir, options)
 
     def letterbox(self):
         if not len(self.input_files) > 0:
