@@ -2,6 +2,7 @@ python-toolbox2 (0.5.0~dev-1) unstable; urgency=low
 
   * New upstream release, closes: #5545, #5654.
   * Raise dependency on ffmpeg-static (>= 0.11~).
+  * Add missing dependency on kt-toolbox (>= 1.0.4).
 
  -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Wed, 28 Mar 2012 16:35:08 +0200
 
