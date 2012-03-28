@@ -72,7 +72,7 @@ class KTToolboxWorker(Worker):
                 progress = 99
             self.progress = progress
 
-        res = re.findall('output-(\d+): (.*)', self.stdout)
+        res = re.findall('output-(\w+): (.*)', self.stdout)
         for output in res:
             _id = output[0]
             path = output[1]
