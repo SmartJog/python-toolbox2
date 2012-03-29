@@ -1,6 +1,6 @@
 AC_PREREQ(2.65)
 
-AC_INIT([python-toolbox2],[0.5.0~dev])
+AC_INIT([python-toolbox2],[0.5.0])
 
 AM_INIT_AUTOMAKE([foreign])
 
