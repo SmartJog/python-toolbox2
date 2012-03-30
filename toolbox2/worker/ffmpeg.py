@@ -66,6 +66,3 @@ class FFmpegWorker(Worker):
             '-filter:v': 'thumbnail',
             '-frames:v': 1,
         })
-
-    def _setup(self, base_dir):
-        pass

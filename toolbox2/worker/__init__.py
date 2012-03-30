@@ -124,9 +124,10 @@ class Worker(object):
 
     def _setup(self, base_dir):
         """
-        Initialize the worker. This method must be implemented by subclasses.
+        Initialize the worker. This method should be implemented by subclasses
+        if needed.
         """
-        raise NotImplementedError
+        pass
 
     def _finalize(self):
         """

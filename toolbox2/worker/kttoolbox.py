@@ -92,6 +92,3 @@ class KTToolboxWorker(Worker):
         args += self.options
 
         return args
-
-    def _setup(self, base_dir):
-        pass

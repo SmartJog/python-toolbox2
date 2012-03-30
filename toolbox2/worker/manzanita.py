@@ -124,9 +124,6 @@ class ManzanitaDemuxWorker(ManzanitaWorker):
             args += output_file.get_args()
         return args
 
-    def _setup(self, _):
-        pass
-
 
 class ManzanitaMuxWorker(ManzanitaWorker):
 

@@ -70,6 +70,3 @@ class FFprobeWorker(Worker):
                     line = re.sub(', from.*', '', line)
                 desc += line + '\n'
         return desc.strip()
-
-    def _setup(self, base_dir):
-        pass
