@@ -6,6 +6,7 @@ Version 0.6.0~dev
 	* Add worker configuration system, closes: #5764.
 	* Update ffmpeg worker API.
 	* Make ffmpeg worker override output files by default.
+	* Add set_timecode method to ffmpeg worker.
 
 Version 0.5.0 Released on 2012/03/29
 

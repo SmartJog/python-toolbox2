@@ -62,6 +62,12 @@ class FFmpegWorker(Worker):
     def set_nb_frames(self, nb_frames):
         self.nb_frames = nb_frames
 
+    def set_timecode(self, timecode):
+        self.format_opts = [opt for opt in self.format_opts if opt[0] != '-timecode']
+        self.format_opts += [
+            ('-timecode', timecode)
+        ]
+
     def get_args(self):
         args = ['-y']
 
