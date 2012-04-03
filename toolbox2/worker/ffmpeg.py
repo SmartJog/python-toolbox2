@@ -215,3 +215,6 @@ class FFmpegWorker(Worker):
         # Clean global audio/video options
         self.video_opts = []
         self.audio_opts = []
+
+    def copy_video(self):
+        self.video_opts.append(('-vcodec', 'copy'))
