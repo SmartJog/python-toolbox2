@@ -93,6 +93,12 @@ class FFmpegWorker(Worker):
             ('-timecode', timecode)
         ]
 
+    def set_aspect_ratio(self, aspect_ratio):
+        self.video_opts = [opt for opt in self.video_opts if opt[0] != '-aspect']
+        self.video_opts += [
+            ('-aspect', aspect_ratio)
+        ]
+
     def get_args(self):
         args = ['-y']
 

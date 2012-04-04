@@ -11,6 +11,7 @@ Version 0.6.0~dev
 	* Remove dependency on sjfs from manzanita rewrap action, closes: #5758.
 	* Refactor manzanita rewrap action and remove dependency over mediaparser.
 	* Support video copy in ffmpeg worker, refs: #5763.
+	* Add set_aspect_ratio to ffmpeg worker, refs: #5763.
 
 Version 0.5.0 Released on 2012/03/29
 
