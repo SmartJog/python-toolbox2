@@ -298,3 +298,44 @@ class FFmpegWorker(Worker):
                 self.video_filter_chain.append(('add_vbi', 'pad=720:512:00:32'))
 
         self.keep_vbi_lines = True
+
+    def transcode_xdcamhd(self, options=None):
+        if not options:
+            options = {}
+        bitrate = options.get('bitrate', 50000)
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        if avinfo.video_res != avinfo.RES_HD:
+            raise FFmpegWorkerException('Only 1920x1080 videos are supported')
+
+        if bitrate not in [50000]:
+            raise FFmpegWorkerException('Only 50MBP XDCAM HD is supported')
+
+        self.video_opts = []
+        self.video_opts += [
+            ('-vcodec', 'mpeg2video'),
+            ('-pix_fmt', 'yuv422p'),
+            ('-b:v', '%sk' % bitrate),
+            ('-minrate', '%sk' % bitrate),
+            ('-maxrate', '%sk' % bitrate),
+            ('-bufsize', 36408333),
+            ('-bf', 2),
+            ('-flags', '+ilme+ildct'),
+            ('-flags2', 'sgop'),
+            ('-intra_vlc', 1),
+            ('-non_linear_quant', 1),
+            ('-qdiff', 0.5),
+            ('-dc', 10),
+            ('-qmin', 1),
+            ('-qmax', 12),
+            ('-lmin', '1*QP2LAMBDA'),
+            ('-rc_max_vbv_use', 1),
+            ('-s', '1920x1080'),
+            ('-vtag', 'xd5c'),
+        ]
