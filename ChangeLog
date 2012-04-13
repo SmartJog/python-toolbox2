@@ -1,6 +1,7 @@
 Version 0.6.0~dev
 
 	* Implement _setup method in parent class (Worker).
+	* AVInfo class code cleanup.
 
 Version 0.5.0 Released on 2012/03/29
 

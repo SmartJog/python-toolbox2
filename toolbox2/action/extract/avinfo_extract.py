@@ -39,19 +39,18 @@ class AVInfo(object):
             else:
                 self.data_streams.append(stream)
 
-        if len(self.video_streams) > 0:
-            self.video_res = '%sx%s' % (self.video_streams[0]['width'],
-                                        self.video_streams[0]['height'])
-
-        if self.video_res == self.RES_SD_PAL_VBI:
-            self.video_has_vbi = True
-
-        elif self.video_res == self.RES_SD_NTSC_VBI:
-            self.video_has_vbi = True
-
+        self._init_res()
         self._init_fps()
         self._init_dar()
         self._init_timecode()
+
+    def _init_res(self):
+        if self.video_streams:
+            self.video_res = '%sx%s' % (self.video_streams[0]['width'],
+                                        self.video_streams[0]['height'])
+
+        if self.video_res in [self.RES_SD_PAL_VBI, self.RES_SD_NTSC_VBI]:
+            self.video_has_vbi = True
 
     def _init_fps(self):
         if not self.video_streams:
