@@ -158,10 +158,10 @@ class Worker(object):
         otherwise returns 0
         """
         ret = self.command.wait(self._handle_output)
-        self._finalize()
         if ret != 0:
             error = self.get_error()
             raise WorkerException(error)
+        self._finalize()
         return ret
 
     def wait_noloop(self):
@@ -171,6 +171,6 @@ class Worker(object):
         it returns its exit code.
         """
         ret = self.command.wait(self._handle_output, loop=False)
-        if ret != None:
+        if ret == 0:
             self._finalize()
         return ret
