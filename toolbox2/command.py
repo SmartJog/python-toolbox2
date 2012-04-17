@@ -7,8 +7,10 @@ import subprocess
 import select
 import signal
 import errno
+import time
 
-COMMAND_DEFAULT_TIMEOUT = 3600
+COMMAND_DEFAULT_TIMEOUT = 1
+COMMAND_DEFAULT_KILL_TIMEOUT = 3600
 COMMAND_DEFAULT_READ_SIZE = 4096
 
 
@@ -22,7 +24,9 @@ class Command(object):
         self.base_dir = base_dir
         self.process = None
         self.memory_limit = 0
+        self.last_read = 0
         self.timeout = COMMAND_DEFAULT_TIMEOUT
+        self.kill_timeout = COMMAND_DEFAULT_KILL_TIMEOUT
         self.read_size = COMMAND_DEFAULT_READ_SIZE
 
     def set_timeout(self, timeout):
@@ -47,6 +51,7 @@ class Command(object):
         if (os.path.isdir(self.base_dir) == False):
             os.makedirs(self.base_dir)
 
+        self.last_read = time.time()
         self.process = subprocess.Popen(args,
                                         cwd=self.base_dir,
                                         bufsize=-1,
@@ -73,12 +78,14 @@ class Command(object):
                                                     self.timeout)
 
             if not file_r and not file_w and not file_x:
-                self.process.kill()
-                raise CommandException('Process (pid = %s) has timed out' %
-                                        (self.process.pid))
+                if (time.time() - self.last_read) > self.kill_timeout:
+                    self.process.kill()
+                    raise CommandException('Process (pid = %s) has timed out' %
+                                            (self.process.pid))
             else:
                 stdout = ''
                 stderr = ''
+                self.last_read = time.time()
                 for _file in file_r:
                     buf = self._read_all(_file)
                     if _file == self.process.stdout:

@@ -78,7 +78,8 @@ class Action(object):
 
         self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
         self.debug = self.params.get('debug', False)
-        self.loop_interval = self.params.get('loop_interval', 1)
+        self.last_callback = time.time()
+        self.callback_interval = self.params.get('callback_interval', 1)
 
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
@@ -130,10 +131,9 @@ class Action(object):
             self.progress = worker.progress / self.worker_count + (math.ceil(self.worker_idx) / self.worker_count) * 100
             self.progress = int(self.progress)
             self.running_time = time.time() - self.started_at
-            self._callback(worker, callback)
-            time.sleep(self.loop_interval)
-            if ret is None:
-                time.sleep(self.loop_interval)
+            if (time.time() - self.last_callback) > self.callback_interval:
+                self.last_callback = time.time()
+                self._callback(worker, callback)
         if ret != 0:
             raise WorkerException(worker.get_error())
 
@@ -324,7 +324,7 @@ class Action(object):
         """
         Run action by calling _setup,_execute and _finalize methods. If an error
         occurs, it raises an ActionException. User defined callback is executed every
-        loop_interval. callback should be a callable and must accept one parameter.
+        callback_interval. callback should be a callable and must accept one parameter.
 
         :param callback: user defined callable function
         :type callback: callable(action)
