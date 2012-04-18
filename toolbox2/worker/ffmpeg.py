@@ -404,6 +404,28 @@ class FFmpegWorker(Worker):
         path = '%s%s' % (os.path.join(basedir, basename), '.mov')
         self.add_output_file(path)
 
+    def mux_gxf(self, basedir, options=None):
+        if not self.input_files:
+            raise FFmpegWorkerException('no input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('no avinfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        self.format_opts += [('-f', 'gxf')]
+        self.video_opts += [('-map', '0:v')]
+
+        for stream in avinfo.audio_streams:
+            index = len(avinfo.video_streams)
+            for channel_index in range(stream['channels']):
+                self.audio_opts += [('-map', '0:%s' % stream['index'])]
+                self.audio_opts += [('-map_channel', '%s.%s.%s:0.%s' % (0, stream['index'], channel_index, index))]
+                index += 1
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.gxf')
+        self.add_output_file(path)
+
     def mux(self, basedir, container, options=None):
         method = getattr(self, 'mux_%s' % container)
         return method(basedir, options)
