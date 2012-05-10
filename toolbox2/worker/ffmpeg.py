@@ -396,3 +396,53 @@ class FFmpegWorker(Worker):
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mov')
         self.add_output_file(path)
+
+    def letterbox(self):
+        if not len(self.input_files) > 0:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        if not avinfo.video_is_SD_NTSC() and not avinfo.video_is_SD_PAL():
+            raise FFmpegWorkerException('Only NTSC/PAL SD is supported')
+
+        if avinfo.video_dar != '16:9':
+            raise FFmpegWorkerException('Only 16:9 content is supported')
+
+        self.set_aspect_ratio('4:3')
+
+        if not avinfo.video_has_vbi or (avinfo.video_has_vbi and not self.keep_vbi_lines):
+            # Remove previously insered vbi lines and re-add them at the end
+            # of the filter chain
+            self.video_filter_chain = [flt for flt in self.video_filter_chain if flt[0] not in ['add_vbi']]
+
+            vbi_lines = 0
+            if self.keep_vbi_lines:
+                vbi_lines = 32
+            if avinfo.video_is_SD_NTSC():
+                scale_height = 360
+                total_height = 480 + vbi_lines
+                top_blank_lines = 60 + vbi_lines
+            elif avinfo.video_is_SD_PAL():
+                scale_height = 432
+                total_height = 576 + vbi_lines
+                top_blank_lines = 72 + vbi_lines
+            self.video_filter_chain.append(
+                ('letterbox', 'scale=720:%d,pad=720:%d:00:%d' % (scale_height, total_height, top_blank_lines)),
+            )
+
+        else:
+            filter_chain = 'split[v1][v2];\n'
+            if avinfo.video_is_SD_NTSC():
+                filter_chain += '[v1]crop=720:480:00:32,scale=720:360,pad=720:512:00:92[videonovbi];\n'
+            elif avinfo.video_is_SD_PAL():
+                filter_chain += '[v1]crop=720:576:00:32,scale=720:432,pad=720:608:00:104[videonovbi];\n'
+
+            filter_chain += '[v2]crop=720:32:00:00[vbi];\n'
+            filter_chain += '[videonovbi][vbi]overlay=0:0'
+
+            self.video_filter_chain.insert(0,
+                ('letterbox', filter_chain),
+            )
