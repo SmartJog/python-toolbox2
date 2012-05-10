@@ -68,6 +68,7 @@ class FFmpegWorker(Worker):
         self.format_opts = self.params.get('format_opts', [])
         self.video_filter_chain = []
         self.keep_vbi_lines = False
+        self.mov_imx_header = False
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -298,6 +299,7 @@ class FFmpegWorker(Worker):
                 self.video_filter_chain.append(('add_vbi', 'pad=720:512:00:32'))
 
         self.keep_vbi_lines = True
+        self.mov_imx_header = True
 
     def transcode_xdcamhd(self, options=None):
         if not options:
@@ -375,4 +377,22 @@ class FFmpegWorker(Worker):
             self.audio_opts += [('-map', '0:a')]
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mxf')
+        self.add_output_file(path)
+
+    def mux_mov(self, basedir, options=None):
+        if not self.input_files:
+            raise FFmpegWorkerException('no input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('no avinfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        self.video_opts += [('-map', '0:v')]
+        if self.mov_imx_header:
+            self.video_opts += [('-vbsf', 'imxdump')]
+        self.audio_opts += [('-map', '0:a')]
+        self.format_opts += [('-f', 'mov')]
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.mov')
         self.add_output_file(path)
