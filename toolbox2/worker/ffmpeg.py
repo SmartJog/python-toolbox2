@@ -301,6 +301,97 @@ class FFmpegWorker(Worker):
         self.keep_vbi_lines = True
         self.mov_imx_header = True
 
+    def transcode_mpeg2video(self, options=None):
+        if not options:
+            options = {}
+
+        bitrate = options.get('bitrate', 15000)
+        pix_fmt = options.get('pix_fmt', 'yuv422p')
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        bufsize = bitrate * 65536 / 90 - 5000
+        if pix_fmt == 'yuv422p':
+            if avinfo.video_is_HD():
+                bufsize = bufsize > 47185920 and 47185920 or bufsize
+            else:
+                bufsize = bufsize > 9437184 and 9437184 or bufsize
+        elif pix_fmt == 'yuv420p':
+            if avinfo.video_is_HD():
+                bufsize = bufsize > 9781248 and 9781248 or bufsize
+            else:
+                bufsize = bufsize > 1835008 and 1835008 or bufsize
+        else:
+            raise FFmpegWorkerException('Unsupported pixel format: %s' % pix_fmt)
+
+        gop_size = 12
+        if avinfo.video_fps in avinfo.FPS_NTSC:
+            gop_size = 15
+
+        self.video_opts = [
+            ('-vcodec', 'mpeg2video'),
+            ('-pix_fmt', pix_fmt),
+            ('-b:v', '%sk' % bitrate),
+            ('-minrate', '%sk' % bitrate),
+            ('-maxrate', '%sk' % bitrate),
+            ('-bufsize', bufsize),
+            ('-bf', 2),
+            ('-g', gop_size),
+            ('-flags', '+ilme+ildct'),
+            ('-flags2', 'sgop'),
+            ('-intra_vlc', 1),
+            ('-non_linear_quant', 1),
+            ('-qdiff', 0.5),
+            ('-dc', 10),
+            ('-qmin', 1),
+            ('-qmax', 12),
+            ('-lmin', '1*QP2LAMBDA'),
+            ('-rc_min_vbv_use', 1),
+            ('-rc_max_vbv_use', 1),
+        ]
+
+        if not avinfo.video_is_HD():
+            # Preserve vbi lines for mpeg2 422@ML
+            if avinfo.video_has_vbi and pix_fmt == 'yuv422p':
+                self.keep_vbi_lines = True
+            else:
+                if avinfo.video_is_SD_NTSC():
+                    height = 480
+                elif avinfo.video_is_SD_PAL():
+                    height = 576
+                self.video_filter_chain.insert(0,
+                    ('crop_vbi', 'crop=720:%s:00:32' % height)
+                )
+
+    def transcode_mpeg2audio(self, options=None):
+        if not options:
+            options = {}
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        if not avinfo.audio_streams:
+            return
+
+        if avinfo.audio_streams[0].get('sample_rate', 48000) < 44100:
+            bitrate = '128'
+        else:
+            bitrate = '384'
+
+        self.audio_opts = [
+            ('-acodec', 'mp2'),
+            ('-ab', '%sk' % bitrate),
+        ]
+
     def transcode_xdcamhd(self, options=None):
         if not options:
             options = {}
