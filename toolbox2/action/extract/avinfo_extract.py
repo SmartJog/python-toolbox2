@@ -19,6 +19,10 @@ class AVInfo(object):
     RES_HD_1280     = '1280x1080'
     RES_HD_1440     = '1440x1080'
 
+    FPS_PAL         = [25, 50]
+    FPS_NTSC        = [29.97, 30, 59.94, 60]
+    FPS_FILM        = [23.97, 23.98, 24]
+
     def __init__(self, data):
         self.data = data
         self.video_res = None
