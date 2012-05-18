@@ -31,6 +31,12 @@ class OmneonCopyWorker(Worker):
         self.tool = 'ommcp'
         self.base_dir = '/'
 
+    def _handle_output(self, stdout, stderr):
+        Worker._handle_output(self, stdout, stderr)
+        res = re.findall('progress=(\d+)', stdout)
+        if res:
+            self.progress = int(res[-1])
+
     def add_output_file(self, path, params=None):
         if len(self.output_files) > 0:
             raise OmneonWorkerException('Omneon copy tool only support one output file')
