@@ -13,7 +13,12 @@ class OmneonCopyWorker(Worker):
 
     class InputFile(Worker.InputFile):
         def get_args(self, base_dir='/'):
-            return ['-in', os.path.relpath(self.path, base_dir)]
+            path = os.path.relpath(self.path, base_dir)
+            srctrack = self.params.get('srctrack', -1)
+            if srctrack >= 0:
+                path += ':srctrack=0'
+
+            return ['-in', path]
 
     class OutputFile(Worker.OutputFile):
         def get_args(self):
