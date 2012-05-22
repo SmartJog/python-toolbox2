@@ -440,6 +440,32 @@ class FFmpegWorker(Worker):
         method = getattr(self, "transcode_%s" % codec)
         return method(options)
 
+    def mux_mpegps(self, basedir, options=None):
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        acodec = self.get_opt_value('acodec', 'mp2')
+        vcodec = self.get_opt_value('vcodec', 'mpeg2video')
+
+        if acodec != 'mp2':
+            raise FFmpegWorkerException('Mpeg2 PS does not support audio codec:' % acodec)
+
+        if vcodec not in ['mpeg1video', 'mpeg2video']:
+            raise FFmpegWorkerException('Mpeg2 PS does not support video codec: %s' % vcodec)
+
+        # FIXME: when -amerge is ready, we should force a stereo layout per audio stream
+        self.audio_opts += [('-map', '0:a')]
+        self.video_opts += [('-map', '0:v')]
+        self.format_opts += [('-f', 'vob')]
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.mpg')
+        self.add_output_file(path)
+
     def mux_mxf(self, basedir, options=None):
         if not options:
             options = {}
