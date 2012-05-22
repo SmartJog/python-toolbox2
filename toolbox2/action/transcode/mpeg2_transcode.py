@@ -106,7 +106,10 @@ class Mpeg2TranscodeAction(Action):
 
             ommcp = self._new_worker(OmneonCopyWorker)
             for output_file in ffmpeg.output_files:
-                ommcp.add_input_file(output_file.path)
+                params = {}
+                if self.codec == 'copy' and output_file.path.endswith('.dv'):
+                    params['srctrack'] = 0
+                ommcp.add_input_file(output_file.path, params)
 
             base_path = os.path.join(self.tmp_dir, self.input_basename)
             ommcp.mux(base_path, self.container, self.container_options)
