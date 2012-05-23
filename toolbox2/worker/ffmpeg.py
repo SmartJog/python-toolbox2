@@ -227,6 +227,44 @@ class FFmpegWorker(Worker):
     def copy_video(self):
         self.video_opts.append(('-vcodec', 'copy'))
 
+    def transcode_dnxhd(self, options=None):
+        if not options:
+            options = {}
+        bitrate = options.get('bitrate', 220000)
+        interlaced = False
+        if bitrate in [220000, 175000, 145000, 120000]:
+            interlaced = True
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        if not avinfo.video_is_HD():
+            raise FFmpegWorkerException('Only 1920x1080 videos are supported')
+
+        if avinfo.video_fps in avinfo.FPS_NTSC and bitrate not in [220000, 145000, 36000]:
+            raise FFmpegWorkerException('NTSC input is not compatible with output bitrate: %s' % bitrate)
+
+        if avinfo.video_fps in avinfo.FPS_PAL and bitrate not in [185000, 120000, 36000]:
+            raise FFmpegWorkerException('PAL input is not compatible with output bitrate: %s' % bitrate)
+
+        if avinfo.video_fps in avinfo.FPS_FILM and bitrate not in [175000, 115000, 36000]:
+            raise FFmpegWorkerException('FILM input is not compatible with output bitrate: %s' % bitrate)
+
+        self.video_opts = [
+            ('-vcodec', 'dnxhd'),
+            ('-b:v', '%sk' % bitrate),
+        ]
+
+        if bitrate == 36000:
+            self.video_opts += [('-qmax', 1024)]
+
+        if interlaced:
+            self.video_opts += [('-flags', '+ildct')]
+
     def transcode_imx(self, options=None):
         if not options:
             options = {}

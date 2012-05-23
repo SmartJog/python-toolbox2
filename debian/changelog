@@ -1,6 +1,6 @@
 python-toolbox2 (0.6.0~dev-1) unstable; urgency=low
 
-  * New upstream release, closes: #5758, #5759, #5763, #5764, #5913, #5898.
+  * New upstream release, closes: #5758, #5759, #5763, #5764, #5913, #5898, #5900.
   * Add a recommends for sjconf-toolbox2.
   * Add dependency on ommedia (>= 6.4.1).
 
