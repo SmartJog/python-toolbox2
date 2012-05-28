@@ -430,6 +430,24 @@ class FFmpegWorker(Worker):
             ('-ab', '%sk' % bitrate),
         ]
 
+    def transcode_pcm(self, options=None):
+        if not options:
+            options = {}
+        audio_format = options.get('format', 's16le')
+        sample_rate = options.get('sample_rate', 48000)
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        self.audio_opts += [
+            ('-acodec', 'pcm_%s' % audio_format),
+            ('-ar', sample_rate),
+        ]
+
     def transcode_xdcamhd(self, options=None):
         if not options:
             options = {}
