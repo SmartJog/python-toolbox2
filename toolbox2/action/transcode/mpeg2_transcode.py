@@ -30,35 +30,48 @@ class Mpeg2TranscodeAction(Action):
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-        self.codec = self.params.get('codec', 'imx')
-        self.audio_codec = self.params.get('audio_codec', 'pcm_s16le')
+        self.video_codec = self.params.get('video_codec', 'imx')
+        self.video_bitrate = int(self.params.get('video_bitrate', 50000))
+        self.video_letterbox = int(self.params.get('video_letterbox', 0))
+        self.video_aspect_ratio = self.params.get('video_aspect_ratio', 'default')
+        self.video_pix_fmt = self.params.get('video_pix_fmt', 'yuv422p')
+
+        self.audio_codec = self.params.get('audio_codec', 'pcm')
+        self.audio_format = self.params.get('audio_format', 's16le')
+        self.audio_samplerate = int(self.params.get('audio_samplerate', 48000))
+
         self.container = self.params.get('container', 'mxf')
         self.container_mapping = self.params.get('container_mapping', 'default')
         self.container_version = self.params.get('container_version', 'default')
-        self.muxer = self.params.get('muxer', 'ffmpeg')
-        self.bitrate = int(self.params.get('bitrate', 30000))
-        self.reference = int(self.params.get('reference', 0))
-        self.letterbox = int(self.params.get('letterbox', 0))
-        self.aspect_ratio = self.params.get('aspect_ratio', 'auto')
-        self.essence_dir = self.params.get('essence_dir', 'media.dir/').lstrip('/')
-        self.abs_essence_dir = os.path.join(self.tmp_dir, self.essence_dir)
+        self.container_reference = int(self.params.get('container_reference', 0))
+        self.container_essence_dir = self.params.get('container_essence_dir', 'media.dir/').lstrip('/')
+        self.container_abs_essence_dir = os.path.join(self.tmp_dir, self.container_essence_dir)
 
-        self.demux_channel_layout = 'default'
-        self.codec_options = {
-            'bitrate': self.bitrate,
+        self.muxer = self.params.get('muxer', 'ffmpeg')
+
+        self.audio_codec_options = {
+            'format': self.audio_format,
         }
+
+        self.video_codec_options = {
+            'bitrate': self.video_bitrate,
+            'pix_fmt': self.video_pix_fmt,
+        }
+
         self.container_options = {
             'mapping': self.container_mapping,
             'version': self.container_version,
+            'reference': self.container_reference,
         }
 
-        if not os.path.isdir(self.abs_essence_dir):
-            os.makedirs(self.abs_essence_dir)
+        if not os.path.isdir(self.container_abs_essence_dir):
+            os.makedirs(self.container_abs_essence_dir)
 
-        if self.muxer == 'ffmpeg' and self.reference:
+        if self.muxer == 'ffmpeg' and self.container_reference:
             raise Mpeg2TranscodeException('Reference files are not supported with ffmpeg muxer')
 
-        if self.container == 'mxf' and self.codec == 'xdcamhd' and self.container_options.get('mapping') == 'rdd9':
+        self.demux_channel_layout = 'default'
+        if self.container == 'mxf' and self.video_codec == 'xdcamhd' and self.container_mapping == 'rdd9':
             self.demux_channel_layout = 'split'
 
     def _setup(self):
@@ -75,23 +88,20 @@ class Mpeg2TranscodeAction(Action):
         ffmpeg.set_nb_frames(nb_video_frames)
         ffmpeg.set_timecode(avinfo.timecode)
 
-        ffmpeg.transcode(self.codec, self.codec_options)
+        ffmpeg.transcode(self.video_codec, self.video_codec_options)
 
-        if self.aspect_ratio == 'auto':
+        if self.video_aspect_ratio == 'default':
             if avinfo.video_dar == '16:9':
                 ffmpeg.set_aspect_ratio('16:9')
             else:
                 ffmpeg.set_aspect_ratio('4:3')
         else:
-            ffmpeg.set_aspect_ratio(self.aspect_ratio)
+            ffmpeg.set_aspect_ratio(self.video_aspect_ratio)
 
-        if self.letterbox:
+        if self.video_letterbox:
             ffmpeg.letterbox()
 
-        ffmpeg.audio_opts += [
-            ('-acodec', self.audio_codec),
-            ('-ar', 48000),
-        ]
+        ffmpeg.transcode(self.audio_codec, self.audio_codec_options)
 
         # FFmpeg muxer
         if self.muxer == 'ffmpeg':
@@ -102,12 +112,12 @@ class Mpeg2TranscodeAction(Action):
 
         # Omneon muxer
         elif self.muxer == 'omneon':
-            ffmpeg.demux(self.abs_essence_dir, self.demux_channel_layout)
+            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channel_layout)
 
             ommcp = self._new_worker(OmneonCopyWorker)
             for output_file in ffmpeg.output_files:
                 params = {}
-                if self.codec == 'copy' and output_file.path.endswith('.dv'):
+                if self.video_codec == 'copy' and output_file.path.endswith('.dv'):
                     params['srctrack'] = 0
                 ommcp.add_input_file(output_file.path, params)
 
@@ -125,7 +135,7 @@ class Mpeg2TranscodeAction(Action):
                 self.add_output_ressource(index + 1, {'path': output_file.path})
                 index += 1
 
-            if self.reference:
+            if self.container_reference:
                 for output_file in ffmpeg.output_files:
                     self.add_output_ressource(index + 1, {'path': output_file.path})
                     index += 1
