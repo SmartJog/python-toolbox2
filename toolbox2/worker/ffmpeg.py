@@ -269,6 +269,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 50000)
+        enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -277,7 +278,7 @@ class FFmpegWorker(Worker):
         if not avinfo:
             raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
 
-        tag = None
+        codec_tag = None
         bufsize = 0
 
         if not (avinfo.video_is_SD_PAL() or avinfo.video_is_SD_NTSC()):
@@ -305,16 +306,16 @@ class FFmpegWorker(Worker):
         ]
 
         if avinfo.video_is_SD_PAL() and bitrate == 30000:
-            tag = 'mx3p'
+            codec_tag = 'mx3p'
             bufsize = 1200000
         elif avinfo.video_is_SD_NTSC() and bitrate == 30000:
-            tag = 'mx3n'
+            codec_tag = 'mx3n'
             bufsize = 1001000
         elif avinfo.video_is_SD_PAL() and bitrate == 50000:
-            tag = 'mx5p'
+            codec_tag = 'mx5p'
             bufsize = 2000000
         elif avinfo.video_is_SD_NTSC() and bitrate == 50000:
-            tag = 'mx5n'
+            codec_tag = 'mx5n'
             bufsize = 1668334
 
         self.video_opts += [
@@ -323,8 +324,12 @@ class FFmpegWorker(Worker):
             ('-b:v', '%sk' % bitrate),
             ('-bufsize', bufsize),
             ('-rc_init_occupancy', bufsize),
-            ('-vtag', tag),
         ]
+
+        if enable_fourcc_tagging:
+            self.video_opts += [
+                ('-vtag', codec_tag)
+            ]
 
         self.video_filter_chain = []
         if avinfo.video_is_SD_NTSC():
@@ -452,6 +457,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 50000)
+        enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -486,8 +492,12 @@ class FFmpegWorker(Worker):
             ('-lmin', '1*QP2LAMBDA'),
             ('-rc_max_vbv_use', 1),
             ('-s', '1920x1080'),
-            ('-vtag', 'xd5c'),
         ]
+
+        if enable_fourcc_tagging:
+            self.video_opts += [
+                ('-vtag', 'xd5c')
+            ]
 
     def transcode(self, codec, options=None):
         if codec == 'copy':
