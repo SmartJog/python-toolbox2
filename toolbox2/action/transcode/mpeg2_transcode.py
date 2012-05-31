@@ -56,6 +56,7 @@ class Mpeg2TranscodeAction(Action):
         self.video_codec_options = {
             'bitrate': self.video_bitrate,
             'pix_fmt': self.video_pix_fmt,
+            'enable_fourcc_tagging': self.container == 'mov',
         }
 
         self.container_options = {
