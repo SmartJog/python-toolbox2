@@ -472,6 +472,15 @@ class FFmpegWorker(Worker):
         if bitrate not in [50000]:
             raise FFmpegWorkerException('Only 50MBP XDCAM HD is supported')
 
+        if avinfo.video_fps in avinfo.FPS_NTSC:
+            codec_tag = 'xd5b'
+        elif avinfo.video_fps in avinfo.FPS_PAL:
+            codec_tag = 'xd5c'
+        elif avinfo.video_fps in avinfo.FPS_FILM:
+            codec_tag = 'xd5d'
+        else:
+            raise FFmpegWorkerException('Unsupported input frame rate: %s' % avinfo.video_fps)
+
         self.video_opts = []
         self.video_opts += [
             ('-vcodec', 'mpeg2video'),
@@ -496,7 +505,7 @@ class FFmpegWorker(Worker):
 
         if enable_fourcc_tagging:
             self.video_opts += [
-                ('-vtag', 'xd5c')
+                ('-vtag', codec_tag)
             ]
 
     def transcode(self, codec, options=None):
