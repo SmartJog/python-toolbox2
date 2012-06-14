@@ -50,9 +50,9 @@ class FFmpegWorker(Worker):
             all_opts = self.video_opts + self.audio_opts + self.format_opts
 
             for option in all_opts:
-                if isinstance(option, list):
-                    args += option
-                if isinstance(option, tuple):
+                if isinstance(option, list) or isinstance(option, tuple):
+                    if option[0] == '-threads':
+                        continue
                     args += list(option)
                 else:
                     raise FFmpegWorkerException('FFmpeg options must be of type tuple or list')
@@ -69,6 +69,8 @@ class FFmpegWorker(Worker):
         self.video_filter_chain = []
         self.keep_vbi_lines = False
         self.mov_imx_header = False
+        self.decoding_threads = 1
+        self.encoding_threads = 1
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -105,6 +107,8 @@ class FFmpegWorker(Worker):
         args = ['-y']
 
         for input_file in self.input_files:
+            if self.decoding_threads:
+                args += ['-threads', self.decoding_threads]
             args += input_file.get_args()
 
         if self.video_filter_chain:
@@ -113,14 +117,16 @@ class FFmpegWorker(Worker):
 
         for opts in [self.video_opts, self.audio_opts, self.format_opts]:
             for opt in opts:
-                if isinstance(opt, list):
-                    args += opt
-                if isinstance(opt, tuple):
+                if isinstance(opt, list) or isinstance(opt, tuple):
+                    if opt[0] == '-threads':
+                        continue
                     args += list(opt)
                 else:
                     raise FFmpegWorkerException('FFmpeg options must be of type tuple or list')
 
         for output_file in self.output_files:
+            if self.encoding_threads:
+                args += ['-threads', self.encoding_threads]
             args += output_file.get_args()
 
         return args
