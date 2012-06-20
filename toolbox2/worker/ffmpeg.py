@@ -319,6 +319,53 @@ class FFmpegWorker(Worker):
         if interlaced:
             self.video_opts += [('-flags', '+ildct')]
 
+    def transcode_simple_h264(self, options=None):
+        if not options:
+            options = {}
+        bitrate = options.get('bitrate', 1500)
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        self.video_opts = [
+            ('-vcodec', 'libx264'),
+            ('-b:v', '%sk' % bitrate),
+            ('-bf', 3),
+            ('-b_strategy', 1),
+            ('-g', 125),
+            ('-coder', 1),
+            ('-flags', '+loop'),
+            ('-me_method', 'hex'),
+            ('-cmp', '+chroma'),
+            ('-subq', 5),
+            ('-me_range', 16),
+            ('-keyint_min', 25),
+            ('-sc_threshold', 40),
+            ('-i_qfactor', 0.71),
+            ('-qcomp', 0.6),
+            ('-qmin', 10),
+            ('-qmax', 51),
+            ('-qdiff', 4),
+            ('-direct-pred', 1),
+            ('-fast-pskip', 1),
+            ('-trellis', 0),
+            ('-refs', 1),
+            ('-x264opts', 'partitions=i8x8,i4x4'),
+        ]
+
+        if avinfo.video_has_vbi:
+            if avinfo.video_is_SD_NTSC():
+                height = 480
+            elif avinfo.video_is_SD_PAL():
+                height = 576
+            self.video_filter_chain.insert(0,
+                ('crop_vbi', 'crop=720:%s:00:32' % height)
+            )
+
     def transcode_imx(self, options=None):
         if not options:
             options = {}
@@ -596,6 +643,26 @@ class FFmpegWorker(Worker):
         self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mpg')
+        self.add_output_file(path)
+
+    def mux_mpeg4(self, basedir, options=None):
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        self.video_opts += [('-map', '0:v')]
+        self.format_opts += [('-f', 'mp4')]
+
+        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.mp4')
         self.add_output_file(path)
 
     def mux_mxf(self, basedir, options=None):
