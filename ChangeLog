@@ -36,6 +36,7 @@ Version 0.6.0~dev
 	* Fix fourcc tags for xdcamhd codec in ffmpeg worker.
 	* Enable fourcc tagging with mov container in mpeg2_transcode action.
 	* Support decoding/encoding threads count selection in ffmpeg worker.
+	* Support channel merging/splitting in ffmpeg worker.
 
 Version 0.5.0 Released on 2012/03/29
 

@@ -3,6 +3,7 @@
 import re
 import copy
 import os.path
+from collections import defaultdict
 
 from toolbox2.worker import Worker, WorkerException
 
@@ -67,6 +68,7 @@ class FFmpegWorker(Worker):
         self.audio_opts = self.params.get('audio_opts', [])
         self.format_opts = self.params.get('format_opts', [])
         self.video_filter_chain = []
+        self.audio_filter_chain = []
         self.keep_vbi_lines = False
         self.mov_imx_header = False
         self.decoding_threads = 1
@@ -115,6 +117,10 @@ class FFmpegWorker(Worker):
             args += ['-vf']
             args += [','.join([flt[1] for flt in self.video_filter_chain])]
 
+        if self.audio_filter_chain:
+            args += ['-filter_complex']
+            args += [','.join([flt[1] for flt in self.audio_filter_chain])]
+
         for opts in [self.video_opts, self.audio_opts, self.format_opts]:
             for opt in opts:
                 if isinstance(opt, list) or isinstance(opt, tuple):
@@ -141,6 +147,63 @@ class FFmpegWorker(Worker):
 
         return extension
 
+    @staticmethod
+    def get_audio_layout_mapping(avinfo, o_channels_per_stream=2):
+
+        def output_stream_dict():
+            return {'input_channels': [], 'input_streams': {}}
+
+        o_stream_idx = 0
+        o_stream_map = defaultdict(output_stream_dict)
+        for audio_stream in avinfo.audio_streams:
+            channels = audio_stream['channels']
+            if o_channels_per_stream > 0:
+                channels_left = o_channels_per_stream - len(o_stream_map[o_stream_idx]['input_channels'])
+            else:
+                channels_left = channels
+            if channels == channels_left:
+                o_stream_map[o_stream_idx]['input_streams'][audio_stream['index']] = audio_stream
+                o_stream_map[o_stream_idx]['input_channels'].append((audio_stream['index'], 0))
+                o_stream_idx += 1
+            else:
+                for channel_idx in range(channels):
+                    o_stream_map[o_stream_idx]['input_streams'][audio_stream['index']] = audio_stream
+                    o_stream_map[o_stream_idx]['input_channels'].append((audio_stream['index'], channel_idx))
+                    if channels > channels_left and len(o_stream_map[o_stream_idx]['input_channels']) == o_channels_per_stream:
+                            o_stream_idx += 1
+
+        filter_chain = ''
+        map_chain = []
+        for index, output_stream in o_stream_map.iteritems():
+            if len(output_stream['input_streams']) == 1:
+                input_stream = output_stream['input_streams'].values()[0]
+                if input_stream['channels'] == o_channels_per_stream:
+                    map_chain.append(('-map', '0:%s' % input_stream['index']))
+                else:
+                    filter_merge = ''
+                    for input_channel in output_stream['input_channels']:
+                        filter_chain += '[0:%s]pan=mono:c0=c%s' % (input_channel[0], input_channel[1])
+                        filter_chain += '[p%s_%s];' % (input_channel[0], input_channel[1])
+                        filter_merge += '[p%s_%s]' % (input_channel[0], input_channel[1])
+
+                    if len(output_stream['input_channels']) > 1:
+                        filter_chain += filter_merge
+                        filter_chain += 'amerge=inputs=%s[m%s];' % (len(output_stream['input_channels']), index)
+                        map_chain.append(('-map', '[m%s]' % (index)))
+                    else:
+                        map_chain.append(('-map', '[p%s_%s]' % (output_stream['input_channels'][0][0], output_stream['input_channels'][0][1])))
+            else:
+                filter_merge = ''
+                for input_channel in output_stream['input_channels']:
+                    filter_chain += '[0:%s]pan=mono:c0=c%s' % (input_channel[0], input_channel[1])
+                    filter_chain += '[p%s_%s];' % (input_channel[0], input_channel[1])
+                    filter_merge += '[p%s_%s]' % (input_channel[0], input_channel[1])
+
+                filter_chain += filter_merge
+                filter_chain += 'amerge=inputs=%s[m%s];' % (len(output_stream['input_channels']), index)
+                map_chain.append(('-map', '[m%s]' % (index)))
+        return (filter_chain.rstrip(';'), map_chain)
+
     def make_thumbnail(self):
         self.video_opts += [
             ('-frames:v', 1),
@@ -163,7 +226,7 @@ class FFmpegWorker(Worker):
             return opt[1]
         return opt_default
 
-    def demux(self, basedir, channel_layout='default'):
+    def demux(self, basedir, channels_per_stream=0):
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
 
@@ -194,37 +257,22 @@ class FFmpegWorker(Worker):
 
             self.add_output_file(path, {'video_opts': opts}, 'video')
 
-        if channel_layout == 'split':
-            index = 0
-            for stream in avinfo.audio_streams:
-                for channel_index in range(stream['channels']):
-                    path = os.path.join(basedir, '%s_a%s' % (basename, index))
-                    extension = self._get_codec_extension(audio_codec or stream['codec_name'])
-                    path = '%s%s' % (path, extension)
+        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, channels_per_stream)
+        if filter_chain:
+            self.audio_filter_chain += [('mapping_audio', filter_chain)]
+        index = 0
+        for audio_map in mapping:
+            path = os.path.join(basedir, '%s_a%s' % (basename, index))
+            extension = self._get_codec_extension(audio_codec or stream['codec_name'])
+            path = '%s%s' % (path, extension)
 
-                    opts = [('-acodec', 'copy')]
-                    if audio_codec:
-                        opts = copy.copy(self.audio_opts)
-                    opts += [('-map', '0:%s' % stream['index'])]
-                    opts += [('-map_channel', '%s.%s.%s:0.%s' % (0, stream['index'], channel_index, index))]
+            opts = [('-acodec', 'copy')]
+            if audio_codec:
+                opts = copy.copy(self.audio_opts)
+            opts += [audio_map]
 
-                    self.add_output_file(path, {'audio_opts': opts}, 'audio')
-
-                    index += 1
-        elif channel_layout == 'default':
-            for stream in avinfo.audio_streams:
-                path = os.path.join(basedir, '%s_a%s' % (basename, stream['index']))
-                extension = self._get_codec_extension(audio_codec or stream['codec_name'])
-                path = '%s%s' % (path, extension)
-
-                opts = [('-acodec', 'copy')]
-                if audio_codec:
-                    opts = copy.copy(self.audio_opts)
-                opts += [('-map', '0:%s' % stream['index'])]
-
-                self.add_output_file(path, {'audio_opts': opts}, 'audio')
-        else:
-            raise FFmpegWorkerException('Unknown channel layout: %s' % channel_layout)
+            self.add_output_file(path, {'audio_opts': opts}, 'audio')
+            index += 1
 
         # Clean global audio/video options
         self.video_opts = []

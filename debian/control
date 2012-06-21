@@ -10,7 +10,7 @@ Standards-Version: 3.9.1
 Package: python-toolbox2
 XB-Python-Version: ${python:Versions}
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, ffmpeg-static (>= 0.11~), kt-toolbox (>= 1.0.4), ommedia (>= 6.4.1)
+Depends: ${misc:Depends}, ${python:Depends}, ffmpeg-static (>= 0.12~), kt-toolbox (>= 1.0.4), ommedia (>= 6.4.1)
 Recommends: sjconf-toolbox2
 Description: SmartJog toolbox2 python module
  Module that provide generic interfaces to describe and manage actions.

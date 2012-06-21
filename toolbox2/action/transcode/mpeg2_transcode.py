@@ -71,9 +71,9 @@ class Mpeg2TranscodeAction(Action):
         if self.muxer == 'ffmpeg' and self.container_reference:
             raise Mpeg2TranscodeException('Reference files are not supported with ffmpeg muxer')
 
-        self.demux_channel_layout = 'default'
+        self.demux_channels_per_stream = 0
         if self.container == 'mxf' and self.video_codec == 'xdcamhd' and self.container_mapping == 'rdd9':
-            self.demux_channel_layout = 'split'
+            self.demux_channels_per_stream = 1
 
     def _setup(self):
         self.input_file = self.get_input_ressource(1).get('path')
@@ -113,7 +113,7 @@ class Mpeg2TranscodeAction(Action):
 
         # Omneon muxer
         elif self.muxer == 'omneon':
-            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channel_layout)
+            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channels_per_stream)
 
             ommcp = self._new_worker(OmneonCopyWorker)
             for output_file in ffmpeg.output_files:
