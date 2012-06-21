@@ -72,8 +72,11 @@ class Mpeg2TranscodeAction(Action):
             raise Mpeg2TranscodeException('Reference files are not supported with ffmpeg muxer')
 
         self.demux_channels_per_stream = 0
-        if self.container == 'mxf' and self.video_codec == 'xdcamhd' and self.container_mapping == 'rdd9':
-            self.demux_channels_per_stream = 1
+        if self.container == 'mxf':
+            if self.video_codec == 'xdcamhd' and self.container_mapping == 'rdd9':
+                self.demux_channels_per_stream = 1
+            if self.video_codec == 'imx' and self.container_mapping == 'd10':
+                self.demux_channels_per_stream = 8
 
     def _setup(self):
         self.input_file = self.get_input_ressource(1).get('path')

@@ -614,20 +614,19 @@ class FFmpegWorker(Worker):
         elif audio_rate != 48000:
             raise FFmpegWorkerException('Only 48000Hz audio is supported in mxf for now')
 
+        self.format_opts += [('-f', 'mxf')]
         self.video_opts += [('-map', '0:v')]
 
+        channels_per_stream = 0
         if mapping == 'rdd9':
-            self.split_audio_channels = True
-            self.format_opts += [('-f', 'mxf')]
-            for stream in avinfo.audio_streams:
-                index = len(avinfo.video_streams)
-                for channel_index in range(stream['channels']):
-                    self.audio_opts += [('-map', '0:%s' % stream['index'])]
-                    self.audio_opts += [('-map_channel', '%s.%s.%s:0.%s' % (0, stream['index'], channel_index, index))]
-                    index += 1
-        else:
-            self.format_opts += [('-f', 'mxf')]
-            self.audio_opts += [('-map', '0:a')]
+            channels_per_stream = 1
+        elif mapping == 'd10':
+            channels_per_stream = 8
+
+        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, channels_per_stream)
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mxf')
         self.add_output_file(path)
