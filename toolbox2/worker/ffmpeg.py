@@ -587,10 +587,13 @@ class FFmpegWorker(Worker):
         if vcodec not in ['mpeg1video', 'mpeg2video']:
             raise FFmpegWorkerException('Mpeg2 PS does not support video codec: %s' % vcodec)
 
-        # FIXME: when -amerge is ready, we should force a stereo layout per audio stream
-        self.audio_opts += [('-map', '0:a')]
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'vob')]
+
+        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mpg')
         self.add_output_file(path)
