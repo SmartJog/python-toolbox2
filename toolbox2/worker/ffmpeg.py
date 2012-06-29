@@ -281,6 +281,16 @@ class FFmpegWorker(Worker):
     def copy_video(self):
         self.video_opts.append(('-vcodec', 'copy'))
 
+    def transcode_aac(self, options=None):
+        if not options:
+            options = {}
+        bitrate = options.get('bitrate', 192)
+
+        self.audio_opts = [
+            ('-acodec', 'libfaac'),
+            ('-b:a', '%sk' % bitrate)
+        ]
+
     def transcode_dnxhd(self, options=None):
         if not options:
             options = {}
