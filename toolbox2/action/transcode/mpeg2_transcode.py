@@ -5,8 +5,10 @@ import os.path
 
 from toolbox2.action import Action, ActionException
 from toolbox2.action.extract.avinfo_extract import AVInfoAction
+from toolbox2.worker.flvtools2 import FLVTool2Worker
 from toolbox2.worker.ffmpeg import FFmpegWorker
 from toolbox2.worker.omneon import OmneonCopyWorker, OmneonQueryWorker
+from toolbox2.worker.qtfaststart import QtFastStartWorker
 
 
 class Mpeg2TranscodeException(ActionException):
@@ -44,6 +46,7 @@ class Mpeg2TranscodeAction(Action):
         self.container_mapping = self.params.get('container_mapping', 'default')
         self.container_version = self.params.get('container_version', 'default')
         self.container_reference = int(self.params.get('container_reference', 0))
+        self.container_hinting = int(self.params.get('container_hinting', 0))
         self.container_essence_dir = self.params.get('container_essence_dir', 'media.dir/').lstrip('/')
         self.container_abs_essence_dir = os.path.join(self.tmp_dir, self.container_essence_dir)
 
@@ -78,6 +81,13 @@ class Mpeg2TranscodeAction(Action):
             if self.video_codec == 'imx' and self.container_mapping == 'd10':
                 self.demux_channels_per_stream = 8
 
+        if self.container_hinting and self.muxer != 'ffmpeg':
+            self.log.warning('Only ffmpeg muxer support file hinting for streaming')
+
+        if self.container_hinting and self.container not in ['flv', 'mp4', 'mov']:
+            self.log.warning('Only flv, mp4 and mov container support hinting')
+            self.container_hinting = 0
+
     def _setup(self):
         self.input_file = self.get_input_ressource(1).get('path')
         nb_video_frames = int(self.get_input_ressource(1).get('nb_video_frames'))
@@ -110,9 +120,28 @@ class Mpeg2TranscodeAction(Action):
         # FFmpeg muxer
         if self.muxer == 'ffmpeg':
             ffmpeg.mux(self.tmp_dir, self.container, self.container_options)
-            for index, output_file in enumerate(ffmpeg.output_files):
-                self.add_output_ressource(index + 1, {'path': output_file.path})
             self.workers.append(ffmpeg)
+            if not self.container_hinting:
+                for index, output_file in enumerate(ffmpeg.output_files):
+                    self.add_output_ressource(index + 1, {'path': output_file.path})
+            else:
+                if self.container in ['flv']:
+                    for index, output_file in enumerate(ffmpeg.output_files):
+                        hinting_worker = self._new_worker(FLVTool2Worker)
+                        hinting_worker.params = {'-U': ''}
+                        hinting_worker.add_input_file(output_file.path)
+                        self.workers.append(hinting_worker)
+                        self.add_output_ressource(index + 1, {'path': output_file.path})
+
+                elif self.container in ['mp4', 'mov']:
+                    for index, output_file in enumerate(ffmpeg.output_files):
+                        base, ext = os.path.splitext(output_file.path)
+                        hinting_output_path = '%s-hint%s' % (base, ext)
+                        hinting_worker = self._new_worker(QtFastStartWorker)
+                        hinting_worker.add_input_file(output_file.path)
+                        hinting_worker.add_output_file(hinting_output_path)
+                        self.workers.append(hinting_worker)
+                        self.add_output_ressource(index + 1, {'path': hinting_output_path})
 
         # Omneon muxer
         elif self.muxer == 'omneon':
