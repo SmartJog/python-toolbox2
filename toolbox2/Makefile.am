@@ -16,6 +16,7 @@ nobase_toolbox2_PYTHON = \
 	worker/kttoolbox.py \
 	worker/manzanita.py \
 	worker/omneon.py \
+	worker/qtfaststart.py \
 	worker/videoparser.py
 
 nodist_toolbox2_PYTHON = action/__init__.py
