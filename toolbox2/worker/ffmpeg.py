@@ -626,6 +626,26 @@ class FFmpegWorker(Worker):
         method = getattr(self, "transcode_%s" % codec)
         return method(options)
 
+    def mux_flv(self, basedir, options=None):
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+
+        self.video_opts += [('-map', '0:v')]
+        self.format_opts += [('-f', 'flv')]
+
+        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
+
+        path = '%s%s' % (os.path.join(basedir, basename), '.flv')
+        self.add_output_file(path)
+
     def mux_mpegps(self, basedir, options=None):
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
