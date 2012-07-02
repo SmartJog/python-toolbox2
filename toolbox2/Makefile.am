@@ -11,6 +11,7 @@ nobase_toolbox2_PYTHON = \
 	action/rewrap/manzanita_rewrap.py \
 	action/transcode/__init__.py \
 	worker/__init__.py \
+	worker/flvtools2.py \
 	worker/ffmpeg.py \
 	worker/ffprobe.py \
 	worker/kttoolbox.py \

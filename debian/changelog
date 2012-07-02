@@ -4,6 +4,7 @@ python-toolbox2 (0.6.0~dev-1) unstable; urgency=low
   * Add a recommends for sjconf-toolbox2.
   * Add dependency on ommedia (>= 6.4.1).
   * Raise dependency on ffmpeg-static (>= 0.12~).
+  * Add dependency on flvtool2 (>= 1.0.6).
 
  -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 12 Apr 2012 10:43:56 +0200
 
