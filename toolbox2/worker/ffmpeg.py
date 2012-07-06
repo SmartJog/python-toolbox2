@@ -295,6 +295,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 220000)
+        pix_fmt = options.get('pix_fmt', 'yuv422p')
         interlaced = False
         if bitrate in [220000, 175000, 145000, 120000]:
             interlaced = True
@@ -321,6 +322,7 @@ class FFmpegWorker(Worker):
         self.video_opts = [
             ('-vcodec', 'dnxhd'),
             ('-b:v', '%sk' % bitrate),
+            ('-pix_fmt', pix_fmt)
         ]
 
         if bitrate == 36000:
