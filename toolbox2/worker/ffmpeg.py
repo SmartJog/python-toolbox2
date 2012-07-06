@@ -177,7 +177,7 @@ class FFmpegWorker(Worker):
         for index, output_stream in o_stream_map.iteritems():
             if len(output_stream['input_streams']) == 1:
                 input_stream = output_stream['input_streams'].values()[0]
-                if input_stream['channels'] == o_channels_per_stream:
+                if input_stream['channels'] == o_channels_per_stream or o_channels_per_stream == 0:
                     map_chain.append(('-map', '0:%s' % input_stream['index']))
                 else:
                     filter_merge = ''
