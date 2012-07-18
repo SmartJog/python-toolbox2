@@ -21,7 +21,7 @@ nobase_toolbox2_PYTHON = \
 	worker/qtfaststart.py \
 	worker/videoparser.py
 
-nodist_toolbox2_PYTHON = action/__init__.py
+nobase_nodist_toolbox2_PYTHON = action/__init__.py
 
 edit = $(SED) \
 	-e 's|@sysconfdir[@]|$(sysconfdir)|g'
