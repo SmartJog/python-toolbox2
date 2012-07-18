@@ -90,7 +90,7 @@ class TransmuxAction(Action):
 
     def _setup(self):
         self.input_file = self.get_input_ressource(1).get('path')
-        nb_video_frames = int(self.get_input_ressource(1).get('nb_video_frames'))
+        nb_video_frames = int(self.get_input_ressource(1).get('nb_video_frames', 0))
         self.input_basename = os.path.splitext(os.path.basename(self.input_file))[0]
 
         avinfo_action = AVInfoAction(self.log, self.base_dir, self.id)
