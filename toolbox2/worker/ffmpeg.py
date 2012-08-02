@@ -791,9 +791,6 @@ class FFmpegWorker(Worker):
         if not avinfo.video_is_SD_NTSC() and not avinfo.video_is_SD_PAL():
             raise FFmpegWorkerException('Only NTSC/PAL SD is supported')
 
-        if avinfo.video_dar != '16:9':
-            raise FFmpegWorkerException('Only 16:9 content is supported')
-
         self.set_aspect_ratio('4:3')
 
         if not avinfo.video_has_vbi or (avinfo.video_has_vbi and not self.keep_vbi_lines):
