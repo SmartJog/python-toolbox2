@@ -10,7 +10,7 @@ from toolbox2.exception import Toolbox2Exception
 from toolbox2.worker import WorkerException
 
 
-TOOLBOX2_CONFIG_FILE = '@sysconfdir@/python-toolbox2.conf'
+TOOLBOX2_CONFIG_FILE = '@sysconfdir@/toolbox2.conf'
 
 
 class ActionException(Toolbox2Exception):
