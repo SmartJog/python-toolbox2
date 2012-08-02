@@ -26,8 +26,8 @@ nobase_nodist_toolbox2_PYTHON = action/__init__.py
 edit = $(SED) \
 	-e 's|@sysconfdir[@]|$(sysconfdir)|g'
 
-$(nodist_toolbox2_PYTHON): $(nodist_toolbox2_PYTHON:=.in) Makefile
+$(nobase_nodist_toolbox2_PYTHON): $(nobase_nodist_toolbox2_PYTHON:=.in) Makefile
 	$(edit) $(srcdir)/$@.in > $(builddir)/$@
 
-BUILT_SOURCES = $(nodist_toolbox2_PYTHON)
-EXTRA_DIST = $(nodist_toolbox2_PYTHON:=.in)
+BUILT_SOURCES = $(nobase_nodist_toolbox2_PYTHON)
+EXTRA_DIST = $(nobase_nodist_toolbox2_PYTHON:=.in)
