@@ -21,8 +21,8 @@ class KTToolboxAction(Action):
     description = 'kt-toolbox extract tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, ressources=None):
-        Action.__init__(self, log, base_dir, _id, params, ressources)
+    def __init__(self, log, base_dir, _id, params=None, resources=None):
+        Action.__init__(self, log, base_dir, _id, params, resources)
         self.input_file = None
         self.kttoolbox_worker = None
 
@@ -37,7 +37,7 @@ class KTToolboxAction(Action):
     def _setup(self):
 
         #FIXME: check if input file is a gxf container
-        self.input_file = self.get_input_ressource(1).get('path')
+        self.input_file = self.get_input_resource(1).get('path')
         if self.input_file is None:
             raise KTToolboxActionException('No specified path for input (index = 1)')
 
@@ -67,7 +67,7 @@ class KTToolboxAction(Action):
                 path = dest
 
             rel_path = os.path.relpath(path, self.tmp_dir)
-            self.add_output_ressource(index, {'path': path, 'rel_path': rel_path})
+            self.add_output_resource(index, {'path': path, 'rel_path': rel_path})
 
             # Create entry if it does not exist.
             # User of kt-toolbox extract can retrieve specific STL file using it.

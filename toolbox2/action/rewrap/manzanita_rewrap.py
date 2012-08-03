@@ -20,8 +20,8 @@ class ManzanitaRewrapAction(Action):
     description = 'Manzanita rewrap tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, ressources=None):
-        Action.__init__(self, log, base_dir, _id, params, ressources)
+    def __init__(self, log, base_dir, _id, params=None, resources=None):
+        Action.__init__(self, log, base_dir, _id, params, resources)
         self.input_file = None
         self.output_file = None
 
@@ -41,27 +41,27 @@ class ManzanitaRewrapAction(Action):
             self.params['manzanita']['stream']['audio'] = {}
 
     def _setup(self):
-        self.input_file = self.get_input_ressource(1).get('path')
+        self.input_file = self.get_input_resource(1).get('path')
         if not self.input_file:
             raise ManzanitaRewrapException('No path specified for input (index = 1)')
-        nb_video_frames = int(self.get_input_ressource(1).get('nb_video_frames', 0))
+        nb_video_frames = int(self.get_input_resource(1).get('nb_video_frames', 0))
 
         # Compute tmp output path
         filename = os.path.basename(self.input_file)
         filename, _ = os.path.splitext(filename)
         extension = '.ts'
         try:
-            extension = self.get_output_ressource(1).get('extension', '.ts')
+            extension = self.get_output_resource(1).get('extension', '.ts')
         except ActionException:
             # Silent exception is file does not exist
             pass
         output_filename = '%s%s' % (filename, extension)
 
         self.output_file = os.path.join(self.tmp_dir, output_filename)
-        self.add_output_ressource(1, {'path': self.output_file})
+        self.add_output_resource(1, {'path': self.output_file})
 
         avinfo_action = AVInfoAction(self.log, self.base_dir, self.id)
-        avinfo_action.add_input_ressource(1, {'path': self.input_file})
+        avinfo_action.add_input_resource(1, {'path': self.input_file})
         avinfo = avinfo_action.run()
 
         # Setup ffmpeg demuxer

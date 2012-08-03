@@ -122,8 +122,8 @@ class AVInfoAction(Action):
     description = 'audio/video information extract tool'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, ressources=None):
-        Action.__init__(self, log, base_dir, _id, params, ressources)
+    def __init__(self, log, base_dir, _id, params=None, resources=None):
+        Action.__init__(self, log, base_dir, _id, params, resources)
         self.input_file = None
         self.thumbnail = None
         self.probe_worker = None
@@ -142,7 +142,7 @@ class AVInfoAction(Action):
 
     def _setup(self):
 
-        self.input_file = self.get_input_ressource(1).get('path')
+        self.input_file = self.get_input_resource(1).get('path')
         self.thumbnail = os.path.join(self.tmp_dir, 'thumbnail.jpg')
 
         self.probe_worker = self._new_worker(FFprobeWorker)
@@ -155,7 +155,7 @@ class AVInfoAction(Action):
             self.ffmpeg_worker.add_output_file(self.thumbnail)
             self.ffmpeg_worker.make_thumbnail()
             self.workers.append(self.ffmpeg_worker)
-            self.add_output_ressource('thumbnail', self.thumbnail)
+            self.add_output_resource('thumbnail', self.thumbnail)
 
         if self.do_count_frames or self.do_count_packets:
             self.probe2_worker = self._new_worker(FFprobeWorker)

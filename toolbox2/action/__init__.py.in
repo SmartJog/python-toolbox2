@@ -25,7 +25,7 @@ class Action(object):
     description = ''
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, ressources=None):
+    def __init__(self, log, base_dir, _id, params=None, resources=None):
         """
         Create a new action.
         base_dir and _id are used to create a unique temporary directory to work in.
@@ -42,7 +42,7 @@ class Action(object):
         :param params: action parameters
         :type params: dict
 
-        :param ressources: action input/output/metadata ressources
+        :param resources: action input/output/metadata resources
         :type resssources: dict
         """
         self.id = _id
@@ -50,13 +50,13 @@ class Action(object):
         self.base_dir = base_dir
         self.params = params or {}
 
-        self.ressources = {
+        self.resources = {
             'inputs': {},
             'outputs': {},
             'metadata': {}
         }
 
-        self.ressources.update(ressources or {})
+        self.resources.update(resources or {})
 
         self.workers = []
         self.worker_idx = 0
@@ -167,147 +167,147 @@ class Action(object):
 
         return worker
 
-    def add_ressource(self, section, index, ressource):
+    def add_resource(self, section, index, resource):
         """
-        Add a ressource to specified section and index.
-        An ActionException is raised if a ressource already exists at specified section and index.
+        Add a resource to specified section and index.
+        An ActionException is raised if a resource already exists at specified section and index.
 
-        :param section: ressource section. For example inputs, outputs, metadata.
+        :param section: resource section. For example inputs, outputs, metadata.
         :type section: string
 
-        :param index: ressource identifier. Most actions use index=1 to get the first input ressource.
+        :param index: resource identifier. Most actions use index=1 to get the first input resource.
         :param type: string or int
 
-        :param ressource: ressource represented as a dict. For example, files minimum representation is {'path': '/path'}
-        :type ressource: dict
+        :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
+        :type resource: dict
 
         :raise: AnctionException
         """
         index = str(index)
-        if section not in self.ressources:
-            self.ressources[section] = {}
-        if index in self.ressources[section]:
+        if section not in self.resources:
+            self.resources[section] = {}
+        if index in self.resources[section]:
             raise ActionException('Ressource (section = %s) (index = %s) already exist' % (section, index))
-        self.ressources[section][index] = ressource
+        self.resources[section][index] = resource
 
-    def get_ressource(self, section, index):
+    def get_resource(self, section, index):
         """
-        Get a ressource from specified section and index.
-        If ressource does not exist raise an ActionException.
+        Get a resource from specified section and index.
+        If resource does not exist raise an ActionException.
 
-        :param section: ressource section. For example inputs, outputs, metadata.
+        :param section: resource section. For example inputs, outputs, metadata.
         :type section: string
 
-        :param index: unique indentifier for ressource. Most action use index=1 for the first input ressource.
+        :param index: unique indentifier for resource. Most action use index=1 for the first input resource.
         :param type: string or int
 
-        :return: ressource
+        :return: resource
         :rtype: dict
         """
         index = str(index)
-        if section not in self.ressources:
+        if section not in self.resources:
             raise ActionException('Section %s does not exist' % section)
-        if index not in self.ressources[section]:
+        if index not in self.resources[section]:
             raise ActionException('Ressource (section = %s) (index = %s) does not exist' % (section, index))
-        return self.ressources[section][index]
+        return self.resources[section][index]
 
-    def add_input_ressource(self, index, ressource):
+    def add_input_resource(self, index, resource):
         """
-        Add an input ressource to specified index.
-        An ActionException is raised if a ressource already exists at specified index.
+        Add an input resource to specified index.
+        An ActionException is raised if a resource already exists at specified index.
 
-        :param index: ressource identifier. Most actions use index=1 to get the first input ressource.
+        :param index: resource identifier. Most actions use index=1 to get the first input resource.
         :param type: string or int
 
-        :param ressource: ressource represented as a dict. For example, files minimum representation is {'path': '/path'}
-        :type ressource: dict
+        :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
+        :type resource: dict
 
         :raise: AnctionException
         """
 
-        return self.add_ressource('inputs', index, ressource)
+        return self.add_resource('inputs', index, resource)
 
-    def get_input_ressource(self, index):
+    def get_input_resource(self, index):
         """
-        Get an input ressource from specified index.
-        If ressource does not exist raise an ActionException.
+        Get an input resource from specified index.
+        If resource does not exist raise an ActionException.
 
-        :param section: ressource section. For example inputs, outputs, metadata.
+        :param section: resource section. For example inputs, outputs, metadata.
         :type section: string
 
-        :param index: unique indentifier for ressource. Most action use index=1 for the first input ressource.
+        :param index: unique indentifier for resource. Most action use index=1 for the first input resource.
         :param type: string or int
 
-        :return: ressource
+        :return: resource
         :rtype: dict
         """
 
-        return self.get_ressource('inputs', index)
+        return self.get_resource('inputs', index)
 
-    def add_output_ressource(self, index, ressource):
+    def add_output_resource(self, index, resource):
         """
-        Add an output ressource to specified index.
-        An ActionException is raised if a ressource already exists at specified index.
+        Add an output resource to specified index.
+        An ActionException is raised if a resource already exists at specified index.
 
-        :param index: ressource identifier. Most actions use index=1 to get the first input ressource.
+        :param index: resource identifier. Most actions use index=1 to get the first input resource.
         :param type: string or int
 
-        :param ressource: ressource represented as a dict. For example, files minimum representation is {'path': '/path'}
-        :type ressource: dict
+        :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
+        :type resource: dict
 
         :raise: AnctionException
         """
 
-        return self.add_ressource('outputs', index, ressource)
+        return self.add_resource('outputs', index, resource)
 
-    def get_output_ressource(self, index):
+    def get_output_resource(self, index):
         """
-        Get an output ressource from specified index.
-        If ressource does not exist raise an ActionException
+        Get an output resource from specified index.
+        If resource does not exist raise an ActionException
 
-        :param index: unique indentifier for ressource. Most action use index=1 for the first input ressource.
+        :param index: unique indentifier for resource. Most action use index=1 for the first input resource.
         :param type: string or int
 
-        :return: ressource
+        :return: resource
         :rtype: dict
         """
-        return self.get_ressource('outputs', index)
+        return self.get_resource('outputs', index)
 
-    def get_input_ressources(self):
+    def get_input_resources(self):
         """
-        Get all input ressources.
+        Get all input resources.
 
-        :return ressources
+        :return resources
         :rtype: dict
         """
-        return self.ressources['inputs']
+        return self.resources['inputs']
 
-    def get_output_ressources(self):
+    def get_output_resources(self):
         """
-        Get all output ressources.
+        Get all output resources.
 
-        :return ressources
+        :return resources
         :rtype dict
         """
-        return self.ressources['outputs']
+        return self.resources['outputs']
 
     def get_metadata(self):
         """
         Return action metadata.
         """
-        return self.ressources['metadata']
+        return self.resources['metadata']
 
     def add_metadata(self, key, value):
         """
         Add key/value to metadata.
         """
-        self.ressources['metadata'][key] = value
+        self.resources['metadata'][key] = value
 
     def update_metadata(self, metadata):
         """
         Update metadata.
         """
-        self.ressources['metadata'].update(metadata)
+        self.resources['metadata'].update(metadata)
 
     def clean(self):
         """

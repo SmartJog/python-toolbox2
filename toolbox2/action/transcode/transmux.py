@@ -26,8 +26,8 @@ class TransmuxAction(Action):
     description = 'transcode to mpeg2 video and mux to various formats'
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, ressources=None):
-        Action.__init__(self, log, base_dir, _id, params, ressources)
+    def __init__(self, log, base_dir, _id, params=None, resources=None):
+        Action.__init__(self, log, base_dir, _id, params, resources)
 
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
@@ -89,12 +89,12 @@ class TransmuxAction(Action):
             self.container_hinting = 0
 
     def _setup(self):
-        self.input_file = self.get_input_ressource(1).get('path')
-        nb_video_frames = int(self.get_input_ressource(1).get('nb_video_frames', 0))
+        self.input_file = self.get_input_resource(1).get('path')
+        nb_video_frames = int(self.get_input_resource(1).get('nb_video_frames', 0))
         self.input_basename = os.path.splitext(os.path.basename(self.input_file))[0]
 
         avinfo_action = AVInfoAction(self.log, self.base_dir, self.id)
-        avinfo_action.add_input_ressource(1, {'path': self.input_file})
+        avinfo_action.add_input_resource(1, {'path': self.input_file})
         avinfo = avinfo_action.run()
 
         ffmpeg = self._new_worker(FFmpegWorker)
@@ -123,7 +123,7 @@ class TransmuxAction(Action):
             self.workers.append(ffmpeg)
             if not self.container_hinting:
                 for index, output_file in enumerate(ffmpeg.output_files):
-                    self.add_output_ressource(index + 1, {'path': output_file.path})
+                    self.add_output_resource(index + 1, {'path': output_file.path})
             else:
                 if self.container in ['flv']:
                     for index, output_file in enumerate(ffmpeg.output_files):
@@ -131,7 +131,7 @@ class TransmuxAction(Action):
                         hinting_worker.params = {'-U': ''}
                         hinting_worker.add_input_file(output_file.path)
                         self.workers.append(hinting_worker)
-                        self.add_output_ressource(index + 1, {'path': output_file.path})
+                        self.add_output_resource(index + 1, {'path': output_file.path})
 
                 elif self.container in ['mp4', 'mov']:
                     for index, output_file in enumerate(ffmpeg.output_files):
@@ -141,7 +141,7 @@ class TransmuxAction(Action):
                         hinting_worker.add_input_file(output_file.path)
                         hinting_worker.add_output_file(hinting_output_path)
                         self.workers.append(hinting_worker)
-                        self.add_output_ressource(index + 1, {'path': hinting_output_path})
+                        self.add_output_resource(index + 1, {'path': hinting_output_path})
 
         # Omneon muxer
         elif self.muxer == 'omneon':
@@ -165,12 +165,12 @@ class TransmuxAction(Action):
 
             index = 0
             for output_file in ommcp.output_files:
-                self.add_output_ressource(index + 1, {'path': output_file.path})
+                self.add_output_resource(index + 1, {'path': output_file.path})
                 index += 1
 
             if self.container_reference:
                 for output_file in ffmpeg.output_files:
-                    self.add_output_ressource(index + 1, {'path': output_file.path})
+                    self.add_output_resource(index + 1, {'path': output_file.path})
                     index += 1
 
             self.workers.append(ffmpeg)

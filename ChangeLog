@@ -50,6 +50,7 @@ Version 0.6.0~dev
 	* Fix crash in transmux action when nb_video_frames is not specified in
 	  input ressource.
 	* Specify mxf_d10 format when d10 mapping is enabled in ffmpeg worker.
+	* Fix mispelled word "resource" all over the project.
 
 Version 0.5.0 Released on 2012/03/29
 
