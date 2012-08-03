@@ -11,16 +11,16 @@ from toolbox2.worker.omneon import OmneonCopyWorker, OmneonQueryWorker
 from toolbox2.worker.qtfaststart import QtFastStartWorker
 
 
-class TransmuxException(ActionException):
+class TranscodeException(ActionException):
     pass
 
 
-class TransmuxAction(Action):
+class TranscodeAction(Action):
     """
     Transcode and mux to various codecs/formats
     """
 
-    name = 'transmux'
+    name = 'transcode'
     engine = ['ffmpeg', 'ommq', 'ommcp']
     category = 'transcode'
     description = 'transcode to mpeg2 video and mux to various formats'
@@ -72,7 +72,7 @@ class TransmuxAction(Action):
             os.makedirs(self.container_abs_essence_dir)
 
         if self.muxer == 'ffmpeg' and self.container_reference:
-            raise TransmuxException('Reference files are not supported with ffmpeg muxer')
+            raise TranscodeException('Reference files are not supported with ffmpeg muxer')
 
         self.demux_channels_per_stream = 0
         if self.container == 'mxf':
