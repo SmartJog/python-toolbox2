@@ -84,7 +84,7 @@ class FFmpegWorker(Worker):
             if self.progress > 99:
                 self.progress = 99
 
-    def add_input_file(self, path, params, avinfo):
+    def add_input_file(self, path, params=None, avinfo=None):
         self.input_files.append(self.InputFile(path, params, avinfo))
 
     def add_output_file(self, path, params=None, output_type='mixed'):
