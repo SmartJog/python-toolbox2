@@ -14,42 +14,29 @@ Version 0.6.0~dev
 	* Add set_aspect_ratio to ffmpeg worker, refs: #5763.
 	* Support IMX codec in ffmpeg worker, refs: #5763.
 	* Support XDCAM HD in ffmpeg worker, refs: #5763.
-	* Support mxf muxing in ffmpeg worker, refs: #5763.
-	* Support mov muxing in ffmpeg worker, refs: #5763.
+	* Support MXF muxing in ffmpeg worker, refs: #5763.
+	* Support MOV muxing in ffmpeg worker, refs: #5763.
 	* Support SD letterboxing in ffmpeg worker, refs: #5763.
 	* Add transcode and mux method to ffmpeg worker, refs: #5763.
 	* Add omneon workers, refs: #5763.
-	* Add mpeg2 transcode action, closes: #5763.
+	* Add transcode action, closes: #5763.
 	* Do not execute _finalize method if worker exited abnormally.
 	* Remove sleep based loop in Action._execute_worker, closes: #5759.
-	* Support gxf muxing in ffmpeg worker.
+	* Support GXF muxing in ffmpeg worker.
 	* Handle progress in ommcp worker, closes: #5913.
-	* Support source track selection in ommcp worker.
-	* Fix DV video muxing with omneon tools.
 	* Add standard fps attributes to AVInfo class.
-	* Support simple mpeg2 transcode in ffmpeg worker, closes: #5898.
-	* Support mpeg ps muxing in ffmpeg worker.
-	* Support dnxhd codec in ffmpeg worker, closes: #5900.
-	* Support pcm codec in ffmpeg worker.
-	* Update and make mpeg2_transcode params more consistent.
-	* Add enable_fourcc_tagging option for xdcamhd and imx codec in ffmpeg worker.
-	* Fix fourcc tags for xdcamhd codec in ffmpeg worker.
-	* Enable fourcc tagging with mov container in mpeg2_transcode action.
+	* Support simple MPEG2 transcode in ffmpeg worker, closes: #5898.
+	* Support MPEG PS muxing in ffmpeg worker.
+	* Support DNxHD codec in ffmpeg worker, closes: #5900.
+	* Support PCM codec in ffmpeg worker.
 	* Support decoding/encoding threads count selection in ffmpeg worker.
 	* Support channel merging/splitting in ffmpeg worker.
 	* Support MXF/D10 mapping in ffmpeg worker.
-	* Force stereo layout for mpegps format.
-	* Support simple h264 transcode in ffmpeg worker.
-	* Support aac codec in ffmpeg worker.
+	* Support simple H264 transcode in ffmpeg worker.
+	* Support AAC codec in ffmpeg worker.
 	* Add qt-faststart worker.
 	* Add flvtool2 worker.
-	* Support hinting option for flv, mp4 and mov containers.
-	* Rename mpeg2_transcode action to transmux.
-	* Fix auto audio channel mapping in ffmpeg worker.
-	* Support pix_fmt option for dnxhd transcode in ffmpeg worker.
-	* Fix crash in transmux action when nb_video_frames is not specified in
-	  input ressource.
-	* Specify mxf_d10 format when d10 mapping is enabled in ffmpeg worker.
+	* Support hinting option for FLV, MP4 and MOV containers.
 	* Fix mispelled word "resource" all over the project.
 
 Version 0.5.0 Released on 2012/03/29
