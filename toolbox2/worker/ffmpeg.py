@@ -511,9 +511,9 @@ class FFmpegWorker(Worker):
             ('-rc_max_vbv_use', 1),
         ]
 
-        if not avinfo.video_is_HD():
+        if avinfo.video_has_vbi:
             # Preserve vbi lines for mpeg2 422@ML
-            if avinfo.video_has_vbi and pix_fmt == 'yuv422p':
+            if pix_fmt == 'yuv422p':
                 self.keep_vbi_lines = True
             else:
                 if avinfo.video_is_SD_NTSC():
