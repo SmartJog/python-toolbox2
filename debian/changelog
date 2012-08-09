@@ -1,3 +1,11 @@
+python-toolbox2 (0.6.0-2) unstable; urgency=low
+
+  * Move kt-toolbox from depends to recommends.
+  * Move ommedia from depends to recommends.
+  * Move flvtool2 from depends to recommends.
+
+ -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 09 Aug 2012 18:18:51 +0200
+
 python-toolbox2 (0.6.0-1) unstable; urgency=low
 
   * New upstream release, closes: #5758, #5759, #5763, #5764, #5913, #5898,
