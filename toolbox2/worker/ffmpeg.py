@@ -297,6 +297,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 220000)
+        bitrate_m = bitrate / 1000
         pix_fmt = options.get('pix_fmt', 'yuv422p')
         interlaced = False
         if bitrate in [220000, 175000, 145000, 120000]:
@@ -310,16 +311,16 @@ class FFmpegWorker(Worker):
             raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
 
         if not avinfo.video_is_HD():
-            raise FFmpegWorkerException('Only 1920x1080 videos are supported')
+            raise FFmpegWorkerException('DNxHD transcode does not support input at %s, only 1920x1080 is supported' % avinfo.video_res)
 
         if avinfo.video_fps in avinfo.FPS_NTSC and bitrate not in [220000, 145000, 36000]:
-            raise FFmpegWorkerException('NTSC input is not compatible with output bitrate: %s' % bitrate)
-
-        if avinfo.video_fps in avinfo.FPS_PAL and bitrate not in [185000, 120000, 36000]:
-            raise FFmpegWorkerException('PAL input is not compatible with output bitrate: %s' % bitrate)
-
-        if avinfo.video_fps in avinfo.FPS_FILM and bitrate not in [175000, 115000, 36000]:
-            raise FFmpegWorkerException('FILM input is not compatible with output bitrate: %s' % bitrate)
+            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 25 fps is supported' % (bitrate_m, avinfo.video_fps))
+        elif avinfo.video_fps in avinfo.FPS_PAL and bitrate not in [185000, 120000, 36000]:
+            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 29.97 fps is supported' % (bitrate_m, avinfo.video_fps))
+        elif avinfo.video_fps in avinfo.FPS_FILM and bitrate not in [175000, 115000, 36000]:
+            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 23.976 fps is supported' % (bitrate_m, avinfo.video_fps))
+        else:
+            raise FFmpegWorkerException('DnxHD does not support input at %s fps' % avinfo.video_fps)
 
         self.video_opts = [
             ('-vcodec', 'dnxhd'),
@@ -397,10 +398,10 @@ class FFmpegWorker(Worker):
         bufsize = 0
 
         if not (avinfo.video_is_SD_PAL() or avinfo.video_is_SD_NTSC()):
-            raise FFmpegWorkerException('Only PAL and NTSC systems are supported')
+            raise FFmpegWorkerException('IMX codec only supports PAL and NTSC frame rates')
 
         if bitrate not in [30000, 50000]:
-            raise FFmpegWorkerException('Only IMX 30 and 50 is supported')
+            raise FFmpegWorkerException('IMX codec does not support bitrate at %sk' % bitrate)
 
         self.video_opts = []
         self.video_opts += [
@@ -485,7 +486,7 @@ class FFmpegWorker(Worker):
             else:
                 bufsize = bufsize > 1835008 and 1835008 or bufsize
         else:
-            raise FFmpegWorkerException('Unsupported pixel format: %s' % pix_fmt)
+            raise FFmpegWorkerException('MPEG-2 video codec does not support %s pixel format' % pix_fmt)
 
         gop_size = 12
         if avinfo.video_fps in avinfo.FPS_NTSC:
@@ -584,10 +585,10 @@ class FFmpegWorker(Worker):
             raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
 
         if avinfo.video_res != avinfo.RES_HD:
-            raise FFmpegWorkerException('Only 1920x1080 videos are supported')
+            raise FFmpegWorkerException('XDCAMHD transcode does not support input at %s, only 1920x1080 is supported' % avinfo.video_res)
 
         if bitrate not in [50000]:
-            raise FFmpegWorkerException('Only 50MBP XDCAM HD is supported')
+            raise FFmpegWorkerException('XDCAMHD does not support bitrate at %sk' % bitrate)
 
         if avinfo.video_fps in avinfo.FPS_NTSC:
             codec_tag = 'xd5b'
@@ -596,7 +597,7 @@ class FFmpegWorker(Worker):
         elif avinfo.video_fps in avinfo.FPS_FILM:
             codec_tag = 'xd5d'
         else:
-            raise FFmpegWorkerException('Unsupported input frame rate: %s' % avinfo.video_fps)
+            raise FFmpegWorkerException('XDCAMHD does not support input at %s fps' % avinfo.video_fps)
 
         self.video_opts = []
         self.video_opts += [
@@ -665,10 +666,10 @@ class FFmpegWorker(Worker):
         vcodec = self.get_opt_value('vcodec', 'mpeg2video')
 
         if acodec != 'mp2':
-            raise FFmpegWorkerException('Mpeg2 PS does not support audio codec:' % acodec)
+            raise FFmpegWorkerException('MPEG-2 PS does not support audio codec: %s' % acodec)
 
         if vcodec not in ['mpeg1video', 'mpeg2video']:
-            raise FFmpegWorkerException('Mpeg2 PS does not support video codec: %s' % vcodec)
+            raise FFmpegWorkerException('MPEG-2 PS does not support video codec: %s' % vcodec)
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'vob')]
@@ -718,7 +719,7 @@ class FFmpegWorker(Worker):
         if not audio_rate:
             self.audio_opts += [('-ar', 48000)]
         elif audio_rate != 48000:
-            raise FFmpegWorkerException('Only 48000Hz audio is supported in mxf for now')
+            raise FFmpegWorkerException('MXF only supports audio at 48000Hz')
 
         self.video_opts += [('-map', '0:v')]
 
@@ -742,12 +743,12 @@ class FFmpegWorker(Worker):
 
     def mux_mov(self, basedir, options=None):
         if not self.input_files:
-            raise FFmpegWorkerException('no input file specified')
+            raise FFmpegWorkerException('No input file specified')
 
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
         avinfo = self.input_files[0].avinfo
         if not avinfo:
-            raise FFmpegWorkerException('no avinfo specified for input fi1e: %s' % self.input_files[0].path)
+            raise FFmpegWorkerException('No avinfo specified for input fi1e: %s' % self.input_files[0].path)
 
         self.video_opts += [('-map', '0:v')]
         if self.mov_imx_header:
@@ -760,12 +761,12 @@ class FFmpegWorker(Worker):
 
     def mux_gxf(self, basedir, options=None):
         if not self.input_files:
-            raise FFmpegWorkerException('no input file specified')
+            raise FFmpegWorkerException('No input file specified')
 
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
         avinfo = self.input_files[0].avinfo
         if not avinfo:
-            raise FFmpegWorkerException('no avinfo specified for input fi1e: %s' % self.input_files[0].path)
+            raise FFmpegWorkerException('No avinfo specified for input fi1e: %s' % self.input_files[0].path)
 
         self.format_opts += [('-f', 'gxf')]
         self.video_opts += [('-map', '0:v')]
@@ -793,7 +794,7 @@ class FFmpegWorker(Worker):
             raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
 
         if not avinfo.video_is_SD_NTSC() and not avinfo.video_is_SD_PAL():
-            raise FFmpegWorkerException('Only NTSC/PAL SD is supported')
+            raise FFmpegWorkerException('SD Letterboxing only supports input at PAL or NTSC resolutions')
 
         self.set_aspect_ratio('4:3')
 
