@@ -379,6 +379,35 @@ class FFmpegWorker(Worker):
         if interlaced:
             self.video_opts += [('-flags', '+ildct')]
 
+    def transcode_dv(self, options=None):
+        if not options:
+            options = {}
+        pix_fmt = options.get('pix_fmt', 'yuv422p')
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
+        if not avinfo.video_is_SD_PAL() and not avinfo.video_is_SD_NTSC():
+            raise FFmpegWorkerException('DV codec only supports PAL and NTSC resolutions')
+
+        self.video_opts = [
+            ('-vcodec', 'dvvideo'),
+            ('-pix_fmt', pix_fmt)
+        ]
+
+        if avinfo.video_has_vbi:
+            if avinfo.video_is_SD_NTSC():
+                height = 480
+            elif avinfo.video_is_SD_PAL():
+                height = 576
+            self.video_filter_chain.insert(0,
+                ('crop_vbi', 'crop=720:%s:00:32' % height)
+            )
+
     def transcode_simple_h264(self, options=None):
         if not options:
             options = {}

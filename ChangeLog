@@ -1,3 +1,7 @@
+Version 0.8.0~dev
+
+	* Support DV codec in ffmpeg worker.
+
 Version 0.7.0 Released on 2012/11/23
 
 	* Add audio_format property to AVInfo class.
