@@ -39,7 +39,7 @@ class TranscodeAction(Action):
         self.video_pix_fmt = self.params.get('video_pix_fmt', 'yuv422p')
 
         self.audio_codec = self.params.get('audio_codec', 'pcm')
-        self.audio_format = self.params.get('audio_format', 's16le')
+        self.audio_format = self.params.get('audio_format', 'default')
         self.audio_samplerate = int(self.params.get('audio_samplerate', 48000))
 
         self.container = self.params.get('container', 'mxf')
@@ -102,7 +102,12 @@ class TranscodeAction(Action):
         ffmpeg.set_nb_frames(nb_video_frames)
         ffmpeg.set_timecode(avinfo.timecode)
 
-        ffmpeg.transcode(self.video_codec, self.video_codec_options)
+        if self.audio_format == 'default':
+            if avinfo.audio_format:
+                self.audio_format = avinfo.audio_format
+            else:
+                self.audio_format = 's16le'
+            self.audio_codec_options['format'] = self.audio_format
 
         if self.video_aspect_ratio == 'default':
             if avinfo.video_dar == '16:9':
@@ -115,6 +120,7 @@ class TranscodeAction(Action):
         if self.video_letterbox:
             ffmpeg.letterbox()
 
+        ffmpeg.transcode(self.video_codec, self.video_codec_options)
         ffmpeg.transcode(self.audio_codec, self.audio_codec_options)
 
         # FFmpeg muxer
