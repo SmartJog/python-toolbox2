@@ -25,6 +25,7 @@ class AVInfo(object):
 
     def __init__(self, data):
         self.data = data
+        self.audio_format = None
         self.video_res = None
         self.video_has_vbi = False
         self.video_fps = 0
@@ -47,6 +48,7 @@ class AVInfo(object):
         self._init_fps()
         self._init_dar()
         self._init_timecode()
+        self._init_audio_format()
 
     def _init_res(self):
         if self.video_streams:
@@ -87,6 +89,14 @@ class AVInfo(object):
                 if 'timecode' in stream_metadata:
                     self.timecode = stream_metadata['timecode']
                     break
+
+    def _init_audio_format(self):
+        if not self.audio_streams:
+            return
+
+        match = re.match('pcm_(.*)', self.audio_streams[0]['codec_name'])
+        if match:
+            self.audio_format = match.groups()[0]
 
     def video_has_VBI(self):
         return self.video_has_vbi
