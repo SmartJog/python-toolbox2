@@ -38,6 +38,7 @@ class TranscodeAction(Action):
         self.video_aspect_ratio = self.params.get('video_aspect_ratio', 'default')
         self.video_pix_fmt = self.params.get('video_pix_fmt', 'yuv422p')
         self.video_gop_size = int(self.params.get('video_gop_size', 0))
+        self.video_interlaced = int(self.params.get('video_interlaced', 1))
 
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
@@ -65,6 +66,7 @@ class TranscodeAction(Action):
             'pix_fmt': self.video_pix_fmt,
             'enable_fourcc_tagging': self.container == 'mov',
             'gop_size': self.video_gop_size,
+            'interlaced': self.video_interlaced,
         }
 
         self.container_options = {
