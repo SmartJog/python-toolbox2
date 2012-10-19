@@ -293,15 +293,48 @@ class FFmpegWorker(Worker):
             ('-b:a', '%sk' % bitrate)
         ]
 
+    def get_dnxhd_profile(self, profile):
+        dnxhd_profiles = [
+            # 23.976 fps
+            {'cid': 1235, 'fps': 23.97, 'pix_fmt': 'yuv422p10le',  'bitrate': 175000, 'interlaced': 0},
+            {'cid': 1237, 'fps': 23.97, 'pix_fmt': 'yuv422p',      'bitrate': 115000, 'interlaced': 0},
+            {'cid': 1238, 'fps': 23.97, 'pix_fmt': 'yuv422p',      'bitrate': 175000, 'interlaced': 0},
+            {'cid': 1253, 'fps': 23.97, 'pix_fmt': 'yuv422p',      'bitrate': 36000,  'interlaced': 0},
+            # 25 fps
+            {'cid': 1235, 'fps': 25,     'pix_fmt': 'yuv422p10le', 'bitrate': 185000, 'interlaced': 0},
+            {'cid': 1237, 'fps': 25,     'pix_fmt': 'yuv422p',     'bitrate': 120000, 'interlaced': 0},
+            {'cid': 1238, 'fps': 25,     'pix_fmt': 'yuv422p',     'bitrate': 185000, 'interlaced': 0},
+            {'cid': 1241, 'fps': 25,     'pix_fmt': 'yuv422p10le', 'bitrate': 185000, 'interlaced': 1},
+            {'cid': 1242, 'fps': 25,     'pix_fmt': 'yuv422p',     'bitrate': 120000, 'interlaced': 1},
+            {'cid': 1243, 'fps': 25,     'pix_fmt': 'yuv422p',     'bitrate': 185000, 'interlaced': 1},
+            # 29.97 fps
+            {'cid': 1235, 'fps': 29.97,  'pix_fmt': 'yuv422p10le', 'bitrate': 220000, 'interlaced': 1},
+            {'cid': 1237, 'fps': 29.97,  'pix_fmt': 'yuv422p',     'bitrate': 145000, 'interlaced': 1},
+            {'cid': 1238, 'fps': 29.97,  'pix_fmt': 'yuv422p',     'bitrate': 220000, 'interlaced': 1},
+            # 50 fps
+            {'cid': 1235, 'fps': 50,     'pix_fmt': 'yuv422p10le', 'bitrate': 365000, 'interlaced': 0},
+            {'cid': 1237, 'fps': 50,     'pix_fmt': 'yuv422p',     'bitrate': 240000, 'interlaced': 0},
+            {'cid': 1238, 'fps': 50,     'pix_fmt': 'yuv422p',     'bitrate': 365000, 'interlaced': 0},
+            # 59.94
+            {'cid': 1235, 'fps': 59.94,  'pix_fmt': 'yuv422p10le', 'bitrate': 440000, 'interlaced': 0},
+            {'cid': 1237, 'fps': 59.94,  'pix_fmt': 'yuv422p',     'bitrate': 290000, 'interlaced': 0},
+            {'cid': 1238, 'fps': 59.94,  'pix_fmt': 'yuv422p',     'bitrate': 440000, 'interlaced': 0},
+        ]
+
+        for dnxhd_profile in dnxhd_profiles:
+            if profile['bitrate'] == dnxhd_profile['bitrate'] and \
+               profile['pix_fmt'] == dnxhd_profile['pix_fmt'] and \
+               profile['interlaced'] == dnxhd_profile['interlaced'] and \
+               abs(profile['fps'] - dnxhd_profile['fps']) < 0.1:
+                   return dnxhd_profile
+
     def transcode_dnxhd(self, options=None):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 220000)
         bitrate_m = bitrate / 1000
         pix_fmt = options.get('pix_fmt', 'yuv422p')
-        interlaced = False
-        if bitrate in [220000, 175000, 145000, 120000]:
-            interlaced = True
+        interlaced = options.get('interlaced', 1)
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -313,14 +346,17 @@ class FFmpegWorker(Worker):
         if not avinfo.video_is_HD():
             raise FFmpegWorkerException('DNxHD transcode does not support input at %s, only 1920x1080 is supported' % avinfo.video_res)
 
-        if avinfo.video_fps in avinfo.FPS_NTSC and bitrate not in [220000, 145000, 36000]:
-            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 25 fps is supported' % (bitrate_m, avinfo.video_fps))
-        elif avinfo.video_fps in avinfo.FPS_PAL and bitrate not in [185000, 120000, 36000]:
-            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 29.97 fps is supported' % (bitrate_m, avinfo.video_fps))
-        elif avinfo.video_fps in avinfo.FPS_FILM and bitrate not in [175000, 115000, 36000]:
-            raise FFmpegWorkerException('DNxHD %sM profile does not support input at %s fps, only 23.976 fps is supported' % (bitrate_m, avinfo.video_fps))
-        else:
-            raise FFmpegWorkerException('DnxHD does not support input at %s fps' % avinfo.video_fps)
+        dnxhd_profile = self.get_dnxhd_profile({
+            'fps':        avinfo.video_fps,
+            'pix_fmt':    pix_fmt,
+            'bitrate':    bitrate,
+            'interlaced': interlaced,
+        })
+
+        if not dnxhd_profile:
+            raise FFmpegWorkerException('DNxHD output settings are not valid: %sMbps 1920x1080%s %sbit @ %sfps' % (
+                bitrate_m, 'i' if interlaced else 'p', 10 if pix_fmt == 'yuv422p10le' else 8, avinfo.video_fps,
+            ))
 
         self.video_opts = [
             ('-vcodec', 'dnxhd'),
