@@ -41,6 +41,7 @@ class TranscodeAction(Action):
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
         self.audio_sample_rate = int(self.params.get('audio_sample_rate', 48000))
+        self.audio_bitrate = int(self.params.get('audio_bitrate', 0))
 
         self.container = self.params.get('container', 'mxf')
         self.container_mapping = self.params.get('container_mapping', 'default')
@@ -54,6 +55,7 @@ class TranscodeAction(Action):
 
         self.audio_codec_options = {
             'format': self.audio_format,
+            'bitrate': self.audio_bitrate,
             'sample_rate': self.audio_sample_rate,
         }
 

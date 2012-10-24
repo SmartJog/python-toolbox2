@@ -284,7 +284,9 @@ class FFmpegWorker(Worker):
     def transcode_aac(self, options=None):
         if not options:
             options = {}
-        bitrate = options.get('bitrate', 192)
+        bitrate = options.get('bitrate', 0)
+        if bitrate == 0:
+            bitrate = 192
 
         self.audio_opts = [
             ('-acodec', 'libfaac'),
@@ -538,10 +540,12 @@ class FFmpegWorker(Worker):
         if not avinfo.audio_streams:
             return
 
-        if avinfo.audio_streams[0].get('sample_rate', 48000) < 44100:
-            bitrate = '128'
-        else:
-            bitrate = '384'
+        bitrate = options.get('bitrate', 0)
+        if bitrate == 0:
+            if avinfo.audio_streams[0].get('sample_rate', 48000) < 44100:
+                bitrate = '128'
+            else:
+                bitrate = '384'
 
         self.audio_opts = [
             ('-acodec', 'mp2'),
