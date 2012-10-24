@@ -2,6 +2,7 @@ Version 0.7.0~dev
 
 	* Add audio_format property to AVInfo class.
 	* Try to keep input audio format in transcode action.
+	* Rename and use sample_rate option in transcode action.
 
 Version 0.6.0 Released on 2012/08/06
 
