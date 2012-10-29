@@ -14,6 +14,7 @@ codec_extension_map = {
     'mpeg2video' : '.m2v',
     'mpeg4video' : '.m4v',
     'dvvideo'    : '.dv',
+    'dnxhd':       '.dnxhd',
 
     # Audio
     'pcm_'       : '.wav',
