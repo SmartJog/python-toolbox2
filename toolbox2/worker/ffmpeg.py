@@ -74,6 +74,7 @@ class FFmpegWorker(Worker):
         self.mov_imx_header = False
         self.decoding_threads = 1
         self.encoding_threads = 1
+        self.fps = 0
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -84,6 +85,9 @@ class FFmpegWorker(Worker):
             self.progress = (frame / self.nb_frames) * 100
             if self.progress > 99:
                 self.progress = 99
+        res = re.findall('fps=\s*(\d+)', self.stderr)
+        if res:
+            self.fps = int(res[-1])
 
     def add_input_file(self, path, params=None, avinfo=None):
         self.input_files.append(self.InputFile(path, params, avinfo))
