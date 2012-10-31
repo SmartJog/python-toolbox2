@@ -12,6 +12,7 @@ Version 0.7.0~dev
 	* Add closed_gop option to transcode action.
 	* Support demuxing of DNxHD essences in ffmpeg worker.
 	* Read fps value from ffmpeg output.
+	* Support BMX muxer.
 
 Version 0.6.0 Released on 2012/08/06
 

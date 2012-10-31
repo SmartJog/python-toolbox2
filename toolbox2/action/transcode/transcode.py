@@ -5,6 +5,7 @@ import os.path
 
 from toolbox2.action import Action, ActionException
 from toolbox2.action.extract.avinfo_extract import AVInfoAction
+from toolbox2.worker.bmx import Raw2BmxWorker
 from toolbox2.worker.flvtools2 import FLVTool2Worker
 from toolbox2.worker.ffmpeg import FFmpegWorker
 from toolbox2.worker.omneon import OmneonCopyWorker, OmneonQueryWorker
@@ -82,6 +83,9 @@ class TranscodeAction(Action):
 
         if self.muxer == 'ffmpeg' and self.container_reference:
             raise TranscodeException('Reference files are not supported with ffmpeg muxer')
+
+        if self.muxer == 'bmx' and self.container != 'mxf':
+            raise TranscodeException('BMX only support MXF muxing')
 
         self.demux_channels_per_stream = 0
         if self.container == 'mxf':
@@ -191,6 +195,30 @@ class TranscodeAction(Action):
             self.workers.append(ffmpeg)
             self.workers.append(ommcp)
             self.workers.append(ommq)
+
+        # BMX muxer
+        elif self.muxer == 'bmx':
+            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channels_per_stream)
+
+            raw2bmx = self._new_worker(Raw2BmxWorker)
+            for output_file in ffmpeg.output_files:
+                params = {}
+                if output_file.type == 'video':
+                    params['codec'] = self.video_codec
+                elif output_file.type == 'audio':
+                    params['codec'] = self.audio_codec
+                raw2bmx.add_input_file(output_file.path, params)
+
+            base_path = os.path.join(self.tmp_dir, self.input_basename)
+            raw2bmx.set_timecode(avinfo.timecode)
+            raw2bmx.mux(base_path, self.container_options)
+            index = 0
+            for output_file in raw2bmx.output_files:
+                self.add_output_resource(index + 1, {'path': output_file.path})
+                index += 1
+
+            self.workers.append(ffmpeg)
+            self.workers.append(raw2bmx)
 
     def _finalize(self):
         pass

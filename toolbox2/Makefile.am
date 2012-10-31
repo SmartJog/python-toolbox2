@@ -12,6 +12,7 @@ nobase_toolbox2_PYTHON = \
 	action/transcode/__init__.py \
 	action/transcode/transcode.py \
 	worker/__init__.py \
+	worker/bmx.py \
 	worker/flvtools2.py \
 	worker/ffmpeg.py \
 	worker/ffprobe.py \

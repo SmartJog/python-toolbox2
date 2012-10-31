@@ -2,6 +2,7 @@ python-toolbox2 (0.7.0~dev-0) unstable; urgency=low
 
   * New upstream release.
   * Raise dependency on ffmpeg-static (>= 1.0).
+  * Add a recommends on bmx (>= 0.1.2).
 
  -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Wed, 19 Sep 2012 12:09:11 +0200
 
