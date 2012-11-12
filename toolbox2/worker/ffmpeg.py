@@ -549,7 +549,7 @@ class FFmpegWorker(Worker):
 
         self.audio_opts = [
             ('-acodec', 'mp2'),
-            ('-ab', '%sk' % bitrate),
+            ('-b:a', '%sk' % bitrate),
         ]
 
     def transcode_pcm(self, options=None):
