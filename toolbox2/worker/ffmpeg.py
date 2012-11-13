@@ -645,8 +645,12 @@ class FFmpegWorker(Worker):
 
         if avinfo.video_fps in avinfo.FPS_NTSC:
             codec_tag = 'xd5b'
+            if interlaced:
+                self.video_filter_chain.append(('setfield', 'setfield=bff'))
         elif avinfo.video_fps in avinfo.FPS_PAL:
             codec_tag = 'xd5c'
+            if interlaced:
+                self.video_filter_chain.append(('setfield', 'setfield=tff'))
         elif avinfo.video_fps in avinfo.FPS_FILM:
             codec_tag = 'xd5d'
         else:
