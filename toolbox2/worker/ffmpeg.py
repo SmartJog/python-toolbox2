@@ -175,7 +175,7 @@ class FFmpegWorker(Worker):
                     o_stream_map[o_stream_idx]['input_streams'][audio_stream['index']] = audio_stream
                     o_stream_map[o_stream_idx]['input_channels'].append((audio_stream['index'], channel_idx))
                     if channels > channels_left and len(o_stream_map[o_stream_idx]['input_channels']) == o_channels_per_stream:
-                            o_stream_idx += 1
+                        o_stream_idx += 1
 
         filter_chain = ''
         map_chain = []
@@ -331,7 +331,7 @@ class FFmpegWorker(Worker):
                profile['pix_fmt'] == dnxhd_profile['pix_fmt'] and \
                profile['interlaced'] == dnxhd_profile['interlaced'] and \
                abs(profile['fps'] - dnxhd_profile['fps']) < 0.1:
-                   return dnxhd_profile
+                return dnxhd_profile
 
     def transcode_dnxhd(self, options=None):
         if not options:
