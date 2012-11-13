@@ -627,6 +627,7 @@ class FFmpegWorker(Worker):
         bitrate = options.get('bitrate', 50000)
         gop_size = options.get('gop_size', 0)
         closed_gop = options.get('closed_gop', 0)
+        interlaced = options.get('interlaced', 1)
         enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
 
         if not self.input_files:
@@ -656,7 +657,10 @@ class FFmpegWorker(Worker):
                 gop_size = 15
             else:
                 gop_size = 12
-        flags = '+ilme+ildct'
+
+        flags = ''
+        if interlaced:
+            flags += '+ilme+ildct'
         if closed_gop:
             flags += '+cgop'
 
@@ -670,7 +674,6 @@ class FFmpegWorker(Worker):
             ('-bufsize', 36408333),
             ('-bf', 2),
             ('-g', gop_size),
-            ('-flags', flags),
             ('-flags2', 'sgop'),
             ('-intra_vlc', 1),
             ('-non_linear_quant', 1),
@@ -682,6 +685,11 @@ class FFmpegWorker(Worker):
             ('-rc_max_vbv_use', 1),
             ('-s', '1920x1080'),
         ]
+
+        if flags:
+            self.video_opts += [
+                ('-flags', flags),
+            ]
 
         if enable_fourcc_tagging:
             self.video_opts += [
