@@ -503,6 +503,7 @@ class FFmpegWorker(Worker):
         bitrate = options.get('bitrate', 15000)
         pix_fmt = options.get('pix_fmt', 'yuv422p')
         gop_size = options.get('gop_size', 0)
+        closed_gop = options.get('closed_gop', 0)
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -532,6 +533,10 @@ class FFmpegWorker(Worker):
             else:
                 gop_size = 12
 
+        flags = '+ilme+ildct'
+        if closed_gop:
+            flags += '+cgop'
+
         self.video_opts = [
             ('-vcodec', 'mpeg2video'),
             ('-pix_fmt', pix_fmt),
@@ -541,7 +546,7 @@ class FFmpegWorker(Worker):
             ('-bufsize', bufsize),
             ('-bf', 2),
             ('-g', gop_size),
-            ('-flags', '+ilme+ildct'),
+            ('-flags', flags),
             ('-flags2', 'sgop'),
             ('-intra_vlc', 1),
             ('-non_linear_quant', 1),
@@ -616,6 +621,7 @@ class FFmpegWorker(Worker):
             options = {}
         bitrate = options.get('bitrate', 50000)
         gop_size = options.get('gop_size', 0)
+        closed_gop = options.get('closed_gop', 0)
         enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
 
         if not self.input_files:
@@ -645,6 +651,9 @@ class FFmpegWorker(Worker):
                 gop_size = 15
             else:
                 gop_size = 12
+        flags = '+ilme+ildct'
+        if closed_gop:
+            flags += '+cgop'
 
         self.video_opts = []
         self.video_opts += [
@@ -656,7 +665,7 @@ class FFmpegWorker(Worker):
             ('-bufsize', 36408333),
             ('-bf', 2),
             ('-g', gop_size),
-            ('-flags', '+ilme+ildct'),
+            ('-flags', flags),
             ('-flags2', 'sgop'),
             ('-intra_vlc', 1),
             ('-non_linear_quant', 1),
