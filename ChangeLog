@@ -9,6 +9,7 @@ Version 0.7.0~dev
 	* Support more DNxHD transcoding profiles in ffmpeg worker.
 	* Add interlaced option to transcode action.
 	* Add closed_gop option to MPEG2/XDCAMHD transcoding profiles.
+	* Add closed_gop option to transcode action.
 
 Version 0.6.0 Released on 2012/08/06
 
