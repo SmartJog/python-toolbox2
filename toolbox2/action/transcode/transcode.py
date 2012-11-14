@@ -220,5 +220,9 @@ class TranscodeAction(Action):
             self.workers.append(ffmpeg)
             self.workers.append(raw2bmx)
 
+        # Unsupported muxer
+        else:
+            raise TranscodeException('Unsupported muxer: %s' % self.muxer)
+
     def _finalize(self):
         pass
