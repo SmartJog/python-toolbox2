@@ -104,6 +104,10 @@ class FFmpegWorker(Worker):
             ('-timecode', timecode)
         ]
 
+    def set_threads(self, decoding_threads, encoding_threads):
+        self.decoding_threads = decoding_threads
+        self.encoding_threads = encoding_threads
+
     def set_aspect_ratio(self, aspect_ratio):
         self.video_opts = [opt for opt in self.video_opts if opt[0] != '-aspect']
         self.video_opts += [
