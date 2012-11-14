@@ -16,6 +16,7 @@ Version 0.7.0~dev
 	* Handle interlaced option in XDCAMHD transcoding profile.
 	* Update XDCAMHD transcoding profile options in ffmpeg worker.
 	* Set field dominance in XDCAMHD transcoding profile.
+	* Add decoding|encoding_threads options to transcode action.
 
 Version 0.6.0 Released on 2012/08/06
 

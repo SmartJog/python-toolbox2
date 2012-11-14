@@ -57,6 +57,9 @@ class TranscodeAction(Action):
 
         self.muxer = self.params.get('muxer', 'ffmpeg')
 
+        self.decoding_threads = int(self.params.get('decoding_threads', 1))
+        self.encoding_threads = int(self.params.get('encoding_threads', 1))
+
         self.audio_codec_options = {
             'format': self.audio_format,
             'bitrate': self.audio_bitrate,
@@ -114,6 +117,7 @@ class TranscodeAction(Action):
         ffmpeg.add_input_file(self.input_file, {}, avinfo)
         ffmpeg.set_nb_frames(nb_video_frames)
         ffmpeg.set_timecode(avinfo.timecode)
+        ffmpeg.set_threads(self.decoding_threads, self.encoding_threads)
 
         if self.audio_format == 'default':
             if avinfo.audio_format:
