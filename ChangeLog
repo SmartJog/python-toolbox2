@@ -1,4 +1,4 @@
-Version 0.7.0~dev
+Version 0.7.0 Released on 2012/11/23
 
 	* Add audio_format property to AVInfo class.
 	* Try to keep input audio format in transcode action.
