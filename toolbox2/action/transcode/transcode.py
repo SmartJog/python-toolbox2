@@ -41,6 +41,7 @@ class TranscodeAction(Action):
         self.video_gop_size = int(self.params.get('video_gop_size', 0))
         self.video_closed_gop = int(self.params.get('video_closed_gop', 0))
         self.video_interlaced = int(self.params.get('video_interlaced', 1))
+        self.video_resolution = self.params.get('video_resolution', 'default')
 
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
@@ -73,6 +74,7 @@ class TranscodeAction(Action):
             'gop_size': self.video_gop_size,
             'closed_gop': self.video_closed_gop,
             'interlaced': self.video_interlaced,
+            'resolution': self.video_resolution,
         }
 
         self.container_options = {
