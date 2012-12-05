@@ -413,6 +413,7 @@ class FFmpegWorker(Worker):
             options = {}
         bitrate = options.get('bitrate', 1500)
         pix_fmt = options.get('pix_fmt', 'yuv420p')
+        resolution = options.get('resolution', 'default')
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -455,6 +456,11 @@ class FFmpegWorker(Worker):
                 height = 576
             self.video_filter_chain.insert(0,
                 ('crop_vbi', 'crop=720:%s:00:32' % height)
+            )
+
+        if resolution != 'default':
+            self.video_filter_chain.insert(1,
+                ('scale', 'scale=%s' % resolution)
             )
 
     def transcode_imx(self, options=None):
