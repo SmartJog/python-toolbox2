@@ -4,6 +4,7 @@ Version 0.8.0~dev
 	* Add pix_fmt option to simple H264 transcoding profile.
 	* Add resolution option to simple H264 transcoding profile.
 	* Add resolution option to transcode action.
+	* Simplify simple H264 transcoding profile.
 
 Version 0.7.0 Released on 2012/11/23
 
