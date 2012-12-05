@@ -412,6 +412,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         bitrate = options.get('bitrate', 1500)
+        pix_fmt = options.get('pix_fmt', 'yuv420p')
 
         if not self.input_files:
             raise FFmpegWorkerException('No input file specified')
@@ -444,6 +445,7 @@ class FFmpegWorker(Worker):
             ('-trellis', 0),
             ('-refs', 1),
             ('-x264opts', 'partitions=i8x8,i4x4'),
+            ('-pix_fmt', pix_fmt),
         ]
 
         if avinfo.video_has_vbi:
