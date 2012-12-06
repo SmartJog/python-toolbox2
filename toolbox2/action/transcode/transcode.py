@@ -128,6 +128,9 @@ class TranscodeAction(Action):
                 self.audio_format = 's16le'
             self.audio_codec_options['format'] = self.audio_format
 
+        ffmpeg.transcode(self.video_codec, self.video_codec_options)
+        ffmpeg.transcode(self.audio_codec, self.audio_codec_options)
+
         if self.video_aspect_ratio == 'default':
             if avinfo.video_dar == '16:9':
                 ffmpeg.set_aspect_ratio('16:9')
@@ -141,9 +144,6 @@ class TranscodeAction(Action):
 
         if self.video_letterbox:
             ffmpeg.letterbox()
-
-        ffmpeg.transcode(self.video_codec, self.video_codec_options)
-        ffmpeg.transcode(self.audio_codec, self.audio_codec_options)
 
         # FFmpeg muxer
         if self.muxer == 'ffmpeg':
