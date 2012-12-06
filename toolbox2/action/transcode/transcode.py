@@ -132,7 +132,10 @@ class TranscodeAction(Action):
             if avinfo.video_dar == '16:9':
                 ffmpeg.set_aspect_ratio('16:9')
             else:
-                ffmpeg.set_aspect_ratio('4:3')
+                if avinfo.video_is_HD():
+                    ffmpeg.set_aspect_ratio('16:9')
+                else:
+                    ffmpeg.set_aspect_ratio('4:3')
         else:
             ffmpeg.set_aspect_ratio(self.video_aspect_ratio)
 

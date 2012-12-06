@@ -5,6 +5,8 @@ Version 0.8.0~dev
 	* Add resolution option to simple H264 transcoding profile.
 	* Add resolution option to transcode action.
 	* Simplify simple H264 transcoding profile.
+	* Use 16/9 as default display aspect ratio for HD files in trancode
+	  action.
 
 Version 0.7.0 Released on 2012/11/23
 
