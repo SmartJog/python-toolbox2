@@ -219,7 +219,7 @@ class FFmpegWorker(Worker):
         ]
 
         self.video_filter_chain += [
-            ('thumbnail', 'thumbnail'),
+            ('thumbnail', 'select=\'gt(scene,0.4)\''),
         ]
 
     def get_opt(self, opt_name, opt_default=None):

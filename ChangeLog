@@ -10,6 +10,7 @@ Version 0.8.0~dev
 	* Fix display aspect ratio override in transcode action.
 	* Add toolbox2-transcode tool.
 	* Trigger action _callback after worker execution.
+	* Switch thumbnail generation to scene detect filter.
 
 Version 0.7.0 Released on 2012/11/23
 
