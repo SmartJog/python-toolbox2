@@ -1,0 +1,111 @@
+#!/usr/bin/python
+
+import sys
+import logging
+import optparse
+from toolbox2.action.extract.avinfo_extract import AVInfoAction
+from toolbox2.action.transcode.transcode import TranscodeAction
+
+
+def print_progress(action):
+    sys.stdout.write('\rProgress=%d' % action.progress)
+    current_worker = action.workers[action.worker_idx]
+    if hasattr(current_worker, 'fps'):
+        sys.stdout.write(', fps=%s' % current_worker.fps)
+    sys.stdout.flush()
+
+
+def transcode(file_path, conf, clean=False):
+    tmp_path = conf['tmp_path']
+    count_packets = conf['count_packets']
+
+    probe = AVInfoAction(logging, tmp_path, 'probe', {'count_packets': count_packets})
+    probe.add_input_resource(1, {'path': file_path})
+    avinfo = probe.run()
+    nb_video_frames = avinfo.video_streams[0].get('nb_read_packets', 0)
+
+    tmp_dir = '%s_%s_%s_%s%s' % (
+        conf['muxer'],
+        conf['video_codec'],
+        conf['video_bitrate'],
+        conf['container'],
+        '_ref' if conf['container_reference'] else ''
+    )
+
+    transcode = TranscodeAction(logging, tmp_path, tmp_dir, conf)
+    transcode.add_input_resource(1, {'path': file_path, 'nb_video_frames': nb_video_frames})
+    transcode.run(print_progress)
+    sys.stdout.write('\n')
+
+    output_path = transcode.get_output_resource(1).get('path')
+
+    probe = AVInfoAction(logging, tmp_path, 'probe', {'count_packets': count_packets})
+    probe.add_input_resource(1, {'path': output_path})
+    avinfo = probe.run()
+
+    output_nb_video_frames = avinfo.video_streams[0].get('nb_read_packets', 0)
+    if nb_video_frames != output_nb_video_frames:
+        logging.warning('input/output frames count differs: i=%s o=%s', nb_video_frames, output_nb_video_frames)
+
+    if clean:
+        transcode.clean()
+
+
+def parse_opts():
+    options = [
+        {'name': 'count_packets', 'action': 'store_true', 'default': 0, 'help': 'enable packet counting and thus transcode progress'},
+        {'name': 'tmp_path', 'action': 'store', 'default': '/tmp', 'help': 'path of the temporary directory used to store output files'},
+        {'name': 'container', 'action': 'store', 'default': 'mxf', 'help': 'container type: mxf, mov, mp4, flv'},
+        {'name': 'container_reference', 'default': 0, 'action':'store_true', 'help':'enable container reference files'},
+        {'name': 'container_hinting', 'default': 0, 'action':'store_true', 'help': 'enable container hinting for streaming'},
+        {'name': 'container_mapping', 'default':'default', 'action':'store', 'help':'container mapping: default, d10, rdd9'},
+        {'name': 'container_version', 'default':'default', 'action':'store', 'help': 'container version: default, qt6, qt7'},
+        {'name': 'video_codec', 'default':'imx', 'action':'store', 'help':'video codec: mpeg2video, imx, xdcamhd, dnxhd, simple_h264'},
+        {'name': 'video_bitrate', 'default': 50000, 'action':'store', 'help':'video bitrate in kbit/s'},
+        {'name': 'video_pix_fmt', 'default':'yuv422p', 'action':'store', 'help':'video pixel format: yuv411p, yuv420p, yuv422p, yuv422p10le'},
+        {'name': 'video_letterbox', 'default': 0, 'action':'store_true', 'help':'enable video letterboxing'},
+        {'name': 'video_aspect_ratio', 'default':'default', 'action':'store', 'help':'video aspect ratio: default, 4:3, 16:9'},
+        {'name': 'video_gop_size', 'default': 0, 'action': 'store', 'help': 'video gop size: 0, 12, 15'},
+        {'name': 'video_closed_gop', 'default': 0, 'action': 'store_true', 'help': 'enable closed gop'},
+        {'name': 'video_interlaced', 'default': 1, 'action': 'store', 'help': 'enable or disable interlaced mode: 0, 1'},
+        {'name': 'video_resolution', 'default': 'default', 'action': 'store', 'help': 'force output resolution'},
+        {'name': 'audio_codec', 'default':'pcm', 'action':'store', 'help':'audio codec: pcm, mpeg2audio, aac'},
+        {'name': 'audio_bitrate', 'default': 0, 'action':'store', 'help':'audio bitrate in kbit/s'},
+        {'name': 'audio_format', 'default':'default', 'action':'store', 'help':'audio format: s16le, s24le, s16be'},
+        {'name': 'audio_sample_rate', 'default': 48000, 'action':'store', 'help':'audio sample rate: 44100 48000, 96000'},
+        {'name': 'muxer', 'default':'ffmpeg', 'action':'store', 'help':'muxing library to use: ffmpeg, omneon, bmx'},
+        {'name': 'decoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to decode'},
+        {'name': 'encoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to encode'},
+    ]
+
+    formatter = optparse.IndentedHelpFormatter(max_help_position=60, width=120)
+    option_parser = optparse.OptionParser(usage='%prog [options] input_file', formatter=formatter)
+    for option in options:
+        long_option = '--%s' % option.get('name').replace('_', '-')
+        option_parser.add_option(long_option,
+                                 dest=option['name'],
+                                 action=option['action'],
+                                 help=option['help'],
+                                 default=option['default'])
+
+    opts, args = option_parser.parse_args()
+
+    ret = {}
+    for option in options:
+        ret[option['name']] = getattr(opts, option['name'])
+    if not args:
+        option_parser.print_help()
+        return None, None
+    return args[0], ret
+
+
+def main():
+    logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+    input_file, settings = parse_opts()
+    if not input_file or not settings:
+        sys.exit(1)
+    transcode(input_file, settings)
+
+
+if __name__ == '__main__':
+    main()

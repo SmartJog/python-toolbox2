@@ -8,6 +8,7 @@ Version 0.8.0~dev
 	* Use 16/9 as default display aspect ratio for HD files in trancode
 	  action.
 	* Fix display aspect ratio override in transcode action.
+	* Add toolbox2-transcode tool.
 
 Version 0.7.0 Released on 2012/11/23
 
