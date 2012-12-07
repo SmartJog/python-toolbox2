@@ -137,6 +137,9 @@ class Action(object):
         if ret != 0:
             raise WorkerException(worker.get_error())
 
+        worker.progress = 100
+        self._callback(worker, callback)
+
     def _callback(self, worker, user_callback):
         """
         Execute user defined callback.
