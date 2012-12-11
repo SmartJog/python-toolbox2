@@ -147,9 +147,6 @@ class AVInfoAction(Action):
         self.do_count_frames = self.params.get('count_frames', False)
         self.do_count_packets = self.params.get('count_packets', False)
 
-    def _check(self):
-        pass
-
     def _setup(self):
 
         self.input_file = self.get_input_resource(1).get('path')
