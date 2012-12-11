@@ -213,7 +213,18 @@ class FFmpegWorker(Worker):
                 map_chain.append(('-map', '[m%s]' % (index)))
         return (filter_chain.rstrip(';'), map_chain)
 
-    def make_thumbnail(self):
+    def make_thumbnail(self, options=None):
+        if not options:
+            options = {}
+        width = options.get('width', 0)
+
+        if not self.input_files:
+            raise FFmpegWorkerException('No input file specified')
+
+        avinfo = self.input_files[0].avinfo
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+
         self.video_opts += [
             ('-frames:v', 1),
         ]
@@ -221,6 +232,25 @@ class FFmpegWorker(Worker):
         self.video_filter_chain += [
             ('thumbnail', 'select=\'gt(scene,0.4)\''),
         ]
+
+        if width:
+            vals = avinfo.video_dar.split(':')
+            if len(vals) != 2:
+                raise FFmpegWorkerException('Invalid input aspect ratio: %s' % avinfo.video_dar)
+            num = int(vals[0])
+            den = int(vals[1])
+            if not num or not den:
+                if avinfo.video_is_HD():
+                    num = 16
+                    den = 9
+                else:
+                    num = 4
+                    den = 3
+            height = int(width * den / num)
+            resolution = '%sx%s' % (width, height)
+            self.video_filter_chain += [
+                ('scale', 'scale=%s' % resolution),
+            ]
 
     def get_opt(self, opt_name, opt_default=None):
         for opts in [self.video_opts, self.audio_opts, self.format_opts]:
