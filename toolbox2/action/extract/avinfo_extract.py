@@ -204,4 +204,3 @@ class AVInfoAction(Action):
     def run(self, callback=None):
         Action.run(self, callback)
         return AVInfo(self.get_metadata())
-
