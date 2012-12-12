@@ -156,6 +156,17 @@ class FFmpegWorker(Worker):
 
         return extension
 
+    def _get_input_avinfo(self, index=0):
+        try:
+            avinfo = self.input_files[index].avinfo
+        except IndexError:
+            raise FFmpegWorkerException('No input file specified at index: %d' % index)
+
+        if not avinfo:
+            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[index].path)
+
+        return avinfo
+
     @staticmethod
     def get_audio_layout_mapping(avinfo, o_channels_per_stream=2):
 
@@ -217,13 +228,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         width = options.get('width', 0)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.video_opts += [
             ('-frames:v', 1),
@@ -266,13 +271,8 @@ class FFmpegWorker(Worker):
         return opt_default
 
     def demux(self, basedir, channels_per_stream=0):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         # Reset ouput_files
         self.output_files = []
@@ -374,13 +374,7 @@ class FFmpegWorker(Worker):
         bitrate_m = bitrate / 1000
         pix_fmt = options.get('pix_fmt', 'yuv422p')
         interlaced = options.get('interlaced', 1)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         if not avinfo.video_is_HD():
             raise FFmpegWorkerException('DNxHD transcode does not support input at %s, only 1920x1080 is supported' % avinfo.video_res)
@@ -413,13 +407,7 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         pix_fmt = options.get('pix_fmt', 'yuv422p')
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         if not avinfo.video_is_SD_PAL() and not avinfo.video_is_SD_NTSC():
             raise FFmpegWorkerException('DV codec only supports PAL and NTSC resolutions')
@@ -444,13 +432,7 @@ class FFmpegWorker(Worker):
         bitrate = options.get('bitrate', 1500)
         pix_fmt = options.get('pix_fmt', 'yuv420p')
         resolution = options.get('resolution', 'default')
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.video_opts = [
             ('-vcodec', 'libx264'),
@@ -485,13 +467,7 @@ class FFmpegWorker(Worker):
             options = {}
         bitrate = options.get('bitrate', 50000)
         enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         codec_tag = None
         bufsize = 0
@@ -567,13 +543,7 @@ class FFmpegWorker(Worker):
         pix_fmt = options.get('pix_fmt', 'yuv422p')
         gop_size = options.get('gop_size', 0)
         closed_gop = options.get('closed_gop', 0)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         bufsize = bitrate * 65536 / 90 - 5000
         if pix_fmt == 'yuv422p':
@@ -638,18 +608,12 @@ class FFmpegWorker(Worker):
     def transcode_mpeg2audio(self, options=None):
         if not options:
             options = {}
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        bitrate = options.get('bitrate', 0)
+        avinfo = self._get_input_avinfo()
 
         if not avinfo.audio_streams:
             return
 
-        bitrate = options.get('bitrate', 0)
         if bitrate == 0:
             if avinfo.audio_streams[0].get('sample_rate', 48000) < 44100:
                 bitrate = '128'
@@ -666,13 +630,7 @@ class FFmpegWorker(Worker):
             options = {}
         audio_format = options.get('format', 's16le')
         sample_rate = options.get('sample_rate', 48000)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.audio_opts += [
             ('-acodec', 'pcm_%s' % audio_format),
@@ -687,13 +645,7 @@ class FFmpegWorker(Worker):
         closed_gop = options.get('closed_gop', 0)
         interlaced = options.get('interlaced', 1)
         enable_fourcc_tagging = options.get('enable_fourcc_tagging', False)
-
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input file: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         if avinfo.video_res != avinfo.RES_HD:
             raise FFmpegWorkerException('XDCAMHD transcode does not support input at %s, only 1920x1080 is supported' % avinfo.video_res)
@@ -764,13 +716,8 @@ class FFmpegWorker(Worker):
         return method(options)
 
     def mux_flv(self, basedir, options=None):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'flv')]
@@ -784,13 +731,8 @@ class FFmpegWorker(Worker):
         self.add_output_file(path)
 
     def mux_mpegps(self, basedir, options=None):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         acodec = self.get_opt_value('acodec', 'mp2')
         vcodec = self.get_opt_value('vcodec', 'mpeg2video')
@@ -813,13 +755,8 @@ class FFmpegWorker(Worker):
         self.add_output_file(path)
 
     def mux_mpeg4(self, basedir, options=None):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'mp4')]
@@ -837,13 +774,8 @@ class FFmpegWorker(Worker):
             options = {}
         mapping = options.get('mapping', 'default')
 
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         audio_rate = self.get_opt_value('-ar')
         if not audio_rate:
@@ -872,13 +804,8 @@ class FFmpegWorker(Worker):
         self.add_output_file(path)
 
     def mux_mov(self, basedir, options=None):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No avinfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         if self.mov_imx_header:
@@ -890,13 +817,8 @@ class FFmpegWorker(Worker):
         self.add_output_file(path)
 
     def mux_gxf(self, basedir, options=None):
-        if not self.input_files:
-            raise FFmpegWorkerException('No input file specified')
-
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No avinfo specified for input fi1e: %s' % self.input_files[0].path)
+        avinfo = self._get_input_avinfo()
 
         self.format_opts += [('-f', 'gxf')]
         self.video_opts += [('-map', '0:v')]
@@ -916,13 +838,7 @@ class FFmpegWorker(Worker):
         return method(basedir, options)
 
     def letterbox(self):
-        if not len(self.input_files) > 0:
-            raise FFmpegWorkerException('No input file specified')
-
-        avinfo = self.input_files[0].avinfo
-        if not avinfo:
-            raise FFmpegWorkerException('No AVInfo specified for input fi1e: %s' % self.input_files[0].path)
-
+        avinfo = self._get_input_avinfo()
         if not avinfo.video_is_SD_NTSC() and not avinfo.video_is_SD_PAL():
             raise FFmpegWorkerException('SD Letterboxing only supports input at PAL or NTSC resolutions')
 
