@@ -60,7 +60,6 @@ class Action(object):
 
         self.workers = []
         self.worker_idx = 0
-        self.worker_count = 1
 
         self.progress = 0
         self.running_time = 0
@@ -105,7 +104,6 @@ class Action(object):
         :param callback: user defined callback called every loop interval.
         :type calback: callable(action)
         """
-        self.worker_count = len(self.workers)
         for self.worker_idx, worker in enumerate(self.workers):
             self._execute_worker(worker, callback)
 
@@ -128,7 +126,7 @@ class Action(object):
         while ret is None:
             ret = worker.wait_noloop()
             # Fetch progress from worker
-            self.progress = worker.progress / self.worker_count + (math.ceil(self.worker_idx) / self.worker_count) * 100
+            self.progress = (worker.progress + 100 * self.worker_idx) / len(self.workers)
             self.progress = int(self.progress)
             self.running_time = time.time() - self.started_at
             if (time.time() - self.last_callback) > self.callback_interval:
