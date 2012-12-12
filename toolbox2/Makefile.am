@@ -6,7 +6,6 @@ nobase_toolbox2_PYTHON = \
 	action/extract/__init__.py \
 	action/extract/avinfo_extract.py \
 	action/extract/kttoolbox_extract.py \
-	action/extract/videoparser_extract.py \
 	action/rewrap/__init__.py \
 	action/rewrap/manzanita_rewrap.py \
 	action/transcode/__init__.py \
