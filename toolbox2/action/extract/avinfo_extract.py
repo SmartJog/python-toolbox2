@@ -148,52 +148,45 @@ class AVInfoAction(Action):
         self.do_count_packets = self.params.get('count_packets', False)
 
     def _setup(self):
-
         self.input_file = self.get_input_resource(1).get('path')
         self.thumbnail = os.path.join(self.tmp_dir, 'thumbnail.jpg')
 
+    def _execute(self, callback=None):
         self.probe_worker = self._new_worker(FFprobeWorker)
         self.probe_worker.add_input_file(self.input_file)
         self.workers.append(self.probe_worker)
+        self.worker_idx = 0
+        self._execute_worker(self.probe_worker, callback)
+        self.update_metadata(self.probe_worker.metadata)
+        avinfo = AVInfo(self.probe_worker.metadata)
 
-        if self.do_thumbnail:
+        has_video_streams = len(avinfo.video_streams) > 0
+
+        if has_video_streams and self.do_thumbnail:
             self.ffmpeg_worker = self._new_worker(FFmpegWorker)
-            self.ffmpeg_worker.add_input_file(self.input_file)
+            self.ffmpeg_worker.add_input_file(self.input_file, {}, avinfo)
             self.ffmpeg_worker.add_output_file(self.thumbnail)
             self.ffmpeg_worker.make_thumbnail()
+
             self.workers.append(self.ffmpeg_worker)
+            self.worker_idx = 1
+            self._execute_worker(self.ffmpeg_worker, callback)
+            self.update_metadata({'thumbnail': self.thumbnail})
             self.add_output_resource('thumbnail', self.thumbnail)
 
-        if self.do_count_frames or self.do_count_packets:
+        if has_video_streams and (self.do_count_frames or self.do_count_packets):
             self.probe2_worker = self._new_worker(FFprobeWorker)
             self.probe2_worker.add_input_file(self.input_file)
             if self.do_count_packets:
                 self.probe2_worker.count_packets()
             if self.do_count_frames:
                 self.probe2_worker.count_frames()
+
             self.workers.append(self.probe2_worker)
-
-    def _callback(self, worker, user_callback):
-        if worker in [self.probe_worker, self.probe2_worker]:
-            self.update_metadata(worker.metadata)
-        Action._callback(self, worker, user_callback)
-
-    def _execute(self, callback):
-        has_video_streams = False
-        self.worker_count = len(self.workers)
-        for self.worker_idx, worker in enumerate(self.workers):
-
-            # If no video streams are detected, skip thumbnail
-            if not has_video_streams and worker == self.ffmpeg_worker:
-                continue
-
-            self._execute_worker(worker, callback)
-            if worker == self.probe_worker:
-                has_video_streams = self.probe_worker.metadata['format']['nb_video_streams'] > 0
-            elif worker == self.ffmpeg_worker:
-                self.update_metadata({
-                    'thumbnail': self.thumbnail,
-                })
+            self.worker_idx = 2
+            self.workers.append(self.probe2_worker)
+            self._execute_worker(self.probe2_worker, callback)
+            self.update_metadata(self.probe2_worker.metadata)
 
         self.progress = 100
         self._callback(self.workers[-1], callback)
