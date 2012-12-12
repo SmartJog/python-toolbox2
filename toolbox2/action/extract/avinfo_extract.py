@@ -147,6 +147,10 @@ class AVInfoAction(Action):
         self.do_count_frames = self.params.get('count_frames', False)
         self.do_count_packets = self.params.get('count_packets', False)
 
+        self.thumbnail_options = {
+            'width': int(self.params.get('thumbnail_width', 0)),
+        }
+
     def _setup(self):
         self.input_file = self.get_input_resource(1).get('path')
         self.thumbnail = os.path.join(self.tmp_dir, 'thumbnail.jpg')
@@ -166,7 +170,7 @@ class AVInfoAction(Action):
             self.ffmpeg_worker = self._new_worker(FFmpegWorker)
             self.ffmpeg_worker.add_input_file(self.input_file, {}, avinfo)
             self.ffmpeg_worker.add_output_file(self.thumbnail)
-            self.ffmpeg_worker.make_thumbnail()
+            self.ffmpeg_worker.make_thumbnail(self.thumbnail_options)
 
             self.workers.append(self.ffmpeg_worker)
             self.worker_idx = 1

@@ -12,6 +12,7 @@ Version 0.8.0~dev
 	* Trigger action _callback after worker execution.
 	* Switch thumbnail generation to scene detect filter.
 	* Add width option to make_thumbnail method in ffmpeg worker.
+	* Add thumbnail_width option to avinfo_extract action.
 
 Version 0.7.0 Released on 2012/11/23
 
