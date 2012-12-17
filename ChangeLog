@@ -1,4 +1,4 @@
-Version 0.8.0~dev
+Version 0.8.0 Released on 2012/12/17
 
 	* Support DV codec in ffmpeg worker.
 	* Add pix_fmt option to simple H264 transcoding profile.
