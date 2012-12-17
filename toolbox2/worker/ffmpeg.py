@@ -248,9 +248,12 @@ class FFmpegWorker(Worker):
                 if avinfo.video_is_HD():
                     num = 16
                     den = 9
-                else:
+                elif avinfo.video_is_SD_PAL() or avinfo.video_is_SD_NTSC():
                     num = 4
                     den = 3
+                else:
+                    num = avinfo.video_streams[0]['width']
+                    den = avinfo.video_streams[0]['height']
             height = int(width * den / num)
             resolution = '%sx%s' % (width, height)
             self.video_filter_chain += [
