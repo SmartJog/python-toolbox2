@@ -148,7 +148,8 @@ class Worker(object):
         self.log.info('Running command: %s', cmd)
 
         self.command = Command(base_dir)
-        self.command.run(args, self.memory_limit)
+        self.command.memory_limit = self.memory_limit
+        self.command.run(args)
 
         self.is_running = True
 

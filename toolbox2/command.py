@@ -46,8 +46,7 @@ class Command(object):
         self._reset_sigpipe_handler()
         self._set_memory_limit()
 
-    def run(self, args, memory_limit=0):
-        self.memory_limit = memory_limit
+    def run(self, args):
         if (os.path.isdir(self.base_dir) == False):
             os.makedirs(self.base_dir)
 
