@@ -78,6 +78,8 @@ class Command(object):
                                                     self.timeout)
 
             if not file_r and not file_w and not file_x:
+                if callback:
+                    callback('', '')
                 if (time.time() - self.last_read) > self.kill_timeout:
                     self.process.kill()
                     raise CommandException('Process (pid = %s) has timed out' %
@@ -92,9 +94,8 @@ class Command(object):
                         stdout = buf
                     elif _file == self.process.stderr:
                         stderr = buf
-                if stdout != '' or stderr != '':
-                    if callback:
-                        callback(stdout, stderr)
+                if callback:
+                    callback(stdout, stderr)
             if not loop:
                 break
 
