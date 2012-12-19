@@ -160,7 +160,7 @@ class AVInfoAction(Action):
         self.probe_worker.add_input_file(self.input_file)
         self.workers.append(self.probe_worker)
         self.worker_idx = 0
-        self._execute_worker(self.probe_worker, callback)
+        self._execute_current_worker(callback)
         self.update_metadata(self.probe_worker.metadata)
         avinfo = AVInfo(self.probe_worker.metadata)
 
@@ -174,7 +174,7 @@ class AVInfoAction(Action):
 
             self.workers.append(self.ffmpeg_worker)
             self.worker_idx = 1
-            self._execute_worker(self.ffmpeg_worker, callback)
+            self._execute_current_worker(callback)
             self.update_metadata({'thumbnail': self.thumbnail})
             self.add_output_resource('thumbnail', self.thumbnail)
 
@@ -189,11 +189,11 @@ class AVInfoAction(Action):
             self.workers.append(self.probe2_worker)
             self.worker_idx = 2
             self.workers.append(self.probe2_worker)
-            self._execute_worker(self.probe2_worker, callback)
+            self._execute_current_worker(callback)
             self.update_metadata(self.probe2_worker.metadata)
 
         self.progress = 100
-        self._callback(self.workers[-1], callback)
+        self._callback(callback)
 
     def _finalize(self):
         pass

@@ -104,15 +104,16 @@ class Action(object):
         :param callback: user defined callback called every loop interval.
         :type calback: callable(action)
         """
-        for self.worker_idx, worker in enumerate(self.workers):
-            self._execute_worker(worker, callback)
+        for self.worker_idx, _ in enumerate(self.workers):
+            self._execute_current_worker(callback)
 
         self.progress = 100
-        self._callback(self.workers[-1], callback)
+        self._callback(callback)
 
-    def _execute_worker(self, worker, callback=None):
+    def _execute_current_worker(self, callback=None):
         """
-        Execute a worker, update progress, and launch callback.
+        Execute current worker designed by worker_idx, update progress,
+        and launch callback.
 
         :param worker: worker to execute
         :type worker: toolbox2.worker.Worker
@@ -120,32 +121,40 @@ class Action(object):
         :param callback: user defined callback called every loop interval.
         :type calback: callable(action)
         """
+        worker = self.workers[self.worker_idx]
         worker.run(self.tmp_dir)
 
         ret = None
         while ret is None:
             ret = worker.wait_noloop()
-            # Fetch progress from worker
-            self.progress = (worker.progress + 100 * self.worker_idx) / len(self.workers)
-            self.progress = int(self.progress)
+            self._update_progress()
             self.running_time = time.time() - self.started_at
             if (time.time() - self.last_callback) > self.callback_interval:
                 self.last_callback = time.time()
-                self._callback(worker, callback)
+                self._callback(callback)
         if ret != 0:
             raise WorkerException(worker.get_error())
 
         worker.progress = 100
-        self._callback(worker, callback)
+        self._update_progress()
+        self._callback(callback)
 
-    def _callback(self, worker, user_callback):
+
+    def _update_progress(self):
+        """
+        Update action progress.
+
+        :param worker: current worker being executed
+        :type worker: toolbox2.worker.Worker
+        """
+        worker = self.workers[self.worker_idx]
+        self.progress = int((worker.progress + 100 * self.worker_idx) / len(self.workers))
+
+    def _callback(self, user_callback):
         """
         Execute user defined callback.
         Overload this method is you want to update action metadata
         with current worker metadata for example.
-
-        :param worker: current worker being executed
-        :type worker: toolbox2.worker.Worker
 
         :param user_callback: user defined callback to execute
         :type user_callback: callable(action)
