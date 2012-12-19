@@ -40,6 +40,14 @@ class Raw2BmxWorker(Worker):
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.tool = 'raw2bmx'
+        self.inputs_size = 0
+
+    def _handle_output(self, stdout, stderr):
+        Worker._handle_output(self, stdout, stderr)
+        if self.inputs_size:
+            output_size = os.stat(self.output_files[0].path).st_size
+            if output_size:
+                self.progress = output_size * 100 / self.inputs_size
 
     def add_output_file(self, path, params=None):
         if len(self.output_files) > 0:
@@ -55,6 +63,7 @@ class Raw2BmxWorker(Worker):
 
         for input_file in self.input_files:
             args += input_file.get_args()
+            self.inputs_size += os.stat(input_file.path).st_size
 
         return args
 

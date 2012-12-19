@@ -3,6 +3,7 @@ Version 0.9.0~dev
 	* Drop Action._execute_worker in favor of Action._execute_current_worker.
 	* Call command callback even if there is no output data read from standard
 	  outputs, refs: #6583.
+	* Compute progress in bmx worker, closes: #6583.
 
 Version 0.8.1 Released on 2013/01/16
 
