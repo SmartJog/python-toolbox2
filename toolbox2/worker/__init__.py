@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from toolbox2.command import Command
+from toolbox2.command import COMMAND_DEFAULT_KILL_TIMEOUT
 from toolbox2.exception import Toolbox2Exception
 
 
@@ -46,6 +47,7 @@ class Worker(object):
         self.timeleft = 0
         self.progress = 0
         self.memory_limit = 0
+        self.kill_timeout = COMMAND_DEFAULT_KILL_TIMEOUT
 
         self.stdout = ''
         self.stderr = ''
@@ -149,6 +151,7 @@ class Worker(object):
 
         self.command = Command(base_dir)
         self.command.memory_limit = self.memory_limit
+        self.command.kill_timeout = self.kill_timeout
         self.command.run(args)
 
         self.is_running = True
