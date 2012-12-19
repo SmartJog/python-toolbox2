@@ -40,6 +40,7 @@ class Raw2BmxWorker(Worker):
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
         self.tool = 'raw2bmx'
+        self.kill_timeout = 5 * 3600
         self.inputs_size = 0
 
     def _handle_output(self, stdout, stderr):

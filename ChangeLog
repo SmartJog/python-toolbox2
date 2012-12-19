@@ -6,6 +6,7 @@ Version 0.9.0~dev
 	* Compute progress in bmx worker, closes: #6583.
 	* Remove memory_limit from Command.run arguments.
 	* Let the worker specify the command kill timeout.
+	* Increase kill timeout limit to 5 hours for the bmx worker.
 
 Version 0.8.1 Released on 2013/01/16
 
