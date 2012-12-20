@@ -1,6 +1,6 @@
 python-toolbox2 (0.9.0~dev-1) unstable; urgency=low
 
-  * New upstream release, closes: #6583.
+  * New upstream release, closes: #6582, #6583.
 
  -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 20 Dec 2012 17:31:37 +0100
 

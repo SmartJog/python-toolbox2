@@ -68,6 +68,30 @@ Enable interlaced mode: 0, 1.
 : --**video-resolution** resolution
 Force ouput resolution. This option is only valid for the simple_h264 codec.
 
+: --**video-burn**
+Enable text and timecode burning.
+
+: --**video-burn-box**
+Add a black background.
+
+: --**video-burn-text** text
+Burn specified text.
+
+: --**video-burn-timecode**
+Enable timecode burning.
+
+: --**video-burn-position** position
+Burning position: center, top-left, top-center, top-right, bottom-left, [...], x=200:y=200.
+
+: --**video-burn-fontsize** fontsize
+Burn font size.
+
+: --**video-burn-fontname** fontname
+Burn font name: vera.
+
+: --**video-burn-padding** padding
+Burn padding in pixel: 10, ...
+
 : --**audio-codec** codec
 Audio codec: pcm, aac.
 
