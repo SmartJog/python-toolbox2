@@ -13,7 +13,6 @@ nobase_toolbox2_PYTHON = \
 	worker/__init__.py \
 	worker/bmx.py \
 	worker/flvtools2.py \
-	worker/ffmpeg.py \
 	worker/ffprobe.py \
 	worker/kttoolbox.py \
 	worker/manzanita.py \
@@ -21,10 +20,10 @@ nobase_toolbox2_PYTHON = \
 	worker/qtfaststart.py \
 	worker/videoparser.py
 
-nobase_nodist_toolbox2_PYTHON = action/__init__.py
+nobase_nodist_toolbox2_PYTHON = action/__init__.py worker/ffmpeg.py
 
 edit = $(SED) \
-	-e 's|@sysconfdir[@]|$(sysconfdir)|g'
+	-e 's|@sysconfdir[@]|$(sysconfdir)|g;s|@fontspkgdatadir[@]|$(fontspkgdatadir)|g'
 
 $(nobase_nodist_toolbox2_PYTHON): $(nobase_nodist_toolbox2_PYTHON:=.in) Makefile
 	$(edit) $(srcdir)/$@.in > $(builddir)/$@
