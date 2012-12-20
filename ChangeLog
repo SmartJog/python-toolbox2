@@ -9,6 +9,7 @@ Version 0.9.0~dev
 	* Increase kill timeout limit to 5 hours for the bmx worker.
 	* Support text and timecode burning through drawtext method in
 	  ffmpeg worker, refs: #6582.
+	* Support text and timecode burning in transcode action, refs: #6582.
 
 Version 0.8.1 Released on 2013/01/16
 

@@ -42,6 +42,7 @@ class TranscodeAction(Action):
         self.video_closed_gop = int(self.params.get('video_closed_gop', 0))
         self.video_interlaced = int(self.params.get('video_interlaced', 1))
         self.video_resolution = self.params.get('video_resolution', 'default')
+        self.video_burn = int(self.params.get('video_burn', 0))
 
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
@@ -81,6 +82,16 @@ class TranscodeAction(Action):
             'mapping': self.container_mapping,
             'version': self.container_version,
             'reference': self.container_reference,
+        }
+
+        self.burn_options = {
+            'box': int(self.params.get('video_burn_box', 0)),
+            'text': self.params.get('video_burn_text', ''),
+            'timecode': int(self.params.get('video_burn_timecode', 0)),
+            'position': self.params.get('video_burn_position', 'center'),
+            'fontname': self.params.get('video_burn_fontname', 'vera'),
+            'fontsize': int(self.params.get('video_burn_fontsize', 12)),
+            'padding': int(self.params.get('video_burn_padding', 10)),
         }
 
         if not os.path.isdir(self.container_abs_essence_dir):
@@ -144,6 +155,9 @@ class TranscodeAction(Action):
 
         if self.video_letterbox:
             ffmpeg.letterbox()
+
+        if self.video_burn:
+            ffmpeg.drawtext(self.burn_options)
 
         # FFmpeg muxer
         if self.muxer == 'ffmpeg':
