@@ -14,6 +14,7 @@ Version 0.9.0~dev
 	* Make FFmpegWorker._get_audio_layout_mapping a private method.
 	* Use _get_audio_layout_mapping in mux_gxf method in ffmpeg worker.
 	* Support minimum audio stream requirements in ffmpeg worker.
+	* Add audio_min_streams option to transcode action.
 
 Version 0.8.1 Released on 2013/01/16
 

@@ -48,6 +48,7 @@ class TranscodeAction(Action):
         self.audio_format = self.params.get('audio_format', 'default')
         self.audio_sample_rate = int(self.params.get('audio_sample_rate', 48000))
         self.audio_bitrate = int(self.params.get('audio_bitrate', 0))
+        self.audio_min_streams = self.params.get('audio_min_streams')
 
         self.container = self.params.get('container', 'mxf')
         self.container_mapping = self.params.get('container_mapping', 'default')
@@ -129,6 +130,7 @@ class TranscodeAction(Action):
         ffmpeg = self._new_worker(FFmpegWorker)
         ffmpeg.add_input_file(self.input_file, {}, avinfo)
         ffmpeg.set_nb_frames(nb_video_frames)
+        ffmpeg.set_audio_min_streams(self.audio_min_streams)
         ffmpeg.set_timecode(avinfo.timecode)
         ffmpeg.set_threads(self.decoding_threads, self.encoding_threads)
         ffmpeg.set_channels_per_stream(self.demux_channels_per_stream)
