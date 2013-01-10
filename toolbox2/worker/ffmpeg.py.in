@@ -72,6 +72,7 @@ class FFmpegWorker(Worker):
         self.video_filter_chain = []
         self.audio_filter_chain = []
         self.channels_per_stream = 0
+        self.audio_min_streams = None
         self.keep_vbi_lines = False
         self.mov_imx_header = False
         self.decoding_threads = 1
@@ -96,6 +97,9 @@ class FFmpegWorker(Worker):
 
     def add_output_file(self, path, params=None, output_type='mixed'):
         self.output_files.append(self.OutputFile(path, params, output_type))
+
+    def set_audio_min_streams(self, audio_min_streams):
+        self.audio_min_streams = audio_min_streams
 
     def set_nb_frames(self, nb_frames):
         self.nb_frames = nb_frames
@@ -181,8 +185,11 @@ class FFmpegWorker(Worker):
 
         o_stream_idx = 0
         o_stream_map = defaultdict(output_stream_dict)
+        i_channels_per_stream = self.channels_per_stream
         for audio_stream in avinfo.audio_streams:
             channels = audio_stream['channels']
+            if not i_channels_per_stream:
+                i_channels_per_stream = channels
             if self.channels_per_stream > 0:
                 channels_left = self.channels_per_stream - len(o_stream_map[o_stream_idx]['input_channels'])
             else:
@@ -228,6 +235,32 @@ class FFmpegWorker(Worker):
                 filter_chain += filter_merge
                 filter_chain += 'amerge=inputs=%s[m%s];' % (len(output_stream['input_channels']), index)
                 map_chain.append(('-map', '[m%s]' % (index)))
+
+        if self.audio_min_streams and not self.nb_frames:
+            raise FFmpegWorkerException('audio_min_streams option requires input file nb frames to be computed')
+        else:
+            if not self.audio_min_streams:
+                self.audio_min_streams = (len(o_stream_map), )
+
+            min_streams = len(o_stream_map)
+            for val in self.audio_min_streams:
+                if min_streams <= val:
+                    min_streams = val
+                    break
+
+            empty_streams = min_streams - len(o_stream_map)
+            if empty_streams < 0:
+                empty_streams = 0
+
+            if not i_channels_per_stream:
+                i_channels_per_stream = 2
+
+            duration = round(self.nb_frames / avinfo.video_fps, 2)
+
+            for index in range(empty_streams):
+                filter_chain += 'aevalsrc=%s:n=480:s=48000:d=%s[null%s];' % ('0:' * i_channels_per_stream, duration, index)
+                map_chain.append(('-map', '[null%s]' % index))
+
         return (filter_chain.rstrip(';'), map_chain)
 
     def make_thumbnail(self, options=None):
