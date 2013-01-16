@@ -1,3 +1,8 @@
+Version 0.8.1~dev
+
+	* Rename transcode_mpeg4 method to transcode_mp4 in ffmpeg worker,
+	  closes: #6552.
+
 Version 0.8.0 Released on 2012/12/17
 
 	* Support DV codec in ffmpeg worker.

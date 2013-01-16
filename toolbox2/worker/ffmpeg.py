@@ -757,7 +757,7 @@ class FFmpegWorker(Worker):
         path = '%s%s' % (os.path.join(basedir, basename), '.mpg')
         self.add_output_file(path)
 
-    def mux_mpeg4(self, basedir, options=None):
+    def mux_mp4(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
         avinfo = self._get_input_avinfo()
 
