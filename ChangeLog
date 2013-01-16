@@ -1,4 +1,4 @@
-Version 0.8.1~dev
+Version 0.8.1 Released on 2013/01/16
 
 	* Rename transcode_mpeg4 method to transcode_mp4 in ffmpeg worker,
 	  closes: #6552.
