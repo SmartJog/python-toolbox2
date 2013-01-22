@@ -11,6 +11,7 @@ Version 0.9.0~dev
 	  ffmpeg worker, refs: #6582.
 	* Support text and timecode burning in transcode action, refs: #6582.
 	* Support text and timecode burning in toolbox2-transcode, closes: #6582.
+	* Make FFmpegWorker._get_audio_layout_mapping a private method.
 
 Version 0.8.1 Released on 2013/01/16
 

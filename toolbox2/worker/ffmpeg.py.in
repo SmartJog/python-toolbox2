@@ -71,6 +71,7 @@ class FFmpegWorker(Worker):
         self.format_opts = self.params.get('format_opts', [])
         self.video_filter_chain = []
         self.audio_filter_chain = []
+        self.channels_per_stream = 0
         self.keep_vbi_lines = False
         self.mov_imx_header = False
         self.decoding_threads = 1
@@ -114,6 +115,9 @@ class FFmpegWorker(Worker):
         self.video_opts += [
             ('-aspect', aspect_ratio)
         ]
+
+    def set_channels_per_stream(self, channels_per_stream):
+        self.channels_per_stream = channels_per_stream
 
     def get_args(self):
         args = ['-y']
@@ -168,18 +172,19 @@ class FFmpegWorker(Worker):
 
         return avinfo
 
-    @staticmethod
-    def get_audio_layout_mapping(avinfo, o_channels_per_stream=2):
+    def _get_audio_layout_mapping(self):
 
         def output_stream_dict():
             return {'input_channels': [], 'input_streams': {}}
+
+        avinfo = self._get_input_avinfo()
 
         o_stream_idx = 0
         o_stream_map = defaultdict(output_stream_dict)
         for audio_stream in avinfo.audio_streams:
             channels = audio_stream['channels']
-            if o_channels_per_stream > 0:
-                channels_left = o_channels_per_stream - len(o_stream_map[o_stream_idx]['input_channels'])
+            if self.channels_per_stream > 0:
+                channels_left = self.channels_per_stream - len(o_stream_map[o_stream_idx]['input_channels'])
             else:
                 channels_left = channels
             if channels == channels_left:
@@ -190,7 +195,7 @@ class FFmpegWorker(Worker):
                 for channel_idx in range(channels):
                     o_stream_map[o_stream_idx]['input_streams'][audio_stream['index']] = audio_stream
                     o_stream_map[o_stream_idx]['input_channels'].append((audio_stream['index'], channel_idx))
-                    if channels > channels_left and len(o_stream_map[o_stream_idx]['input_channels']) == o_channels_per_stream:
+                    if channels > channels_left and len(o_stream_map[o_stream_idx]['input_channels']) == self.channels_per_stream:
                         o_stream_idx += 1
 
         filter_chain = ''
@@ -198,7 +203,7 @@ class FFmpegWorker(Worker):
         for index, output_stream in o_stream_map.iteritems():
             if len(output_stream['input_streams']) == 1:
                 input_stream = output_stream['input_streams'].values()[0]
-                if input_stream['channels'] == o_channels_per_stream or o_channels_per_stream == 0:
+                if input_stream['channels'] == self.channels_per_stream or self.channels_per_stream == 0:
                     map_chain.append(('-map', '0:%s' % input_stream['index']))
                 else:
                     filter_merge = ''
@@ -274,7 +279,7 @@ class FFmpegWorker(Worker):
             return opt[1]
         return opt_default
 
-    def demux(self, basedir, channels_per_stream=0):
+    def demux(self, basedir):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
         avinfo = self._get_input_avinfo()
 
@@ -300,7 +305,7 @@ class FFmpegWorker(Worker):
 
             self.add_output_file(path, {'video_opts': opts}, 'video')
 
-        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, channels_per_stream)
+        filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('mapping_audio', filter_chain)]
         index = 0
@@ -721,12 +726,12 @@ class FFmpegWorker(Worker):
 
     def mux_flv(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'flv')]
+        self.channels_per_stream = 2
 
-        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('audio_mapping', filter_chain)]
         self.audio_opts += mapping
@@ -736,10 +741,10 @@ class FFmpegWorker(Worker):
 
     def mux_mpegps(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         acodec = self.get_opt_value('acodec', 'mp2')
         vcodec = self.get_opt_value('vcodec', 'mpeg2video')
+        self.channels_per_stream = 2
 
         if acodec != 'mp2':
             raise FFmpegWorkerException('MPEG-2 PS does not support audio codec: %s' % acodec)
@@ -750,7 +755,7 @@ class FFmpegWorker(Worker):
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'vob')]
 
-        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('audio_mapping', filter_chain)]
         self.audio_opts += mapping
@@ -760,12 +765,12 @@ class FFmpegWorker(Worker):
 
     def mux_mp4(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'mp4')]
+        self.channels_per_stream = 2
 
-        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, 2)
+        filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('audio_mapping', filter_chain)]
         self.audio_opts += mapping
@@ -779,7 +784,6 @@ class FFmpegWorker(Worker):
         mapping = options.get('mapping', 'default')
 
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         audio_rate = self.get_opt_value('-ar')
         if not audio_rate:
@@ -790,16 +794,16 @@ class FFmpegWorker(Worker):
         self.video_opts += [('-map', '0:v')]
 
         mxf_format = 'mxf'
-        channels_per_stream = 0
+        self.channels_per_stream = 0
         if mapping == 'rdd9':
-            channels_per_stream = 1
+            self.channels_per_stream = 1
         elif mapping == 'd10':
-            channels_per_stream = 8
+            self.channels_per_stream = 8
             mxf_format = 'mxf_d10'
 
         self.format_opts += [('-f', mxf_format)]
 
-        filter_chain, mapping = self.get_audio_layout_mapping(avinfo, channels_per_stream)
+        filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('audio_mapping', filter_chain)]
         self.audio_opts += mapping

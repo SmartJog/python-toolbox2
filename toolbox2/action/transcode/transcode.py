@@ -131,6 +131,7 @@ class TranscodeAction(Action):
         ffmpeg.set_nb_frames(nb_video_frames)
         ffmpeg.set_timecode(avinfo.timecode)
         ffmpeg.set_threads(self.decoding_threads, self.encoding_threads)
+        ffmpeg.set_channels_per_stream(self.demux_channels_per_stream)
 
         if self.audio_format == 'default':
             if avinfo.audio_format:
@@ -187,7 +188,7 @@ class TranscodeAction(Action):
 
         # Omneon muxer
         elif self.muxer == 'omneon':
-            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channels_per_stream)
+            ffmpeg.demux(self.container_abs_essence_dir)
 
             ommcp = self._new_worker(OmneonCopyWorker)
             for output_file in ffmpeg.output_files:
@@ -221,7 +222,7 @@ class TranscodeAction(Action):
 
         # BMX muxer
         elif self.muxer == 'bmx':
-            ffmpeg.demux(self.container_abs_essence_dir, self.demux_channels_per_stream)
+            ffmpeg.demux(self.container_abs_essence_dir)
 
             raw2bmx = self._new_worker(Raw2BmxWorker)
             for output_file in ffmpeg.output_files:
