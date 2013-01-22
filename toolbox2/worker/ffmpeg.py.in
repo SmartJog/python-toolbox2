@@ -830,13 +830,12 @@ class FFmpegWorker(Worker):
 
         self.format_opts += [('-f', 'gxf')]
         self.video_opts += [('-map', '0:v')]
+        self.channels_per_stream = 1
 
-        for stream in avinfo.audio_streams:
-            index = len(avinfo.video_streams)
-            for channel_index in range(stream['channels']):
-                self.audio_opts += [('-map', '0:%s' % stream['index'])]
-                self.audio_opts += [('-map_channel', '%s.%s.%s:0.%s' % (0, stream['index'], channel_index, index))]
-                index += 1
+        filter_chain, mapping = self._get_audio_layout_mapping()
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.gxf')
         self.add_output_file(path)

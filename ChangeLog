@@ -12,6 +12,7 @@ Version 0.9.0~dev
 	* Support text and timecode burning in transcode action, refs: #6582.
 	* Support text and timecode burning in toolbox2-transcode, closes: #6582.
 	* Make FFmpegWorker._get_audio_layout_mapping a private method.
+	* Use _get_audio_layout_mapping in mux_gxf method in ffmpeg worker.
 
 Version 0.8.1 Released on 2013/01/16
 
