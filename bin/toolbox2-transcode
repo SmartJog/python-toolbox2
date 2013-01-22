@@ -32,6 +32,9 @@ def transcode(file_path, conf, clean=False):
         '_ref' if conf['container_reference'] else ''
     )
 
+    if conf['audio_min_streams']:
+        conf['audio_min_streams'] = [int(x) for x in conf['audio_min_streams'].split(',')]
+
     transcode = TranscodeAction(logging, tmp_path, tmp_dir, conf)
     transcode.add_input_resource(1, {'path': file_path, 'nb_video_frames': nb_video_frames})
     transcode.run(print_progress)
@@ -81,6 +84,7 @@ def parse_opts():
         {'name': 'audio_bitrate', 'default': 0, 'action':'store', 'help':'audio bitrate in kbit/s'},
         {'name': 'audio_format', 'default':'default', 'action':'store', 'help':'audio format: s16le, s24le, s16be'},
         {'name': 'audio_sample_rate', 'default': 48000, 'action':'store', 'help':'audio sample rate: 44100 48000, 96000'},
+        {'name': 'audio_min_streams', 'default': None, 'action': 'store', 'help':'list of audio min streams to align to: \'2, 4, 8\', \'4, 8\', ...'},
         {'name': 'muxer', 'default':'ffmpeg', 'action':'store', 'help':'muxing library to use: ffmpeg, omneon, bmx'},
         {'name': 'decoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to decode'},
         {'name': 'encoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to encode'},

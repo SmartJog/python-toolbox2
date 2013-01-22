@@ -104,6 +104,9 @@ Audio format for pcm codecs: s16le, s16be, s24le, ...
 : --**audio-sample-rate** sample_rate
 Audio sample rate: 44100, 48000, 96000, ...
 
+: --**audio-min-streams** min_streams
+List of audio min streams to align to: '2, 4, 8', '4, 8', ...
+
 : --**muxer** muxer
 Muxing library to use: ffmpeg, omneon, bmx.
 
