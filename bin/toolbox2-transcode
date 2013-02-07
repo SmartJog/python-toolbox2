@@ -85,6 +85,7 @@ def parse_opts():
         {'name': 'audio_format', 'default':'default', 'action':'store', 'help':'audio format: s16le, s24le, s16be'},
         {'name': 'audio_sample_rate', 'default': 48000, 'action':'store', 'help':'audio sample rate: 44100 48000, 96000'},
         {'name': 'audio_min_streams', 'default': None, 'action': 'store', 'help':'list of audio min streams to align to: \'2, 4, 8\', \'4, 8\', ...'},
+        {'name': 'audio_channels_per_stream', 'default': 0, 'action': 'store', 'help': 'audio channels per streams: 0, 1, 2, ...'},
         {'name': 'muxer', 'default':'ffmpeg', 'action':'store', 'help':'muxing library to use: ffmpeg, omneon, bmx'},
         {'name': 'decoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to decode'},
         {'name': 'encoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to encode'},

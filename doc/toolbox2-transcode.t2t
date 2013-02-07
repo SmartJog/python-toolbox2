@@ -107,6 +107,9 @@ Audio sample rate: 44100, 48000, 96000, ...
 : --**audio-min-streams** min_streams
 List of audio min streams to align to: '2, 4, 8', '4, 8', ...
 
+: --**audio-channels-per-stream** channels
+Audio channels per streams: 0, 1, 2, ...
+
 : --**muxer** muxer
 Muxing library to use: ffmpeg, omneon, bmx.
 
