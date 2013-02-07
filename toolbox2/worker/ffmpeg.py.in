@@ -762,7 +762,6 @@ class FFmpegWorker(Worker):
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'flv')]
-        self.channels_per_stream = 2
 
         filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
@@ -777,7 +776,6 @@ class FFmpegWorker(Worker):
 
         acodec = self.get_opt_value('acodec', 'mp2')
         vcodec = self.get_opt_value('vcodec', 'mpeg2video')
-        self.channels_per_stream = 2
 
         if acodec != 'mp2':
             raise FFmpegWorkerException('MPEG-2 PS does not support audio codec: %s' % acodec)
@@ -801,7 +799,6 @@ class FFmpegWorker(Worker):
 
         self.video_opts += [('-map', '0:v')]
         self.format_opts += [('-f', 'mp4')]
-        self.channels_per_stream = 2
 
         filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
@@ -827,7 +824,6 @@ class FFmpegWorker(Worker):
         self.video_opts += [('-map', '0:v')]
 
         mxf_format = 'mxf'
-        self.channels_per_stream = 0
         if mapping == 'rdd9':
             self.channels_per_stream = 1
         elif mapping == 'd10':
