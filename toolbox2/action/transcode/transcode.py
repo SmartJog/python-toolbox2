@@ -49,6 +49,7 @@ class TranscodeAction(Action):
         self.audio_sample_rate = int(self.params.get('audio_sample_rate', 48000))
         self.audio_bitrate = int(self.params.get('audio_bitrate', 0))
         self.audio_min_streams = self.params.get('audio_min_streams')
+        self.audio_channels_per_stream = int(self.params.get('audio_channels_per_stream', 0))
 
         self.container = self.params.get('container', 'mxf')
         self.container_mapping = self.params.get('container_mapping', 'default')
@@ -104,12 +105,11 @@ class TranscodeAction(Action):
         if self.muxer == 'bmx' and self.container != 'mxf':
             raise TranscodeException('BMX only support MXF muxing')
 
-        self.demux_channels_per_stream = 0
         if self.container == 'mxf':
             if self.video_codec == 'xdcamhd' and self.container_mapping == 'rdd9':
-                self.demux_channels_per_stream = 1
+                self.audio_channels_per_stream = 1
             if self.video_codec == 'imx' and self.container_mapping == 'd10':
-                self.demux_channels_per_stream = 8
+                self.audio_channels_per_stream = 8
 
         if self.container_hinting and self.muxer != 'ffmpeg':
             self.log.warning('Only ffmpeg muxer support file hinting for streaming')
@@ -133,7 +133,7 @@ class TranscodeAction(Action):
         ffmpeg.set_audio_min_streams(self.audio_min_streams)
         ffmpeg.set_timecode(avinfo.timecode)
         ffmpeg.set_threads(self.decoding_threads, self.encoding_threads)
-        ffmpeg.set_channels_per_stream(self.demux_channels_per_stream)
+        ffmpeg.set_channels_per_stream(self.audio_channels_per_stream)
 
         if self.audio_format == 'default':
             if avinfo.audio_format:
