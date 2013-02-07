@@ -851,8 +851,12 @@ class FFmpegWorker(Worker):
         self.video_opts += [('-map', '0:v')]
         if self.mov_imx_header:
             self.video_opts += [('-vbsf', 'imxdump')]
-        self.audio_opts += [('-map', '0:a')]
         self.format_opts += [('-f', 'mov')]
+
+        filter_chain, mapping = self._get_audio_layout_mapping()
+        if filter_chain:
+            self.audio_filter_chain += [('audio_mapping', filter_chain)]
+        self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mov')
         self.add_output_file(path)

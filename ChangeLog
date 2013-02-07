@@ -16,6 +16,7 @@ Version 0.9.0~dev
 	* Support minimum audio stream requirements in ffmpeg worker.
 	* Add audio_min_streams option to transcode action.
 	* Add audio_min_streams option to toolbox2-transcode.
+	* Use _get_audio_layout_mapping in mux_mov method in ffmpeg worker.
 
 Version 0.8.1 Released on 2013/01/16
 
