@@ -44,7 +44,7 @@ class FFprobeWorker(Worker):
 
     def _finalize(self):
         try:
-            self.metadata = json.loads(self.stdout)
+            self.metadata = json.loads(unicode(self.stdout, errors='ignore'))
         except ValueError, exc:
             raise FFprobeWorkerException('FFProbe output could not be decoded: %s, %s' % (exc, self.stdout))
 
