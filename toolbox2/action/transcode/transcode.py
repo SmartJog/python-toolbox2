@@ -143,7 +143,7 @@ class TranscodeAction(Action):
             self.audio_codec_options['format'] = self.audio_format
 
         ffmpeg.transcode(self.video_codec, self.video_codec_options)
-        ffmpeg.transcode(self.audio_codec, self.audio_codec_options)
+        ffmpeg.transcode(self.audio_codec, self.audio_codec_options, 'audio')
 
         if self.video_aspect_ratio == 'default':
             if avinfo.video_dar == '16:9':

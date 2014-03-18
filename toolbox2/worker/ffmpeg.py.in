@@ -362,6 +362,9 @@ class FFmpegWorker(Worker):
     def copy_video(self):
         self.video_opts.append(('-vcodec', 'copy'))
 
+    def copy_audio(self):
+        self.audio_opts.append(('-acodec', 'copy'))
+
     def transcode_aac(self, options=None):
         if not options:
             options = {}
@@ -750,9 +753,12 @@ class FFmpegWorker(Worker):
                 ('-vtag', codec_tag)
             ]
 
-    def transcode(self, codec, options=None):
+    def transcode(self, codec, options=None, av='video'):
         if codec == 'copy':
-            return self.copy_video()
+            if av == 'video':
+                return self.copy_video()
+            else:
+                return self.copy_audio()
 
         method = getattr(self, "transcode_%s" % codec)
         return method(options)
