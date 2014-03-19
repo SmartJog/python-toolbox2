@@ -42,7 +42,7 @@ Container mapping: default, d10, rdd9.
 Container version: qt6, qt7. This option is only valid for mov with the omneon muxer.
 
 : --**video-codec** codec
-Video codec: mpeg2video, imx, xdcamhd, dnxhd, simple_h264.
+Video codec: mpeg2video, imx, xdcamhd, dnxhd, simple_h264, prores.
 
 : --**video-bitrate** bitrate
 Video bitrate in kbit/s.

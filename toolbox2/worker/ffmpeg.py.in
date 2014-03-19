@@ -753,6 +753,19 @@ class FFmpegWorker(Worker):
                 ('-vtag', codec_tag)
             ]
 
+
+
+    def transcode_prores(self, options=None):
+        if not options:
+            options = {}
+        self.video_opts = [('-c:v', 'prores')]
+        if 'bitrate' in options:
+            self.video_opts += [('-b:v', options['bitrate'])]
+
+
+
+
+
     def transcode(self, codec, options=None, av='video'):
         if codec == 'copy':
             if av == 'video':

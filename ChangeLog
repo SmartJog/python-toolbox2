@@ -21,6 +21,7 @@ Version 0.9.0~dev
 	* Add audio_channels_per_stream option to transcode action.
 	* Add audio_channels_per_stream option to toolbox2-transcode.
 	* Add unicode errors ignore to the json parse of ffprobe.
+	* Add support for prores.
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16
