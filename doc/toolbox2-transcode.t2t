@@ -87,7 +87,7 @@ Burning position: center, top-left, top-center, top-right, bottom-left, [...], x
 Burn font size.
 
 : --**video-burn-fontname** fontname
-Burn font name: dejavu, vera (same as dejavu).
+Burn font name: dejavu, vera (same as dejavu), liberation, arial (same as liberation).
 
 : --**video-burn-padding** padding
 Burn padding in pixel: 10, ...

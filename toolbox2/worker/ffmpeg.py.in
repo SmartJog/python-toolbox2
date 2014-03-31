@@ -957,6 +957,8 @@ class FFmpegWorker(Worker):
         fontfiles = {
             'vera': '@fontspkgdatadir@/Vera.ttf',
             'dejavu': '@fontspkgdatadir@/DejaVuSans.ttf',
+            'liberation': '@fontspkgdatadir@/LiberationSans-Regular.ttf',
+            'arial': '@fontspkgdatadir@/Arial.ttf',
         }
         fontfile = fontfiles.get(fontname)
         if not fontfile:
