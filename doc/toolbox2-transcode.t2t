@@ -81,7 +81,7 @@ Burn specified text.
 Enable timecode burning.
 
 : --**video-burn-position** position
-Burning position: center, top-left, top-center, top-right, bottom-left, [...], x=200:y=200.
+Burning position: center, top-left, top-center, top-right, bottom-left, [...], <x>x<y> (eg. '1337x42').
 
 : --**video-burn-fontsize** fontsize
 Burn font size.

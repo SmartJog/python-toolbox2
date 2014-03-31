@@ -977,9 +977,20 @@ class FFmpegWorker(Worker):
             'center':        'x=(w/2-tw/2):y=(h/2-lh/2)',
             'center-right':  'x=(w-tw-%d):y=(h/2-lh/2)' % padding,
         }
-        position = positions.get(position, position)
+        position_coords = positions.get(position)
+        drawtext_filter=''
 
-        drawtext_filter = 'drawtext=%s:' % position
+        # Is it a custom position? We expect a string <number>x<number>
+        if not position_coords:
+            xy = position.split('x')
+            if len(xy) == 2:
+                drawtext_filter += 'drawtext=x=%s:y=%s:' % (xy[0], xy[1])
+            else:
+                drawtext_filter += 'drawtext=x=0:y=0:'
+        else:
+            drawtext_filter += 'drawtext=%s:' % position_coords
+
+
         drawtext_filter += 'fontcolor=white:'
         drawtext_filter += 'fontfile=%s:' % fontfile
 

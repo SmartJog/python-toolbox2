@@ -76,7 +76,7 @@ def parse_opts():
         {'name': 'video_burn_box', 'default': 0, 'action': 'store_true', 'help': 'add a black background'},
         {'name': 'video_burn_text', 'default': '', 'action': 'store', 'help': 'burn specified text'},
         {'name': 'video_burn_timecode', 'default': 0, 'action': 'store_true', 'help': 'burn timecode'},
-        {'name': 'video_burn_position', 'default': 'center', 'action': 'store', 'help': 'burn position: center, top-left, ...'},
+        {'name': 'video_burn_position', 'default': 'center', 'action': 'store', 'help': 'burn position: center, top-left, <x>x<y>, ...'},
         {'name': 'video_burn_fontsize', 'default': 12, 'action': 'store', 'help': 'burn font size'},
         {'name': 'video_burn_fontname', 'default': 'dejavu', 'action': 'store', 'help': 'burn font name: vera, dejavu, arial, liberation'},
         {'name': 'video_burn_padding', 'default': 10, 'action': 'store', 'help': 'burn padding in pixel: 10, ...'},
