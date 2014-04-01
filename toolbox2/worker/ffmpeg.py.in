@@ -761,7 +761,8 @@ class FFmpegWorker(Worker):
     def transcode_prores(self, options=None):
         if not options:
             options = {}
-        self.video_opts = [('-c:v', 'prores')]
+        self.video_opts = [('-vcodec', 'prores')]
+        self.video_opts += [('-profile:v', '0')]
         if 'bitrate' in options:
             self.video_opts += [('-b:v', options['bitrate'])]
 
