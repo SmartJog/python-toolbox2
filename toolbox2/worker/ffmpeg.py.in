@@ -756,6 +756,52 @@ class FFmpegWorker(Worker):
                 ('-vtag', codec_tag)
             ]
 
+    def _prores_bitrate_lookup(self, avinfo):
+        """Try to set the bitrate based on input resolution and FPS
+
+        These are "official" Apple directives.
+        """
+        lookup  = {
+            "720x486 @ 23.98": "10M",
+            "720x486 @ 25.0": "10M",
+            "720x486 @ 29.97": "12M",
+
+            "720x576 @ 23.98": "12M",
+            "720x576 @ 25.0": "12M",
+            "720x576 @ 29.97": "15M",
+
+            "1920x1080 @ 23.98": "36M",
+            "1920x1080 @ 25.0": "38M",
+            "1920x1080 @ 29.97": "45M",
+        }
+
+        res = "%s @ %s" % (avinfo.video_res, avinfo.video_fps)
+        if res in lookup:
+            return lookup[res]
+        lres = avinfo.video_res.split('x')
+        res_x = int(lres[0])
+        res_y = int(lres[1])
+        fps = float(avinfo.video_fps)
+
+        if res_y <= 486:
+            res_y = 486
+            res_x = 720
+        elif res_y <= 576:
+            res_y = 576
+            res_x = 720
+        else:
+            res_y=1080
+            res_x=1920
+
+        if fps <= 23.98:
+            fps = 23.98
+        elif fps <= 25.0:
+            fps = 25.0
+        else:
+            fps = 29.97
+
+        res = "%sx%s @ %s" % (res_x, res_y, fps)
+        return lookup[res]
 
 
     def transcode_prores(self, options=None):
@@ -763,10 +809,14 @@ class FFmpegWorker(Worker):
             options = {}
         self.video_opts = [('-vcodec', 'prores')]
         self.video_opts += [('-profile:v', '0')]
-        if 'bitrate' in options:
-            self.video_opts += [('-b:v', options['bitrate'])]
 
-
+        try:
+            avinfo = self._get_input_avinfo()
+            bitrate = self._prores_bitrate_lookup(avinfo)
+            self.video_opts += [('-b:v', bitrate)]
+        except:
+            if 'bitrate' in options:
+                self.video_opts += [('-b:v', options['bitrate'])]
 
 
 
