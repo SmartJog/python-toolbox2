@@ -25,6 +25,7 @@ Version 0.9.0~dev
 	* Support relative paths as input in toolbox2-transcode.
 	* Use the thumbnail filter to extract thumbnails.
 	* Force -d10_channelcount 8 for IMX if the option is available
+	* Add a special PCM transcode to force 2x4 -> 1x8 audio mapping
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16

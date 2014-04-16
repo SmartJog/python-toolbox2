@@ -82,6 +82,8 @@ class FFmpegWorker(Worker):
         self.decoding_threads = 1
         self.encoding_threads = 1
         self.fps = 0
+        self.special_audio_filter = None
+        self.special_audio_mapping = None
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -139,7 +141,10 @@ class FFmpegWorker(Worker):
             args += ['-vf']
             args += [','.join([flt[1] for flt in self.video_filter_chain])]
 
-        if self.audio_filter_chain:
+        if self.special_audio_filter:
+            args += ['-filter_complex']
+            args += [self.special_audio_filter]
+        elif self.audio_filter_chain:
             args += ['-filter_complex']
             args += [','.join([flt[1] for flt in self.audio_filter_chain])]
 
@@ -703,6 +708,30 @@ class FFmpegWorker(Worker):
             ('-ar', sample_rate),
         ]
 
+    def transcode_pcm_2x4_to_1x8ch(self, options=None):
+        """Force a 2x4 -> 1x8 audio mapping
+
+        This is a temporary function required for C+.
+
+        This should rather be done by default with a new ffmpeg option like
+        -filter_complex amerge=inputs=-1[a] -map [a]
+
+        This way we should not have to care about the audio channel count in
+        the input...
+        """
+        if not options:
+            options = {}
+        audio_format = options.get('format', 's24le')
+        sample_rate = options.get('sample_rate', 48000)
+        avinfo = self._get_input_avinfo()
+
+        self.audio_opts += [
+            ('-acodec', 'pcm_%s' % audio_format),
+            ('-ar', sample_rate),
+        ]
+        self.special_audio_filter = "[0:a:0]pan=mono:c0=c0[p1_0];[0:a:0]pan=mono:c0=c1[p1_1];[0:a:1]pan=mono:c0=c0[p2_0];[0:a:1]pan=mono:c0=c1[p2_1];[0:a:0]pan=mono:c0=c2[p1_2];[0:a:0]pan=mono:c0=c3[p1_3];[0:a:1]pan=mono:c0=c2[p2_2];[0:a:1]pan=mono:c0=c3[p2_3];[p1_0][p1_1][p2_0][p2_1][p1_2][p1_3][p2_2][p2_3]amerge=inputs=8[m0]"
+        self.special_audio_mapping = ('-map', '[m0]')
+
     def transcode_xdcamhd(self, options=None):
         if not options:
             options = {}
@@ -926,7 +955,11 @@ class FFmpegWorker(Worker):
         filter_chain, mapping = self._get_audio_layout_mapping()
         if filter_chain:
             self.audio_filter_chain += [('audio_mapping', filter_chain)]
-        self.audio_opts += mapping
+
+        if self.special_audio_mapping:
+            self.audio_opts += [self.special_audio_mapping]
+        else:
+            self.audio_opts += mapping
 
         path = '%s%s' % (os.path.join(basedir, basename), '.mxf')
         self.add_output_file(path)
