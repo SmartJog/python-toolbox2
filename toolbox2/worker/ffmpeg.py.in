@@ -277,7 +277,13 @@ class FFmpegWorker(Worker):
         ]
 
         self.video_filter_chain += [
-            ('thumbnail', 'select=\'gt(scene,0.4)\''),
+            # The thumbnail filter extracts an image from the first frames
+            ('thumbnail', 'thumbnail'),
+            # In recent ffmpeg version, a parameter can controls the
+            # search depth inside the video and will produce better results,
+            # especially when the video starts with a bunch of black frames.
+            # Feel free to uncomment the following next time ffmpeg is upgraded.
+            # ('thumbnail', 'thumbnail=n=200'),
         ]
 
         if width:

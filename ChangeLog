@@ -23,6 +23,7 @@ Version 0.9.0~dev
 	* Add unicode errors ignore to the json parse of ffprobe.
 	* Add support for prores.
 	* Support relative paths as input in toolbox2-transcode.
+	* Use the thumbnail filter to extract thumbnails.
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16
