@@ -956,6 +956,7 @@ class FFmpegWorker(Worker):
         fontname = options.get('fontname', 'vera')
         fontfiles = {
             'vera': '@fontspkgdatadir@/Vera.ttf',
+            'dejavu': '@fontspkgdatadir@/DejaVuSans.ttf',
         }
         fontfile = fontfiles.get(fontname)
         if not fontfile:
