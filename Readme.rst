@@ -9,7 +9,13 @@ python-toolbox2 provides a generic interface for:
 License
 =======
 
-python-toolbox2 is released under the `GNU LGPL 2.1 <http://www.gnu.org/licenses/lgpl-2.1.html>`_.
+python-toolbox2 is Free software.
+It is released under the `GNU LGPL 2.1 <http://www.gnu.org/licenses/lgpl-2.1.html>`_.
+
+Fonts from the share/fonts folder are Free too, but are covered by various licences.
+The most representative should be `SIL Open Font Licence <http://scripts.sil.org/OFL_web>`_.
+Please see individual COPYING files in the share/fonts folder for more information.
+
 
 
 Build and installation
