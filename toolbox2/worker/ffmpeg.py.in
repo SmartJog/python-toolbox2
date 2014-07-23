@@ -4,6 +4,8 @@ import re
 import copy
 import os.path
 import math
+import socket
+import time
 import tempfile
 from collections import defaultdict
 
@@ -949,6 +951,11 @@ class FFmpegWorker(Worker):
         timecode = options.get('timecode', 0)
 
         text = options.get('text', '')
+        if options.get('hostname', 0) == 1:
+            text += " " + socket.gethostname()
+        if options.get('date', 0) == 1:
+            text += " " + time.ctime()
+        text = text.strip()  # Avoid a leading white-space if no text is set
         if timecode and text:
             text += " "  # The timecode will be appended automatically
 

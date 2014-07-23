@@ -80,6 +80,8 @@ def parse_opts():
         {'name': 'video_burn_fontsize', 'default': 12, 'action': 'store', 'help': 'burn font size'},
         {'name': 'video_burn_fontname', 'default': 'dejavu', 'action': 'store', 'help': 'burn font name: vera, dejavu, arial, liberation'},
         {'name': 'video_burn_padding', 'default': 10, 'action': 'store', 'help': 'burn padding in pixel: 10, ...'},
+        {'name': 'video_burn_date', 'default': 0, 'action': 'store_true', 'help': 'add the date to the burned text'},
+        {'name': 'video_burn_hostname', 'default': 0, 'action': 'store_true', 'help': 'add the hostname to the burned text'},
         {'name': 'audio_codec', 'default':'pcm', 'action':'store', 'help':'audio codec: pcm, mpeg2audio, aac'},
         {'name': 'audio_bitrate', 'default': 0, 'action':'store', 'help':'audio bitrate in kbit/s'},
         {'name': 'audio_format', 'default':'default', 'action':'store', 'help':'audio format: s16le, s24le, s16be'},

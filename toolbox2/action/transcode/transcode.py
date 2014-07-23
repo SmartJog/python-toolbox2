@@ -94,6 +94,8 @@ class TranscodeAction(Action):
             'fontname': self.params.get('video_burn_fontname', 'vera'),
             'fontsize': int(self.params.get('video_burn_fontsize', 12)),
             'padding': int(self.params.get('video_burn_padding', 10)),
+            'date': int(self.params.get('video_burn_date', 0)),
+            'hostname': int(self.params.get('video_burn_hostname', 0)),
         }
 
         if not os.path.isdir(self.container_abs_essence_dir):

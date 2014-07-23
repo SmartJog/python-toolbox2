@@ -77,6 +77,12 @@ Add a black background.
 : --**video-burn-text** text
 Burn specified text.
 
+: --**video-burn-date**
+Add the date to the burned text.
+
+: --**video-burn-hostname**
+Add the hostname to the burned text.
+
 : --**video-burn-timecode**
 Enable timecode burning.
 
