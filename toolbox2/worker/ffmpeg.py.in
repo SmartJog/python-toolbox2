@@ -4,6 +4,7 @@ import re
 import copy
 import os.path
 import math
+import tempfile
 from collections import defaultdict
 
 from toolbox2.worker import Worker, WorkerException
@@ -937,12 +938,7 @@ class FFmpegWorker(Worker):
                 ('letterbox', filter_chain),
             )
 
-    def drawtext(self, options=None):
-        def escape_filter_params(text):
-            for char in [',', ':', ';', '\'']:
-                text = text.replace(char, '\\' + char)
-            text = text.replace(' ', '\\\\ ')
-            return text
+    def drawtext(self, basedir, options=None):
 
         if not options:
             options = {}
@@ -950,8 +946,20 @@ class FFmpegWorker(Worker):
         avinfo = self._get_input_avinfo()
         rate = int(math.ceil(avinfo.video_fps))
         box = options.get('box', 0)
-        text = escape_filter_params(options.get('text', ''))
-        timecode = options.get('timecode', 0) or not text
+        timecode = options.get('timecode', 0)
+
+        text = options.get('text', '')
+        if timecode and text:
+            text += " "  # The timecode will be appended automatically
+
+        # Put the text in a tmp file (this avoid dealing with escaping)
+        # The tmp file is placed in the work directory, so that it is deleted with it
+        fd, path = tempfile.mkstemp(suffix='toolbox2_burn_text',
+                                    dir=basedir,
+                                    text=True)
+        os.write(fd, text)
+        os.close(fd)
+
         fontsize = options.get('fontsize', 12)
         fontname = options.get('fontname', 'vera')
         fontfiles = {
@@ -1001,10 +1009,13 @@ class FFmpegWorker(Worker):
             drawtext_filter += 'box=1:boxcolor=0x00000000@1:'
 
         if text:
-            drawtext_filter += 'text=%s:' % (text)
+            drawtext_filter += 'textfile=%s:' % path
 
         if timecode:
-            drawtext_filter += 'timecode=\'%s\':rate=%s' % (escape_filter_params(avinfo.timecode), rate)
+            drawtext_filter += 'timecode=\'%s\':rate=%s' % (
+                avinfo.timecode.replace(':', '\\:'),
+                rate
+            )
 
         self.video_filter_chain.append(
             ('drawtext', drawtext_filter)

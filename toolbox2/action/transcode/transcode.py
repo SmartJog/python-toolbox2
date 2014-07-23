@@ -160,7 +160,7 @@ class TranscodeAction(Action):
             ffmpeg.letterbox()
 
         if self.video_burn:
-            ffmpeg.drawtext(self.burn_options)
+            ffmpeg.drawtext(self.tmp_dir, self.burn_options)
 
         # FFmpeg muxer
         if self.muxer == 'ffmpeg':
