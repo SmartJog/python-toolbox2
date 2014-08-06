@@ -191,7 +191,7 @@ class Action(object):
         :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
         :type resource: dict
 
-        :raise: AnctionException
+        :raise: ActionException
         """
         index = str(index)
         if section not in self.resources:
@@ -232,7 +232,7 @@ class Action(object):
         :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
         :type resource: dict
 
-        :raise: AnctionException
+        :raise: ActionException
         """
 
         return self.add_resource('inputs', index, resource)
@@ -265,7 +265,7 @@ class Action(object):
         :param resource: resource represented as a dict. For example, files minimum representation is {'path': '/path'}
         :type resource: dict
 
-        :raise: AnctionException
+        :raise: ActionException
         """
 
         return self.add_resource('outputs', index, resource)
