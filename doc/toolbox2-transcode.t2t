@@ -1,6 +1,6 @@
 toolbox2-transcode
 toolbox2-transcode
-%%mtime
+%%mtime(%Y-%m-%d)
 
 %!target : man
 %!encoding : utf-8
