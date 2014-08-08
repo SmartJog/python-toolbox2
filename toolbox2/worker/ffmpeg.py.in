@@ -9,6 +9,7 @@ import time
 import tempfile
 from collections import defaultdict
 
+from toolbox2.utils import is_option_available
 from toolbox2.worker import Worker, WorkerException
 
 
@@ -554,6 +555,12 @@ class FFmpegWorker(Worker):
             ('-pix_fmt', 'yuv422p'),
             ('-top', 1),
         ]
+
+        # Available since ffmpeg n2.3
+        if is_option_available('ffmpeg','d10_channelcount'):
+            self.video_opts += [
+                ('-d10_channelcount', 8),
+            ]
 
         if avinfo.video_is_SD_PAL() and bitrate == 30000:
             codec_tag = 'mx3p'

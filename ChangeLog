@@ -24,6 +24,7 @@ Version 0.9.0~dev
 	* Add support for prores.
 	* Support relative paths as input in toolbox2-transcode.
 	* Use the thumbnail filter to extract thumbnails.
+	* Force -d10_channelcount 8 for IMX if the option is available
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16
