@@ -266,6 +266,11 @@ class FFmpegWorker(Worker):
 
         return (filter_chain.rstrip(';'), map_chain)
 
+    def make_fullhelp(self):
+        self.format_opts += [
+            ('-h', 'full')
+        ]
+
     def make_thumbnail(self, options=None):
         if not options:
             options = {}

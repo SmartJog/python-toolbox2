@@ -25,7 +25,7 @@ class Action(object):
     description = ''
     required_params = {}
 
-    def __init__(self, log, base_dir, _id, params=None, resources=None):
+    def __init__(self, log, base_dir, _id=None, params=None, resources=None):
         """
         Create a new action.
         base_dir and _id are used to create a unique temporary directory to work in.
@@ -75,7 +75,10 @@ class Action(object):
         except (Exception, IOError), exc:
             self.log.warning('%s', exc)
 
-        self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
+        if self.id:
+            self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
+        else:
+            self.tmp_dir = self.base_dir
         self.debug = self.params.get('debug', False)
         self.last_callback = time.time()
         self.callback_interval = self.params.get('callback_interval', 1)

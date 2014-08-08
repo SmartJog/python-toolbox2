@@ -2,6 +2,7 @@ toolbox2dir = $(pyexecdir)/toolbox2
 nobase_toolbox2_PYTHON = \
 	__init__.py \
 	command.py \
+	utils.py \
 	exception.py \
 	action/extract/__init__.py \
 	action/extract/avinfo_extract.py \
@@ -10,6 +11,8 @@ nobase_toolbox2_PYTHON = \
 	action/rewrap/manzanita_rewrap.py \
 	action/transcode/__init__.py \
 	action/transcode/transcode.py \
+	action/getcapability/__init__.py \
+	action/getcapability/getcapability.py \
 	worker/__init__.py \
 	worker/bmx.py \
 	worker/flvtools2.py \

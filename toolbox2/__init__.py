@@ -6,6 +6,7 @@ from toolbox2.exception import Toolbox2Exception
 from toolbox2.action.extract import *
 from toolbox2.action.rewrap import *
 from toolbox2.action.transcode import *
+from toolbox2.action.getcapability import *
 
 
 def find_subclasses(cls, _seen=None):

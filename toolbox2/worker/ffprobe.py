@@ -24,6 +24,11 @@ class FFprobeWorker(Worker):
             '-show_streams': None,
         })
 
+    def make_fullhelp(self):
+        self.params= {
+            '-h': None,
+        }
+
     def count_frames(self):
         self.params.update({
             '-count_frames': None,
@@ -43,22 +48,23 @@ class FFprobeWorker(Worker):
         return args
 
     def _finalize(self):
-        try:
-            self.metadata = json.loads(unicode(self.stdout, errors='ignore'))
-        except ValueError, exc:
-            raise FFprobeWorkerException('FFProbe output could not be decoded: %s, %s' % (exc, self.stdout))
-
         nb_audio_streams = 0
         nb_video_streams = 0
-        for stream in self.metadata['streams']:
-            if stream['codec_type'] == 'video':
-                nb_video_streams = nb_video_streams + 1
-            elif stream['codec_type'] == 'audio':
-                nb_audio_streams = nb_audio_streams + 1
+        if self.params.get('-print_format') == 'json':
+            try:
+                self.metadata = json.loads(unicode(self.stdout, errors='ignore'))
+            except ValueError, exc:
+                raise FFprobeWorkerException('FFProbe output could not be decoded: %s, %s' % (exc, self.stdout))
 
-        self.metadata['format']['nb_audio_streams'] = nb_audio_streams
-        self.metadata['format']['nb_video_streams'] = nb_video_streams
-        self.metadata['description'] = self._get_description()
+            for stream in self.metadata['streams']:
+                if stream['codec_type'] == 'video':
+                    nb_video_streams = nb_video_streams + 1
+                elif stream['codec_type'] == 'audio':
+                    nb_audio_streams = nb_audio_streams + 1
+
+            self.metadata['format']['nb_audio_streams'] = nb_audio_streams
+            self.metadata['format']['nb_video_streams'] = nb_video_streams
+            self.metadata['description'] = self._get_description()
 
     def _get_description(self):
         desc = ''
