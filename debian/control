@@ -1,16 +1,26 @@
 Source: python-toolbox2
-XS-Python-Version: >= 2.6
 Priority: optional
 Section: python
-Maintainer: Philippe Bridant <philippe.bridant@smartjog.com>
-Uploaders: Matthieu Bouron <matthieu.bouron@smartjog.com>, Stéphane Kanschine <stephane.kanschine@smartjog.com>, Rémi Cardona <remi.cardona@smartjog.com>
-Build-Depends: cdbs (>= 0.4.89), debhelper (>= 8), python-central (>= 0.6), txt2tags
-Standards-Version: 3.9.1
+Maintainer: Nicolas Delvaux <nicolas.delvaux@arkena.com>
+Build-Depends: debhelper (>= 8),
+               python-all (>= 2.6.6-3~),
+               txt2tags
+Standards-Version: 3.9.5
 
 Package: python-toolbox2
-XB-Python-Version: ${python:Versions}
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, ffmpeg-static (>= 1.0)
-Recommends: sjconf-toolbox2, kt-toolbox (>= 1.0.4), ommedia (>= 6.4.1), flvtool2 (>= 1.0.6), bmx (>= 0.1.2)
+Depends: python (>= 2.6.6-3+squeeze3~),
+# Explicitely set the python dependency because of an internal Python backport
+# TODO: drop the previous line and activate the next one when switching to
+# Wheezy
+#        ${python:Depends},
+         ${misc:Depends},
+         ffmpeg-static (>= 1.0)
+Recommends: sjconf-toolbox2,
+            kt-toolbox (>= 1.0.4),
+            ommedia (>= 6.4.1),
+            flvtool2 (>= 1.0.6),
+            bmx (>= 0.1.2),
+            qt-faststart-static (>= 1.0)
 Description: SmartJog toolbox2 python module
  Module that provide generic interfaces to describe and manage actions.
