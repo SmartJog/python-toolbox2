@@ -108,7 +108,12 @@ class AVInfo(object):
         return self.video_res in [self.RES_SD_NTSC, self.RES_SD_NTSC_VBI]
 
     def video_is_HD(self):
-        return self.video_res in [self.RES_HD, self.RES_HD_1280, self.RES_HD_1440]
+        # We consider anything bigger than 1280x1080 as HD
+        width, height = self.video_res.split('x')
+        if int(width) * int(height) >= 1280 * 1080:
+            return True
+        else:
+            return False
 
     def video_is_SD(self):
         return not self.video_is_HD()

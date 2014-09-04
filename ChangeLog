@@ -28,6 +28,7 @@ Version 0.9.0~dev
 	* Add a special PCM transcode to force 2x4 -> 1x8 audio mapping
 	* Try to detect the aspect ratio for SD videos
 	* Add the "copy" parameter for the aspect_ratio
+	* Do not hardcode the list of HD resolutions anymore
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16
