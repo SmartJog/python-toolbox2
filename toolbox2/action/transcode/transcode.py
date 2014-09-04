@@ -148,10 +148,12 @@ class TranscodeAction(Action):
         ffmpeg.transcode(self.audio_codec, self.audio_codec_options, 'audio')
 
         if self.video_aspect_ratio == 'default':
-            if avinfo.video_dar == '16:9':
+            if avinfo.video_is_HD():
                 ffmpeg.set_aspect_ratio('16:9')
             else:
-                if avinfo.video_is_HD():
+                num, den = avinfo.video_dar.split(':')
+                dar = float(num) / float(den)
+                if dar > 1.5:
                     ffmpeg.set_aspect_ratio('16:9')
                 else:
                     ffmpeg.set_aspect_ratio('4:3')
