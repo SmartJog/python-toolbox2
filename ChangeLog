@@ -27,6 +27,7 @@ Version 0.9.0~dev
 	* Force -d10_channelcount 8 for IMX if the option is available
 	* Add a special PCM transcode to force 2x4 -> 1x8 audio mapping
 	* Try to detect the aspect ratio for SD videos
+	* Add the "copy" parameter for the aspect_ratio
 	* Various fix and improvements.
 
 Version 0.8.1 Released on 2013/01/16

@@ -54,7 +54,9 @@ Video pixel format: yuv411p, yuv420p, yuv422p, yuv422p10le.
 Enable video letterboxing. This option override video_aspect_ratio and should only be valid for 16/9 SD content.
 
 : --**video-aspect-ratio** aspect_ratio
-Video aspect ratio: default, 4:3, 16:9, ...
+Video aspect ratio: default, copy, 4:3, 16:9, ...
+"default" tries to chose between 4:3 and 16:9 depending on the input file.
+"copy" reuses the input file aspect ratio.
 
 : --**video-gop-size** gop_size
 Video gop size: 12, 15, ... This option is only valid for the mpeg2video and xdcamhd codecs.

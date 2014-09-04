@@ -157,6 +157,8 @@ class TranscodeAction(Action):
                     ffmpeg.set_aspect_ratio('16:9')
                 else:
                     ffmpeg.set_aspect_ratio('4:3')
+        elif self.video_aspect_ratio == 'copy':
+            ffmpeg.set_aspect_ratio(avinfo.video_dar)
         else:
             ffmpeg.set_aspect_ratio(self.video_aspect_ratio)
 
