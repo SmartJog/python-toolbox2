@@ -287,19 +287,18 @@ class FFmpegWorker(Worker):
             ('-frames:v', 1),
         ]
 
-        # The thumbnail filter extracts an image from the first frames
-
-        # Available since ffmpeg 2.0 (better to use a named parameter)
-        if is_option_available('ffmpeg', 'n .* set the frames batch size', regex=True):
-            self.video_filter_chain += [('thumbnail', 'thumbnail=n=200')]
-        else:
-            self.video_filter_chain += [('thumbnail', 'thumbnail=200')]
-
         if width:
             # ffmpeg will figure out the height by itself to keep the ratio
             self.video_filter_chain += [
                 ('scale', 'scale=%s:-1' % width),
             ]
+
+        # The thumbnail filter extracts an image from the first frames
+        # Available since ffmpeg 2.0 (better to use a named parameter)
+        if is_option_available('ffmpeg', 'n .* set the frames batch size', regex=True):
+            self.video_filter_chain += [('thumbnail', 'thumbnail=n=200')]
+        else:
+            self.video_filter_chain += [('thumbnail', 'thumbnail=200')]
 
     def get_opt(self, opt_name, opt_default=None):
         for opts in [self.video_opts, self.audio_opts, self.format_opts]:
