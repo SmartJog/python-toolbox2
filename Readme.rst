@@ -56,5 +56,9 @@ Authors
 =======
 
 python-toolbox2 was created at SmartJog by Matthieu Bouron.
+The current maintainer for the project is Nicolas Delvaux.
 
-* Matthieu Bouron <matthieu.bouron@smartjog.com>
+* Matthieu Bouron
+* Nicolas Delvaux <nicolas.delvaux@arkena.com>
+* Nicolas Gaullier <nicolas.gaullier@arkena.com>
+* M Delakis
