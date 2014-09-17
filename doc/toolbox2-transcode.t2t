@@ -140,5 +140,5 @@ toolbox2-transcode --video-codec dnxhd --video-bitrate 220000 --video-pix-fmt yu
 
 = AUTHOR =
 
-The toolbox2 transcode module and this manual page have been written by the
-**SmartJog** company.
+The toolbox2-transcode utility and this manual page have been written by the
+**Arkena** company.

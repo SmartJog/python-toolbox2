@@ -55,7 +55,7 @@ version 1.10.0 is more up to date than 1.10.0~dev).
 Authors
 =======
 
-python-toolbox2 was created at SmartJog by Matthieu Bouron.
+python-toolbox2 was created at Arkena (ex-SmartJog) by Matthieu Bouron.
 The current maintainer for the project is Nicolas Delvaux.
 
 * Matthieu Bouron
