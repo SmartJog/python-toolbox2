@@ -68,7 +68,7 @@ Force closed gop. This option is only valid for the mpeg2video and xdcamhd codec
 Enable interlaced mode: 0, 1.
 
 : --**video-resolution** resolution
-Force ouput resolution. This option is only valid for the simple_h264 codec.
+Force output resolution. This option is only valid for the simple_h264 codec.
 
 : --**video-burn**
 Enable text and timecode burning.
