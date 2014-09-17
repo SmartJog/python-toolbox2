@@ -1,9 +1,9 @@
-python-toolbox2 (0.9.0~dev-1) unstable; urgency=low
+python-toolbox2 (0.9.0-1) unstable; urgency=low
 
-  * New upstream release, closes: #6582, #6583.
+  * New upstream release, closes: #6582, #6583 and more
   * Modernize the Debian packaging
 
- -- Matthieu Bouron <matthieu.bouron@smartjog.com>  Thu, 20 Dec 2012 17:31:37 +0100
+ -- Nicolas Delvaux <nicolas.delvaux@arkena.com>  Wed, 17 Sep 2014 18:12:56 +0200
 
 python-toolbox2 (0.8.1-1) unstable; urgency=low
 
