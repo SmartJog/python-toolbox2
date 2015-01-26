@@ -9,6 +9,7 @@ import time
 import tempfile
 from collections import defaultdict
 
+import toolbox2
 from toolbox2.utils import is_option_available
 from toolbox2.worker import Worker, WorkerException
 
@@ -1053,10 +1054,10 @@ class FFmpegWorker(Worker):
         fontsize = options.get('fontsize', 12)
         fontname = options.get('fontname', 'vera')
         fontfiles = {
-            'vera': '@fontspkgdatadir@/Vera.ttf',
-            'dejavu': '@fontspkgdatadir@/DejaVuSans.ttf',
-            'liberation': '@fontspkgdatadir@/LiberationSans-Regular.ttf',
-            'arial': '@fontspkgdatadir@/Arial.ttf',
+            'vera': toolbox2.get_internal_resource('fonts', 'Vera.ttf'),
+            'dejavu': toolbox2.get_internal_resource('fonts', 'DejaVuSans.ttf'),
+            'liberation': toolbox2.get_internal_resource('fonts', 'LiberationSans-Regular.ttf'),
+            'arial': toolbox2.get_internal_resource('fonts', 'Arial.ttf'),
         }
         fontfile = fontfiles.get(fontname)
         if not fontfile:

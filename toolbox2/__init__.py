@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+
 from toolbox2.action import Action
 from toolbox2.exception import Toolbox2Exception
 
@@ -7,6 +10,25 @@ from toolbox2.action.extract import *
 from toolbox2.action.rewrap import *
 from toolbox2.action.transcode import *
 from toolbox2.action.getcapability import *
+
+
+__version__ = '0.10.0~dev'
+
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+
+def get_internal_resource(category, resource):
+    """Return the absolute path toward a resource"""
+    # If installed properly on Unix
+    path = os.path.join(sys.prefix, 'share', category, resource)
+    if not os.path.exists(path):
+        # If simply installed via the setup.py (no specific root/prefix)
+        path = os.path.join(_ROOT,
+                            os.pardir,
+                            'share',
+                            category,
+                            resource)
+    return path
 
 
 def find_subclasses(cls, _seen=None):

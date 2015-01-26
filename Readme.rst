@@ -1,21 +1,24 @@
-===============
-python-toolbox2
-===============
+========
+Toolbox2
+========
 
-python-toolbox2 provides a generic interface for:
+Toolbox2 provides a generic Python interface for:
  * actions description and execution which manipulate multiple workers,
  * workers description and execution which manipulate different tools such as ffmpeg for example.
+
+Binaries are provided to help test the module.
+They are in the *bin* folder and man-pages are available in *doc*.
+
 
 License
 =======
 
-python-toolbox2 is Free software.
+Toolbox2 is Free software.
 It is released under the `GNU LGPL 2.1 <http://www.gnu.org/licenses/lgpl-2.1.html>`_.
 
-Fonts from the share/fonts folder are Free too, but are covered by various licences.
+Fonts from the data/fonts folder are Free too, but are covered by various licences.
 The most representative should be `SIL Open Font Licence <http://scripts.sil.org/OFL_web>`_.
-Please see individual COPYING files in the share/fonts folder for more information.
-
+Please see individual COPYING files in the data/fonts folder for more information.
 
 
 Build and installation
@@ -24,38 +27,17 @@ Build and installation
 Bootstrapping
 -------------
 
-python-toolbox2 uses the autotools for its build system.
+Toolbox2 use the traditional build system for Python modules.
 
-If you checked out code from the git repository, you will need
-autoconf and automake to generate the configure script and Makefiles.
+To install, simply run::
 
-To generate them, simply run::
-
-    $ autoreconf -fvi
-
-Building
---------
-
-python-toolbox2 builds like your typical autotools-based project::
-
-    $ ./configure && make && make install
-
-
-Development
-===========
-
-We use `semantic versioning <http://semver.org/>`_ for
-versioning. When working on a development release, we append ``~dev``
-to the current version to distinguish released versions from
-development ones. This has the advantage of working well with Debian's
-version scheme, where ``~`` is considered smaller than everything (so
-version 1.10.0 is more up to date than 1.10.0~dev).
+    $ python setup.py install
 
 
 Authors
 =======
 
-python-toolbox2 was created at Arkena (ex-SmartJog) by Matthieu Bouron.
+Toolbox2 was created at Arkena (ex-SmartJog) by Matthieu Bouron.
 The current maintainer for the project is Nicolas Delvaux.
 
 * Matthieu Bouron
