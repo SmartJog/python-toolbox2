@@ -1,4 +1,4 @@
 include COPYING ChangeLog Readme.rst
-recursive-include doc *
+recursive-include doc *.rst
 recursive-include conf *
 recursive-include share *

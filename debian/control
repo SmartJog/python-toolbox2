@@ -4,7 +4,8 @@ Section: python
 Maintainer: Nicolas Delvaux <nicolas.delvaux@arkena.com>
 Build-Depends: debhelper (>= 8),
                python-all (>= 2.6.6-3~),
-               txt2tags
+               python-setuptools,
+               python-docutils
 Standards-Version: 3.9.5
 
 Package: python-toolbox2

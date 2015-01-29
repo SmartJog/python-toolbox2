@@ -1,16 +1,22 @@
 import os
 import subprocess
+from distutils.command.build import build
 from setuptools import setup, find_packages
 
 import toolbox2
 
 
-try:
-    # Build manpages
-    subprocess.call(['txt2tags', '-o', 'doc/toolbox2.1', 'doc/toolbox2.t2t'])
-    subprocess.call(['txt2tags', '-o', 'doc/toolbox2-transcode.1', 'doc/toolbox2-transcode.t2t'])
-except OSError:
-    print('Warning: txt2tags was not found, skipping manpages generation.')
+class MyBuild(build):
+    """Customized build command - build manpages."""
+    def run(self):
+        try:
+            print('Generating manpages...')
+            subprocess.call(['rst2man', 'doc/toolbox2.rst', 'doc/toolbox2.1'])
+            subprocess.call(['rst2man', 'doc/toolbox2-transcode.rst', 'doc/toolbox2-transcode.1'])
+        except OSError:
+            print('Warning: rst2man was not found, skipping manpages generation.')
+        build.run(self)
+
 
 data_files = [(d, [os.path.join(d, f) for f in files]) for d, dirs, files in os.walk('share/fonts')]
 data_files.append(('/etc/', ['conf/toolbox2.conf']))
@@ -25,6 +31,7 @@ setup(
     packages=find_packages(),
     scripts=['bin/toolbox2', 'bin/toolbox2-transcode'],
     data_files=data_files,
+    cmdclass={'build': MyBuild},
     classifiers=[
         "Programming Language :: Python",
         "License :: LGPL 2.1",
