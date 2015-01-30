@@ -53,22 +53,15 @@ class GetCapabilityAction(Action):
 
     def extract_help(self, callback=None):
         if self.tool == 'ffmpeg':
-            worker = FFmpegWorker(self.log)
+            worker = self._new_worker(FFmpegWorker)
         elif self.tool == 'ffprobe':
-            worker = FFprobeWorker(self.log)
+            worker = self._new_worker(FFprobeWorker)
         else:
             raise GetCapabilityActionException(
                 'getcapability via help extraction is not supported for %s'
                 % self.tool
             )
         worker.make_fullhelp()
-
-        try:
-            if self.conf:
-                path = self.conf.get('tools', worker.tool)
-                worker.tool = path
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError) as exc:
-            self.log.warning('%s', exc)
 
         self.workers.append(worker)
         self.worker_idx = 0
