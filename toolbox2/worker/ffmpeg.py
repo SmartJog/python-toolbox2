@@ -345,7 +345,7 @@ class FFmpegWorker(Worker):
         index = 0
         for audio_map in mapping:
             path = os.path.join(basedir, '%s_a%s' % (basename, index))
-            extension = self._get_codec_extension(audio_codec or stream['codec_name'])
+            extension = self._get_codec_extension(audio_codec or avinfo.video_streams[0]['codec_name'])
             path = '%s%s' % (path, extension)
 
             opts = [('-acodec', 'copy')]
