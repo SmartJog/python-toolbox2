@@ -29,7 +29,7 @@ class AVInfo(object):
         self.video_res = None
         self.video_has_vbi = False
         self.video_fps = 0
-        self.video_dar = 0
+        self.video_dar = '16:9'
         self.timecode = '00:00:00:00'
         self.video_streams = []
         self.audio_streams = []
