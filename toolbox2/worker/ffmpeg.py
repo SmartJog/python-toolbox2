@@ -282,7 +282,6 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         width = options.get('width', 0)
-        avinfo = self._get_input_avinfo()
 
         self.video_opts += [
             ('-frames:v', 1),
@@ -683,7 +682,6 @@ class FFmpegWorker(Worker):
             options = {}
         audio_format = options.get('format', 's16le')
         sample_rate = options.get('sample_rate', 48000)
-        avinfo = self._get_input_avinfo()
 
         self.audio_opts += [
             ('-acodec', 'pcm_%s' % audio_format),
@@ -705,7 +703,6 @@ class FFmpegWorker(Worker):
             options = {}
         audio_format = options.get('format', 's24le')
         sample_rate = options.get('sample_rate', 48000)
-        avinfo = self._get_input_avinfo()
 
         self.audio_opts += [
             ('-acodec', 'pcm_%s' % audio_format),
@@ -948,7 +945,6 @@ class FFmpegWorker(Worker):
 
     def mux_mov(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         self.video_opts += [('-map', '0:v')]
         if self.mov_imx_header:
@@ -965,7 +961,6 @@ class FFmpegWorker(Worker):
 
     def mux_gxf(self, basedir, options=None):
         basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
-        avinfo = self._get_input_avinfo()
 
         self.format_opts += [('-f', 'gxf')]
         self.video_opts += [('-map', '0:v')]
