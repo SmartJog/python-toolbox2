@@ -25,7 +25,7 @@ class FFprobeWorker(Worker):
         })
 
     def make_fullhelp(self):
-        self.params= {
+        self.params = {
             '-h': None,
         }
 

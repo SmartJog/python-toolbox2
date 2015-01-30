@@ -816,8 +816,8 @@ class FFmpegWorker(Worker):
             res_y = 576
             res_x = 720
         else:
-            res_y=1080
-            res_x=1920
+            res_y = 1080
+            res_x = 1920
 
         if fps <= 23.98:
             fps = 23.98
@@ -1072,7 +1072,7 @@ class FFmpegWorker(Worker):
             'center-right':  'x=(w-tw-%d):y=(h/2-lh/2)' % padding,
         }
         position_coords = positions.get(position)
-        drawtext_filter=''
+        drawtext_filter = ''
 
         # Is it a custom position? We expect a string <number>x<number>
         if not position_coords:
