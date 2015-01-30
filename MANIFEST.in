@@ -2,3 +2,5 @@ include COPYING ChangeLog Readme.rst
 recursive-include doc *.rst
 recursive-include conf *
 recursive-include share *
+recursive-include tests *
+

@@ -2,6 +2,7 @@ Version 0.10.0~dev
 
 	* Switch the build system to setuptools
 	* Rewrite man pages in RST (better github/gitlab support)
+	* Bootstrap a test suite
 
 Version 0.9.0 Released on 2014/09/17
 

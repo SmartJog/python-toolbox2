@@ -31,6 +31,7 @@ setup(
     packages=find_packages(),
     scripts=['bin/toolbox2', 'bin/toolbox2-transcode'],
     data_files=data_files,
+    test_suite='tests',
     cmdclass={'build': MyBuild},
     classifiers=[
         "Programming Language :: Python",

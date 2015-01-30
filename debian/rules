@@ -3,3 +3,14 @@
 
 %:
 	dh $@ --with python2
+
+# Get the supported Python versions
+PYVERS = $(shell pyversions -r -v)
+
+override_dh_auto_test:
+ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	set -e -x;\
+	for py in $(PYVERS); do \
+		PYTHONPATH=$(CURDIR)/build/lib.*-$$py  python$$py setup.py test;\
+	done
+endif
