@@ -88,6 +88,7 @@ class FFmpegWorker(Worker):
         self.special_audio_filter = None
         self.special_audio_mapping = None
         self.single_frame = False
+        self.seek = 0
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -139,6 +140,9 @@ class FFmpegWorker(Worker):
         for input_file in self.input_files:
             if self.decoding_threads:
                 args += ['-threads', self.decoding_threads]
+            if self.seek > 0:
+                args += ['-ss', self.seek]
+
             args += input_file.get_args()
 
         if self.video_filter_chain:
@@ -1118,3 +1122,8 @@ class FFmpegWorker(Worker):
 
     def set_single_frame(self):
         self.single_frame = True
+
+    def set_seek(self, seek):
+        self.seek = seek
+        avinfo = self._get_input_avinfo()
+        avinfo.timecode = '00:00:%d:00' % seek

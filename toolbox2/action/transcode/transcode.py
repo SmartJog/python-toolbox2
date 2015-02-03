@@ -45,6 +45,7 @@ class TranscodeAction(Action):
         self.video_burn = int(self.params.get('video_burn', 0))
 
         self.single_frame = self.params.get('single_frame', False)
+        self.seek = int(self.params.get('seek', 0))
 
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
@@ -145,6 +146,9 @@ class TranscodeAction(Action):
             else:
                 self.audio_format = 's16le'
             self.audio_codec_options['format'] = self.audio_format
+
+        if self.seek > 0:
+            ffmpeg.set_seek(self.seek)
 
         if self.single_frame:
             self.container = 'jpg'

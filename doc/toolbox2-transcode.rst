@@ -138,6 +138,9 @@ OPTIONS
 --**single-frame**
   Extract a single frame (output a .jpg).
 
+--**seek** seconds
+  Start the transcode from a specified offset.
+
 
 EXAMPLES
 ========
@@ -149,3 +152,5 @@ EXAMPLES
 **dnxhd/mxf 220mbp 1920x1080i 29.97fps 10bit pcm @ 24bit muxed by ffmpeg**
   toolbox2-transcode --video-codec dnxhd --video-bitrate 220000 --video-pix-fmt yuv422p10le --container mxf --audio-format s24le input.mov
 
+**Preview of a burned text at the 10th second**
+  toolbox2-transcode --seek=10 --single-frame --video-burn --video-burn-date --video-burn-hostname --video-burn-timecode input.mpg
