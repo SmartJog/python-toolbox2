@@ -95,6 +95,7 @@ def parse_opts():
         {'name': 'muxer', 'default':'ffmpeg', 'action':'store', 'help':'muxing library to use: ffmpeg, omneon, bmx'},
         {'name': 'decoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to decode'},
         {'name': 'encoding_threads', 'default': 1, 'action':'store', 'help':'number of threads used to encode'},
+        {'name': 'single_frame', 'default': False, 'action':'store_true', 'help':'extract a single frame'},
     ]
 
     formatter = optparse.IndentedHelpFormatter(max_help_position=60, width=120)

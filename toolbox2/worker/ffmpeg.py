@@ -55,6 +55,8 @@ class FFmpegWorker(Worker):
 
         def get_args(self):
             args = []
+            if self.params.get('single_frame', False):
+                args += ['-frames:v', '1']
             all_opts = self.video_opts + self.audio_opts + self.format_opts
 
             for option in all_opts:
@@ -85,6 +87,7 @@ class FFmpegWorker(Worker):
         self.fps = 0
         self.special_audio_filter = None
         self.special_audio_mapping = None
+        self.single_frame = False
 
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
@@ -844,7 +847,8 @@ class FFmpegWorker(Worker):
             if 'bitrate' in options:
                 self.video_opts += [('-b:v', options['bitrate'])]
 
-
+    def transcode_mjpeg(self, options=None):
+        self.video_opts = [('-vcodec', 'mjpeg')]
 
     def transcode(self, codec, options=None, av='video'):
         if codec == 'copy':
@@ -973,6 +977,11 @@ class FFmpegWorker(Worker):
 
         path = '%s%s' % (os.path.join(basedir, basename), '.gxf')
         self.add_output_file(path)
+
+    def mux_jpg(self, basedir, options=None):
+        basename = os.path.splitext(os.path.basename(self.input_files[0].path))[0]
+        path = os.path.join(basedir, '%s.jpg' % basename)
+        self.add_output_file(path, params={'single_frame': True})
 
     def mux(self, basedir, container, options=None):
         method = getattr(self, 'mux_%s' % container)
@@ -1106,3 +1115,6 @@ class FFmpegWorker(Worker):
         self.video_filter_chain.append(
             ('drawtext', drawtext_filter)
         )
+
+    def set_single_frame(self):
+        self.single_frame = True

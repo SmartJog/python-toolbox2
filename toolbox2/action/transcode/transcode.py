@@ -44,6 +44,8 @@ class TranscodeAction(Action):
         self.video_resolution = self.params.get('video_resolution', 'default')
         self.video_burn = int(self.params.get('video_burn', 0))
 
+        self.single_frame = self.params.get('single_frame', False)
+
         self.audio_codec = self.params.get('audio_codec', 'pcm')
         self.audio_format = self.params.get('audio_format', 'default')
         self.audio_sample_rate = int(self.params.get('audio_sample_rate', 48000))
@@ -143,6 +145,12 @@ class TranscodeAction(Action):
             else:
                 self.audio_format = 's16le'
             self.audio_codec_options['format'] = self.audio_format
+
+        if self.single_frame:
+            self.container = 'jpg'
+            self.video_codec = 'mjpeg'
+            self.container_hinting = False
+            ffmpeg.set_single_frame()
 
         ffmpeg.transcode(self.video_codec, self.video_codec_options)
         ffmpeg.transcode(self.audio_codec, self.audio_codec_options, 'audio')

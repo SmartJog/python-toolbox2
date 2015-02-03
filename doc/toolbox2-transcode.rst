@@ -135,6 +135,9 @@ OPTIONS
 --**encoding-threads** thread_count
   How many threads should be used to encode.
 
+--**single-frame**
+  Extract a single frame (output a .jpg).
+
 
 EXAMPLES
 ========
