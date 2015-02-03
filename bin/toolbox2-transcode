@@ -4,6 +4,8 @@ import os
 import sys
 import logging
 import optparse
+
+import toolbox2
 from toolbox2.action.extract.avinfo_extract import AVInfoAction
 from toolbox2.action.transcode.transcode import TranscodeAction
 
@@ -57,6 +59,7 @@ def transcode(file_path, conf, clean=False):
 
 def parse_opts():
     options = [
+        {'name': 'version', 'default': False, 'action':'store_true', 'help':'print the Toolbox2 version'},
         {'name': 'count_packets', 'action': 'store_true', 'default': 0, 'help': 'enable packet counting and thus transcode progress'},
         {'name': 'tmp_path', 'action': 'store', 'default': '/tmp', 'help': 'path of the temporary directory used to store output files'},
         {'name': 'container', 'action': 'store', 'default': 'mxf', 'help': 'container type: mxf, mov, mp4, flv'},
@@ -105,6 +108,10 @@ def parse_opts():
                                  default=option['default'])
 
     opts, args = option_parser.parse_args()
+
+    if opts.version:
+        print(toolbox2.__version__)
+        sys.exit()
 
     ret = {}
     for option in options:
