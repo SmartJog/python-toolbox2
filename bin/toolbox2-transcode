@@ -70,6 +70,7 @@ def parse_opts():
         {'name': 'video_codec', 'default':'imx', 'action':'store', 'help':'video codec: mpeg2video, imx, xdcamhd, dnxhd, simple_h264'},
         {'name': 'video_bitrate', 'default': 50000, 'action':'store', 'help':'video bitrate in kbit/s'},
         {'name': 'video_pix_fmt', 'default':'yuv422p', 'action':'store', 'help':'video pixel format: yuv411p, yuv420p, yuv422p, yuv422p10le'},
+        {'name': 'prores_profile', 'default': 'proxy', 'action': 'store', 'help': 'profile to use if the video codec is set to prores: proxy (default), lt, standard or hq'},
         {'name': 'video_letterbox', 'default': 0, 'action':'store_true', 'help':'enable video letterboxing'},
         {'name': 'video_aspect_ratio', 'default':'default', 'action':'store', 'help':'video aspect ratio: default, 4:3, 16:9'},
         {'name': 'video_gop_size', 'default': 0, 'action': 'store', 'help': 'video gop size: 0, 12, 15'},

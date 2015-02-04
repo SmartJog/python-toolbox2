@@ -52,6 +52,9 @@ OPTIONS
 --**video-codec** codec
   Video codec: mpeg2video, imx, xdcamhd, dnxhd, simple_h264, prores.
 
+--**prores-profile** profile
+  Only used if **--video-codec** is set to prores: proxy (default), lt, standard or hq.
+
 --**video-bitrate** bitrate
   Video bitrate in kbit/s.
 

@@ -42,6 +42,7 @@ class TranscodeAction(Action):
         self.video_closed_gop = int(self.params.get('video_closed_gop', 0))
         self.video_interlaced = int(self.params.get('video_interlaced', 1))
         self.video_resolution = self.params.get('video_resolution', 'default')
+        self.prores_profile = self.params.get('prores_profile', 'proxy')
         self.video_burn = int(self.params.get('video_burn', 0))
 
         self.single_frame = self.params.get('single_frame', False)
@@ -81,6 +82,7 @@ class TranscodeAction(Action):
             'closed_gop': self.video_closed_gop,
             'interlaced': self.video_interlaced,
             'resolution': self.video_resolution,
+            'prores_profile': self.prores_profile,
         }
 
         self.container_options = {

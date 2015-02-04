@@ -789,12 +789,12 @@ class FFmpegWorker(Worker):
                 ('-vtag', codec_tag)
             ]
 
-    def _prores_bitrate_lookup(self, avinfo):
+    def _prores_bitrate_lookup(self, avinfo, profile='proxy'):
         """Try to set the bitrate based on input resolution and FPS
 
         These are "official" Apple directives.
         """
-        lookup  = {
+        proxy  = {
             "720x486 @ 23.98": "10M",
             "720x486 @ 25.0": "10M",
             "720x486 @ 29.97": "12M",
@@ -807,6 +807,57 @@ class FFmpegWorker(Worker):
             "1920x1080 @ 25.0": "38M",
             "1920x1080 @ 29.97": "45M",
         }
+
+        lt = {
+            "720x486 @ 23.98": "23M",
+            "720x486 @ 25.0": "24M",
+            "720x486 @ 29.97": "29M",
+
+            "720x576 @ 23.98": "27M",
+            "720x576 @ 25.0": "28M",
+            "720x576 @ 29.97": "34M",
+
+            "1920x1080 @ 23.98": "82M",
+            "1920x1080 @ 25.0": "85M",
+            "1920x1080 @ 29.97": "102M",
+        }
+
+        standard = {
+            "720x486 @ 23.98": "34M",
+            "720x486 @ 25.0": "35M",
+            "720x486 @ 29.97": "42M",
+
+            "720x576 @ 23.98": "39M",
+            "720x576 @ 25.0": "41M",
+            "720x576 @ 29.97": "49M",
+
+            "1920x1080 @ 23.98": "117M",
+            "1920x1080 @ 25.0": "122M",
+            "1920x1080 @ 29.97": "147M",
+        }
+
+        hq = {
+            "720x486 @ 23.98": "50M",
+            "720x486 @ 25.0": "52M",
+            "720x486 @ 29.97": "63M",
+
+            "720x576 @ 23.98": "59M",
+            "720x576 @ 25.0": "61M",
+            "720x576 @ 29.97": "73M",
+
+            "1920x1080 @ 23.98": "176M",
+            "1920x1080 @ 25.0": "184M",
+            "1920x1080 @ 29.97": "220M",
+        }
+
+        if profile == 'lt':
+            lookup = lt
+        elif profile == 'standard':
+            lookup = standard
+        elif profile == 'hq':
+            lookup = hq
+        else:
+            lookup = proxy
 
         res = "%s @ %s" % (avinfo.video_res, avinfo.video_fps)
         if res in lookup:
@@ -841,11 +892,21 @@ class FFmpegWorker(Worker):
         if not options:
             options = {}
         self.video_opts = [('-vcodec', 'prores')]
-        self.video_opts += [('-profile:v', '0')]
+
+        profile = options.get('prores_profile', 'proxy')
+        profile_digit = 0  # proxy
+        if profile == 'lt':
+            profile_digit = 1
+        elif profile == 'standard':
+            profile_digit = 2
+        elif profile == 'hq':
+            profile_digit = 3
+
+        self.video_opts += [('-profile:v', profile_digit)]
 
         try:
             avinfo = self._get_input_avinfo()
-            bitrate = self._prores_bitrate_lookup(avinfo)
+            bitrate = self._prores_bitrate_lookup(avinfo, profile)
             self.video_opts += [('-b:v', bitrate)]
         except:
             if 'bitrate' in options:
