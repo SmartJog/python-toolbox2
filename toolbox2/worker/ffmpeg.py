@@ -1112,6 +1112,10 @@ class FFmpegWorker(Worker):
         if timecode and text:
             text += " "  # The timecode will be appended automatically
 
+        if not text and timecode == 0:
+            # Nothing to draw, stop right there
+            return
+
         # Put the text in a tmp file (this avoid dealing with escaping)
         # The tmp file is placed in the work directory, so that it is deleted with it
         fd, path = tempfile.mkstemp(suffix='toolbox2_burn_text',
