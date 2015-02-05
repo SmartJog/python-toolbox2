@@ -1118,11 +1118,13 @@ class FFmpegWorker(Worker):
 
         # Put the text in a tmp file (this avoid dealing with escaping)
         # The tmp file is placed in the work directory, so that it is deleted with it
-        fd, path = tempfile.mkstemp(suffix='toolbox2_burn_text',
-                                    dir=basedir,
-                                    text=True)
-        os.write(fd, text)
-        os.close(fd)
+        path = ''
+        if text:
+            fd, path = tempfile.mkstemp(suffix='toolbox2_burn_text',
+                                        dir=basedir,
+                                        text=True)
+            os.write(fd, text)
+            os.close(fd)
 
         fontsize = options.get('fontsize', 12)
         fontname = options.get('fontname', 'vera')
