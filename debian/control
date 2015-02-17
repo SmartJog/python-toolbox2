@@ -25,4 +25,4 @@ Recommends: sjconf-toolbox2,
             bmx (>= 0.1.2),
             qt-faststart-static (>= 1.0)
 Description: Toolbox2 python module
- Module that provide generic interfaces to describe and manage actions.
+ Generic interface to describe and manage actions on media assets.

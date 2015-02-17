@@ -25,6 +25,7 @@ setup(
     name='python-toolbox2',
     author='The development team at Arkena',
     author_email='opensource@arkena.com',
+    description='Generic interface to describe and manage actions on media assets.',
     long_description=open('Readme.rst').read(),
     url='https://github.com/SmartJog/python-toolbox2/',
     version=toolbox2.__version__,
