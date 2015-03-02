@@ -8,6 +8,7 @@ Version 0.10.0~dev
 	* Allow to seek (start the transcode at a specified offset)
 	* Add support for 'lt', 'standard' and 'hq' prores profiles
 	* Add target bitrates for ProRes @ 1280x720
+	* Fix thumbnail generation for very short videos
 	* Various fixes
 
 Version 0.9.0 Released on 2014/09/17

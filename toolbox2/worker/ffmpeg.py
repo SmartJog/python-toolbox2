@@ -300,12 +300,19 @@ class FFmpegWorker(Worker):
                 ('scale', 'scale=%s:-1' % width),
             ]
 
+        frames_batch = 200  # frames to be analized
+        avinfo = self._get_input_avinfo()
+        frame_count = int(avinfo.video_fps*float(avinfo.video_streams[0]['duration']))
+        if frame_count < frames_batch:
+            # For very short videos
+            frames_batch = frame_count
+
         # The thumbnail filter extracts an image from the first frames
         # Available since ffmpeg 2.0 (better to use a named parameter)
         if is_option_available('ffmpeg', 'n .* set the frames batch size', regex=True):
-            self.video_filter_chain += [('thumbnail', 'thumbnail=n=200')]
+            self.video_filter_chain += [('thumbnail', 'thumbnail=n=%d' % frames_batch)]
         else:
-            self.video_filter_chain += [('thumbnail', 'thumbnail=200')]
+            self.video_filter_chain += [('thumbnail', 'thumbnail=%d' % frames_batch)]
 
     def get_opt(self, opt_name, opt_default=None):
         for opts in [self.video_opts, self.audio_opts, self.format_opts]:
