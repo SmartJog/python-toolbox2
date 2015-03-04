@@ -1,4 +1,4 @@
-Version 0.10.0~dev
+Version 0.10.0 Released on 2015/03/04
 
 	* Switch the build system to setuptools
 	* Rewrite man pages in RST (better github/gitlab support)

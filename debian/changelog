@@ -1,10 +1,10 @@
-python-toolbox2 (0.10.0~dev-1) UNRELEASED; urgency=medium
+python-toolbox2 (0.10.0-1) unstable; urgency=medium
 
   * New upstream release
   * Run the test suite at build time
   * Change the package description
 
- -- Nicolas Delvaux <nicolas.delvaux@arkena.com>  Tue, 27 Jan 2015 10:26:09 +0100
+ -- Nicolas Delvaux <nicolas.delvaux@arkena.com>  Wed, 04 Mar 2015 17:45:13 +0100
 
 python-toolbox2 (0.9.0-1) unstable; urgency=low
 
