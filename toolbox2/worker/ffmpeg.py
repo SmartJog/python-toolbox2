@@ -302,10 +302,11 @@ class FFmpegWorker(Worker):
 
         frames_batch = 200  # frames to be analized
         avinfo = self._get_input_avinfo()
-        frame_count = int(avinfo.video_fps*float(avinfo.video_streams[0]['duration']))
-        if frame_count < frames_batch:
-            # For very short videos
-            frames_batch = frame_count
+        if 'duration' in avinfo.video_streams[0]:
+            frame_count = int(avinfo.video_fps*float(avinfo.video_streams[0]['duration']))
+            if frame_count < frames_batch:
+                # For very short videos
+                frames_batch = frame_count
 
         # The thumbnail filter extracts an image from the first frames
         # Available since ffmpeg 2.0 (better to use a named parameter)

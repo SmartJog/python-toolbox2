@@ -1,3 +1,7 @@
+Version 0.10.1 Released on 2015/03/05
+
+	* Fix a thumbnail generation regression for some videos
+
 Version 0.10.0 Released on 2015/03/04
 
 	* Switch the build system to setuptools
