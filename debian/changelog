@@ -1,3 +1,9 @@
+python-toolbox2 (0.10.2-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Nicolas Delvaux <nicolas.delvaux@arkena.com>  Tue, 12 May 2015 16:35:54 +0200
+
 python-toolbox2 (0.10.1-1) unstable; urgency=medium
 
   * New upstream release

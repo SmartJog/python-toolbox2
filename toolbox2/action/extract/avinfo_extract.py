@@ -46,6 +46,7 @@ class AVInfo(object):
 
         self._init_res()
         self._init_fps()
+        self._init_pix_fmt()
         self._init_dar()
         self._init_timecode()
         self._init_audio_format()
@@ -66,6 +67,10 @@ class AVInfo(object):
         if match:
             (num, den) = match.groups()
             self.video_fps = round(float(num) / float(den), 2)
+
+    def _init_pix_fmt(self):
+        if self.video_streams:
+            self.pix_fmt = self.video_streams[0]['pix_fmt']
 
     def _init_dar(self):
         if not self.video_streams:

@@ -1,3 +1,7 @@
+Version 0.10.2 Released on 2015/05/12
+
+	* Change the default pixel format value to be the same as the source
+
 Version 0.10.1 Released on 2015/03/05
 
 	* Fix a thumbnail generation regression for some videos

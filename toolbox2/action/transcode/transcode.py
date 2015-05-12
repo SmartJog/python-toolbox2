@@ -37,7 +37,7 @@ class TranscodeAction(Action):
         self.video_bitrate = int(self.params.get('video_bitrate', 50000))
         self.video_letterbox = int(self.params.get('video_letterbox', 0))
         self.video_aspect_ratio = self.params.get('video_aspect_ratio', 'default')
-        self.video_pix_fmt = self.params.get('video_pix_fmt', 'yuv422p')
+        self.video_pix_fmt = self.params.get('video_pix_fmt', 'default')
         self.video_gop_size = int(self.params.get('video_gop_size', 0))
         self.video_closed_gop = int(self.params.get('video_closed_gop', 0))
         self.video_interlaced = int(self.params.get('video_interlaced', 1))
@@ -141,6 +141,9 @@ class TranscodeAction(Action):
         ffmpeg.set_timecode(avinfo.timecode)
         ffmpeg.set_threads(self.decoding_threads, self.encoding_threads)
         ffmpeg.set_channels_per_stream(self.audio_channels_per_stream)
+
+        if self.video_codec_options['pix_fmt'] == 'default':
+            self.video_codec_options['pix_fmt'] = avinfo.pix_fmt
 
         if self.audio_format == 'default':
             if avinfo.audio_format:
