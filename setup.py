@@ -29,7 +29,7 @@ setup(
     long_description=open('Readme.rst').read(),
     url='https://github.com/SmartJog/python-toolbox2/',
     version=toolbox2.__version__,
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests', 'tests.*')),
     scripts=['bin/toolbox2', 'bin/toolbox2-transcode'],
     data_files=data_files,
     test_suite='tests',
