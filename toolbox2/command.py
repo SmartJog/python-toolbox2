@@ -65,6 +65,9 @@ class Command(object):
         fl = fcntl.fcntl(self.process.stderr, fcntl.F_GETFL)
         fcntl.fcntl(self.process.stderr, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
+    def cancel(self):
+        self.process.kill()
+
     def wait(self, callback=None, loop=True):
 
         while self.process.returncode is None:

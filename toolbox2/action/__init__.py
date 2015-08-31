@@ -50,6 +50,8 @@ class Action(object):
         self.base_dir = base_dir
         self.params = params or {}
 
+        self._cancel = False
+
         self.resources = {
             'inputs': {},
             'outputs': {},
@@ -108,9 +110,12 @@ class Action(object):
         :type calback: callable(action)
         """
         for self.worker_idx, _ in enumerate(self.workers):
+            if self._cancel:
+                break  # no need to run other workers
             self._execute_current_worker(callback)
 
-        self.progress = 100
+        if not self._cancel:
+            self.progress = 100
         self._callback(callback)
 
     def _execute_current_worker(self, callback=None):
@@ -128,17 +133,21 @@ class Action(object):
         worker.run(self.tmp_dir)
 
         ret = None
-        while ret is None:
+        while ret is None and not self._cancel:
             ret = worker.wait_noloop()
             self._update_progress()
             self.running_time = time.time() - self.started_at
             if (time.time() - self.last_callback) > self.callback_interval:
                 self.last_callback = time.time()
                 self._callback(callback)
-        if ret != 0:
-            raise WorkerException(worker.get_error())
 
-        worker.progress = 100
+        if ret is None and self._cancel:
+            self.log.info('Killing the running worker...')
+            worker.cancel()
+        elif ret != 0:
+            raise WorkerException(worker.get_error())
+        else:
+            worker.progress = 100
         self._update_progress()
         self._callback(callback)
 
@@ -332,6 +341,10 @@ class Action(object):
             shutil.rmtree(self.tmp_dir)
         except OSError:
             self.log.exception('An error occured')
+
+    def cancel(self):
+        """Cancel/abort the running action"""
+        self._cancel = True
 
     def run(self, callback=None):
         """

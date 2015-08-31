@@ -168,6 +168,10 @@ class Worker(object):
         self._finalize()
         return ret
 
+    def cancel(self):
+        """Cancel a running command"""
+        self.command.cancel()
+
     def wait_noloop(self):
         """
         Wait (non-blocking) running process and return its exit code.
