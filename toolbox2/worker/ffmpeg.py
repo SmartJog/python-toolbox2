@@ -93,13 +93,13 @@ class FFmpegWorker(Worker):
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
 
-        res = re.findall('frame=\s*(\d+)', self.stderr)
+        res = re.findall(r'frame=\s*(\d+)', self.stderr)
         if len(res) > 0 and self.nb_frames > 0:
             frame = float(res[-1])
             self.progress = (frame / self.nb_frames) * 100
             if self.progress > 99:
                 self.progress = 99
-        res = re.findall('fps=\s*(\d+)', self.stderr)
+        res = re.findall(r'fps=\s*(\d+)', self.stderr)
         if res:
             self.fps = int(res[-1])
 

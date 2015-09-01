@@ -63,7 +63,7 @@ class AVInfo(object):
         if not self.video_streams:
             return
 
-        match = re.match('(\d+)/(\d+)', self.video_streams[0]['r_frame_rate'])
+        match = re.match(r'(\d+)/(\d+)', self.video_streams[0]['r_frame_rate'])
         if match:
             (num, den) = match.groups()
             self.video_fps = round(float(num) / float(den), 2)

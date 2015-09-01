@@ -28,7 +28,7 @@ class VideoparserWorker(Worker):
 
         while '\n' in self.stdout_buf:
             line, self.stdout_buf = self.stdout_buf.split('\n', 1)
-            res = re.findall('(\w+):\s+([^\n]+)', line)
+            res = re.findall(r'(\w+):\s+([^\n]+)', line)
             if not self.full_desc:
                 if len(res) > 0:
                     if res[0][0] == 'full_desc':

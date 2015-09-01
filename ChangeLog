@@ -2,6 +2,7 @@ Version 0.10.3~dev
 
 	* Allow to cancel an Action and/or a Worker
 	* Do not try to install tests
+	* Use raw strings for regexps
 
 Version 0.10.2 Released on 2015/05/12
 

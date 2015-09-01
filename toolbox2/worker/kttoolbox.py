@@ -65,14 +65,14 @@ class KTToolboxWorker(Worker):
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
 
-        res = re.findall('Progress: (\d+)%', self.stdout)
+        res = re.findall(r'Progress: (\d+)%', self.stdout)
         if len(res) > 0:
             progress = int(res[-1])
             if progress > 99:
                 progress = 99
             self.progress = progress
 
-        res = re.findall('output-(\w+): (.*)', self.stdout)
+        res = re.findall(r'output-(\w+): (.*)', self.stdout)
         for output in res:
             _id = output[0]
             path = output[1]

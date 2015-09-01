@@ -69,7 +69,7 @@ class Raw2BmxWorker(Worker):
         return args
 
     def set_timecode(self, timecode):
-        match = re.match('(\d{2}):(\d{2}):(\d{2})([:;])(\d{2})', timecode)
+        match = re.match(r'(\d{2}):(\d{2}):(\d{2})([:;])(\d{2})', timecode)
         if not match:
             raise Raw2BmxWorkerException('Timecode must be something like hh:mm:ss[:|;]ff')
 
