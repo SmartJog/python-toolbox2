@@ -1,6 +1,7 @@
 python-toolbox2 (0.10.3~dev-1) UNRELEASED; urgency=medium
 
   * New upstream version
+  * Clean the packaging
 
  -- Nicolas Delvaux <nicolas.delvaux@arkena.com>  Mon, 31 Aug 2015 16:11:25 +0200
 

@@ -7,15 +7,11 @@ Build-Depends: debhelper (>= 8),
                python-setuptools,
                python-docutils
 X-Python-Version: >= 2.6
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 
 Package: python-toolbox2
 Architecture: all
-Depends: python (>= 2.6.6-3+squeeze3~),
-# Explicitely set the python dependency because of an internal Python backport
-# TODO: drop the previous line and activate the next one when switching to
-# Wheezy
-#        ${python:Depends},
+Depends: ${python:Depends},
          ${misc:Depends},
          ffmpeg-static (>= 1.0)
 Recommends: sjconf-toolbox2,
