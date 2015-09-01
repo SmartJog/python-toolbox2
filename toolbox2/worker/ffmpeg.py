@@ -278,7 +278,7 @@ class FFmpegWorker(Worker):
                 filter_chain += 'aevalsrc=%s:n=480:s=48000:d=%s[null%s];' % ('0:' * i_channels_per_stream, duration, index)
                 map_chain.append(('-map', '[null%s]' % index))
 
-        return (filter_chain.rstrip(';'), map_chain)
+        return filter_chain.rstrip(';'), map_chain
 
     def make_fullhelp(self):
         self.format_opts += [

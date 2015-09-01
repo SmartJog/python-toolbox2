@@ -39,9 +39,7 @@ class GetCapabilityAction(Action):
         pass
 
     def _execute(self, callback=None):
-        if self.tool == 'ffmpeg':
-            self.extract_help(callback)
-        elif self.tool == 'ffprobe':
+        if self.tool in ('ffmpeg', 'ffprobe'):
             self.extract_help(callback)
         else:
             raise GetCapabilityActionException(

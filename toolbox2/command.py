@@ -47,7 +47,7 @@ class Command(object):
         self._set_memory_limit()
 
     def run(self, args):
-        if (os.path.isdir(self.base_dir) == False):
+        if not os.path.isdir(self.base_dir):
             os.makedirs(self.base_dir)
 
         self.last_read = time.time()
