@@ -4,6 +4,7 @@ Version 0.10.3~dev
 	* Do not try to install tests
 	* Use raw strings for regexps
 	* Some style fixes
+	* Add a "--version" option to the "toolbox2" command
 
 Version 0.10.2 Released on 2015/05/12
 

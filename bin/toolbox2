@@ -12,16 +12,22 @@ try:
 except:
     import json
 
+import toolbox2
 from toolbox2 import Loader, Toolbox2Exception
 
 
 if __name__ == '__main__':
 
-    usage = "usage: %prog [options]"
+    usage = 'usage: %prog [options]'
     parser = OptionParser(usage=usage)
-    parser.add_option("-p", "--path", dest="path", help="Path of file contaning a json encoded action description.")
+    parser.add_option('-p', '--path', help='Path of file contaning a JSON encoded action description')
+    parser.add_option('-v', '--version', action='store_true', help='Print the Toolbox2 version')
 
     (options, args) = parser.parse_args()
+
+    if options.version:
+        print(toolbox2.__version__)
+        sys.exit()
 
     loader = Loader()
 
