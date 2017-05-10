@@ -12,7 +12,7 @@ from toolbox2.action.transcode import *
 from toolbox2.action.getcapability import *
 
 
-__version__ = '0.10.3'
+__version__ = '0.10.4'
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
