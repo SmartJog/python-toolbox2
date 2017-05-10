@@ -388,8 +388,13 @@ class FFmpegWorker(Worker):
         if bitrate == 0:
             bitrate = 192
 
+        # libfaac is no longer available since ffmpeg 3.2
+        if is_option_available('ffmpeg', 'faac', regex=True):
+            aac_codec = 'libfaac'
+        else:
+            aac_codec = 'aac'
         self.audio_opts = [
-            ('-acodec', 'libfaac'),
+            ('-acodec', aac_codec),
             ('-b:a', '%sk' % bitrate)
         ]
 
