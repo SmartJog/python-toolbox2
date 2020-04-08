@@ -1,8 +1,8 @@
-python-toolbox2 (0.10.6~dev-1) UNRELEASED; urgency=medium
+python-toolbox2 (0.10.6-1) unstable; urgency=medium
 
-  * New upstream version
+  * Fix installation directory
 
- -- Alexandre Lemaitre <alexandre.lemaitre@cji.paris>  Wed, 08 Apr 2020 18:03:27 +0200
+ -- Alexandre Lemaitre <alexandre.lemaitre@cji.paris>  Wed, 08 Apr 2020 18:04:23 +0200
 
 python-toolbox2 (0.10.5-1) unstable; urgency=medium
 
