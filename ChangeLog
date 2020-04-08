@@ -1,3 +1,11 @@
+Version 0.10.6 Released on 2020/04/08
+
+	* Fix installation directory
+
+Version 0.10.5 Released on 2020/04/07
+
+	*  Modernize packaging
+
 Version 0.10.4 Released on 2017/05/10
 
 	* Use aac codec and keep compatibility with libfaac

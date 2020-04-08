@@ -1,9 +1,9 @@
 Source: python-toolbox2
 Priority: optional
 Section: python
-Maintainer: Nicolas Delvaux <nicolas.delvaux@arkena.com>
-Uploaders: Robinson Bernand <robinson.bernand@arkena.com>
-Build-Depends: debhelper (>= 8),
+Maintainer: Nicolas Delvaux <nicolas.delvaux@cji.paris>
+Uploaders: Alexandre Lemaitre <alexandre.lemaitre@cji.paris>
+Build-Depends: debhelper (>= 9),
                python-all (>= 2.6.6-3~),
                python-setuptools,
                python-docutils
@@ -23,3 +23,12 @@ Recommends: sjconf-toolbox2,
             qt-faststart-static (>= 1.0)
 Description: Toolbox2 python module
  Generic interface to describe and manage actions on media assets.
+
+Package: toolbox2
+Architecture: all
+Depends: ${misc:Depends},
+         python-toolbox2 (= ${binary:Version})
+Description: Toolbox2 python module
+ Generic interface to describe and manage ac
+ This package contains the Python binding.
+
