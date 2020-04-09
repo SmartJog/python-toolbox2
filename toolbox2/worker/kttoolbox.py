@@ -54,9 +54,9 @@ class KTToolboxWorker(Worker):
         self.action = params.get('action', 'VBITOSTL')
         self.options = []
 
-        for key, value in option_map.iteritems():
-            option = value.keys()[0]
-            default = value.values()[0]
+        for key, value in list(option_map.items()):
+            option = list(value.keys())[0]
+            default = list(value.values())[0]
             option_value = params.get(key, default)
             if option_value != '':
                 self.options.append(option)

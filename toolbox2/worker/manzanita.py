@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
+
 
 import os
 import copy
@@ -139,7 +139,7 @@ class ManzanitaMuxWorker(ManzanitaWorker):
 
             self.params = get_default_params(self.type)
 
-            for key, value in params.iteritems():
+            for key, value in list(params.items()):
                 if key in self.params:
                     if self.params[key] is None and (value == '' or value == 'None'):
                         pass
@@ -163,7 +163,7 @@ class ManzanitaMuxWorker(ManzanitaWorker):
 
         for section in ['program', 'transport', 'video', 'audio']:
             section_params = params.get(section, {})
-            for key, value in section_params.iteritems():
+            for key, value in list(section_params.items()):
                 if key in self.manzanita_params[section]:
                     if self.manzanita_params[section][key] is None and (value == '' or value == 'None'):
                         pass
@@ -177,14 +177,14 @@ class ManzanitaMuxWorker(ManzanitaWorker):
 
             fileobj.write("Transport*\n")
             fileobj.write("File = %s\n" % self.output_files[0].path)
-            for key, value in self.manzanita_params['transport'].iteritems():
+            for key, value in list(self.manzanita_params['transport'].items()):
                 if not value is None:
                     fileobj.write("%s = %s\n" % (key, value))
 
             fileobj.write("\n\n")
 
             fileobj.write("Program1*\n")
-            for key, value in self.manzanita_params['program'].iteritems():
+            for key, value in list(self.manzanita_params['program'].items()):
                 if not value is None:
                     fileobj.write("%s = %s\n" % (key, value))
 
@@ -199,7 +199,7 @@ class ManzanitaMuxWorker(ManzanitaWorker):
                     fileobj.write("Video%s$\n" % (stream_video_count))
                     fileobj.write("File = %s\n" % stream.path)
                     stream.params.update(self.manzanita_params['video'])
-                    for key, value in stream.params.iteritems():
+                    for key, value in list(stream.params.items()):
                         if not value is None:
                             fileobj.write("%s = %s\n" % (key, value))
 
@@ -208,7 +208,7 @@ class ManzanitaMuxWorker(ManzanitaWorker):
                     fileobj.write("Audio%s$\n" % (stream_audio_count))
                     fileobj.write("File = %s\n" % stream.path)
                     stream.params.update(self.manzanita_params['audio'])
-                    for key, value in stream.params.iteritems():
+                    for key, value in list(stream.params.items()):
                         if not value is None:
                             fileobj.write("%s = %s\n" % (key, value))
                 fileobj.write("\n\n")

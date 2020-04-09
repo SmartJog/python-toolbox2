@@ -50,7 +50,7 @@ class KTToolboxAction(Action):
 
     def _finalize(self):
         index = 1
-        for _id, path in self.kttoolbox_worker.stls.iteritems():
+        for _id, path in list(self.kttoolbox_worker.stls.items()):
             output = self.kttoolbox_params.get('teletext_track_output_path_%s' % _id, None)
 
             if output:
