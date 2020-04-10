@@ -1,4 +1,4 @@
-#!/usr/bin/python                                                                                                                         
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """Test file for the toolbox2 module"""

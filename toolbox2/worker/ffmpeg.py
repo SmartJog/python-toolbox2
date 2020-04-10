@@ -175,7 +175,7 @@ class FFmpegWorker(Worker):
     def _get_codec_extension(self, codec):
         extension = ''
 
-        for key in codec_extension_map.keys():
+        for key in list(codec_extension_map.keys()):
             if key in codec:
                 extension = codec_extension_map[key]
                 break
@@ -224,9 +224,9 @@ class FFmpegWorker(Worker):
 
         filter_chain = ''
         map_chain = []
-        for index, output_stream in o_stream_map.iteritems():
+        for index, output_stream in list(o_stream_map.items()):
             if len(output_stream['input_streams']) == 1:
-                input_stream = output_stream['input_streams'].values()[0]
+                input_stream = list(output_stream['input_streams'].values())[0]
                 if input_stream['channels'] == self.channels_per_stream or self.channels_per_stream == 0:
                     map_chain.append(('-map', '0:%s' % input_stream['index']))
                 else:

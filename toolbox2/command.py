@@ -107,7 +107,7 @@ class Command(object):
         while True:
             try:
                 return _file.read(size)
-            except (OSError, IOError), e:
+            except (OSError, IOError) as e:
                 if e.errno == errno.EINTR:
                     continue
                 elif e.errno == errno.EAGAIN or e.errno == errno.EWOULDBLOCK:

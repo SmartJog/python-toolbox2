@@ -4,15 +4,15 @@ Section: python
 Maintainer: Nicolas Delvaux <nicolas.delvaux@cji.paris>
 Uploaders: Alexandre Lemaitre <alexandre.lemaitre@cji.paris>
 Build-Depends: debhelper (>= 9),
-               python-all (>= 2.6.6-3~),
-               python-setuptools,
-               python-docutils
-X-Python-Version: >= 2.6
+               python3-all (>= 2.6.6-3~),
+               python3-setuptools,
+               python3-docutils
 Standards-Version: 3.9.6
 
-Package: python-toolbox2
+Package: python3-toolbox2
 Architecture: all
-Depends: ${python:Depends},
+Section: python
+Depends: ${python3:Depends},
          ${misc:Depends},
          ffmpeg-static (>= 1.0)
 Recommends: sjconf-toolbox2,
@@ -21,14 +21,15 @@ Recommends: sjconf-toolbox2,
             flvtool2 (>= 1.0.6),
             bmx (>= 0.1.2),
             qt-faststart-static (>= 1.0)
-Description: Toolbox2 python module
+Description: Toolbox2 python3 module
  Generic interface to describe and manage actions on media assets.
 
 Package: toolbox2
 Architecture: all
+Section: python
 Depends: ${misc:Depends},
-         python-toolbox2 (= ${binary:Version})
-Description: Toolbox2 python module
+         python3-toolbox2 (= ${binary:Version})
+Description: Toolbox2 python3 module
  Generic interface to describe and manage ac
- This package contains the Python binding.
+ This package contains the Python3 binding.
 

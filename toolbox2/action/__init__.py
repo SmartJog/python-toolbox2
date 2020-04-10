@@ -4,8 +4,8 @@ import os
 import time
 import math
 import shutil
-import ConfigParser
-from ConfigParser import SafeConfigParser
+import configparser
+from configparser import SafeConfigParser
 from toolbox2.exception import Toolbox2Exception
 from toolbox2.worker import WorkerException
 
@@ -74,7 +74,7 @@ class Action(object):
             with open(TOOLBOX2_CONFIG_FILE, 'r') as fp:
                 self.conf = SafeConfigParser()
                 self.conf.readfp(fp)
-        except (Exception, IOError), exc:
+        except (Exception, IOError) as exc:
             self.log.warning('%s', exc)
 
         if self.id:
@@ -184,7 +184,7 @@ class Action(object):
             if self.conf:
                 path = self.conf.get('tools', worker.tool)
                 worker.tool = path
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), exc:
+        except (configparser.NoSectionError, configparser.NoOptionError) as exc:
             self.log.warning('%s', exc)
 
         return worker
@@ -361,7 +361,7 @@ class Action(object):
             self._setup()
             self._execute(callback)
             self._finalize()
-        except WorkerException, exc:
+        except WorkerException as exc:
             self.log.exception('An error occurred')
             raise ActionException(exc)
         finally:

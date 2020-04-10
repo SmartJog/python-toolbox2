@@ -1,3 +1,9 @@
+python-toolbox2 (0.10.7-1) unstable; urgency=medium
+
+  * Migrate toolbox2 to Python3
+
+ -- Alexandre Lemaitre <alexandre.lemaitre@cji.paris>  Thu, 09 Apr 2020 13:51:06 +0200
+
 python-toolbox2 (0.10.6-1) unstable; urgency=medium
 
   * Fix installation directory

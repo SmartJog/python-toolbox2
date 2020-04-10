@@ -23,7 +23,7 @@ class OmneonCopyWorker(Worker):
     class OutputFile(Worker.OutputFile):
         def get_args(self):
             args = []
-            for key, value in self.params.iteritems():
+            for key, value in list(self.params.items()):
                 args.append(key)
                 if value != None and value != '':
                     args.append(value)
