@@ -14,10 +14,10 @@ class ManzanitaRewrapException(ActionException):
 
 class ManzanitaRewrapAction(Action):
 
-    name = 'manzanita_rewrap'
-    engine = 'manzanita'
-    category = 'rewrap'
-    description = 'Manzanita rewrap tool'
+    name = "manzanita_rewrap"
+    engine = "manzanita"
+    category = "rewrap"
+    description = "Manzanita rewrap tool"
     required_params = {}
 
     def __init__(self, log, base_dir, _id, params=None, resources=None):
@@ -25,43 +25,43 @@ class ManzanitaRewrapAction(Action):
         self.input_file = None
         self.output_file = None
 
-        if 'manzanita' not in self.params:
-            self.params['manzanita'] = {}
+        if "manzanita" not in self.params:
+            self.params["manzanita"] = {}
 
-        if 'global' not in self.params['manzanita']:
-            self.params['manzanita']['global'] = {}
+        if "global" not in self.params["manzanita"]:
+            self.params["manzanita"]["global"] = {}
 
-        if 'stream' not in self.params['manzanita']:
-            self.params['manzanita']['stream'] = {}
+        if "stream" not in self.params["manzanita"]:
+            self.params["manzanita"]["stream"] = {}
 
-        if 'video' not in self.params['manzanita']['stream']:
-            self.params['manzanita']['stream']['video'] = {}
+        if "video" not in self.params["manzanita"]["stream"]:
+            self.params["manzanita"]["stream"]["video"] = {}
 
-        if 'audio' not in self.params['manzanita']['stream']:
-            self.params['manzanita']['stream']['audio'] = {}
+        if "audio" not in self.params["manzanita"]["stream"]:
+            self.params["manzanita"]["stream"]["audio"] = {}
 
     def _setup(self):
-        self.input_file = self.get_input_resource(1).get('path')
+        self.input_file = self.get_input_resource(1).get("path")
         if not self.input_file:
-            raise ManzanitaRewrapException('No path specified for input (index = 1)')
-        nb_video_frames = int(self.get_input_resource(1).get('nb_video_frames', 0))
+            raise ManzanitaRewrapException("No path specified for input (index = 1)")
+        nb_video_frames = int(self.get_input_resource(1).get("nb_video_frames", 0))
 
         # Compute tmp output path
         filename = os.path.basename(self.input_file)
         filename, _ = os.path.splitext(filename)
-        extension = '.ts'
+        extension = ".ts"
         try:
-            extension = self.get_output_resource(1).get('extension', '.ts')
+            extension = self.get_output_resource(1).get("extension", ".ts")
         except ActionException:
             # Silent exception is file does not exist
             pass
-        output_filename = '%s%s' % (filename, extension)
+        output_filename = "%s%s" % (filename, extension)
 
         self.output_file = os.path.join(self.tmp_dir, output_filename)
-        self.add_output_resource(1, {'path': self.output_file})
+        self.add_output_resource(1, {"path": self.output_file})
 
         avinfo_action = AVInfoAction(self.log, self.base_dir, self.id)
-        avinfo_action.add_input_resource(1, {'path': self.input_file})
+        avinfo_action.add_input_resource(1, {"path": self.input_file})
         avinfo = avinfo_action.run()
 
         # Setup ffmpeg demuxer
@@ -71,15 +71,17 @@ class ManzanitaRewrapAction(Action):
         ffmpeg.demux(self.tmp_dir)
 
         # Setup mp2tsms muxer
-        mp2tsms = self._new_worker(ManzanitaMuxWorker, self.params['manzanita']['global'])
+        mp2tsms = self._new_worker(
+            ManzanitaMuxWorker, self.params["manzanita"]["global"]
+        )
 
-        indexes = {'audio': 0, 'video': 0}
+        indexes = {"audio": 0, "video": 0}
         for output in ffmpeg.output_files:
-            if output.type not in ['audio', 'video']:
+            if output.type not in ["audio", "video"]:
                 continue
             index = str(indexes[output.type] + 1)
-            params = self.params['manzanita']['stream'][output.type].get(index, {})
-            params['type'] = output.type
+            params = self.params["manzanita"]["stream"][output.type].get(index, {})
+            params["type"] = output.type
             mp2tsms.add_input_file(output.path, params)
             indexes[output.type] += 1
 

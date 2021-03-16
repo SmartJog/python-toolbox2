@@ -10,16 +10,16 @@ class FLVTool2WorkerException(WorkerException):
 class FLVTool2Worker(Worker):
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
-        self.tool = 'flvtool2'
+        self.tool = "flvtool2"
 
     def add_input_file(self, path, params=None):
         if len(self.input_files) > 0:
-            raise FLVTool2WorkerException('flvtools only support one input file')
+            raise FLVTool2WorkerException("flvtools only support one input file")
         Worker.add_input_file(self, path, params)
 
     def add_output_file(self, path, params=None):
         if len(self.output_files) > 0:
-            raise FLVTool2WorkerException('qt-faststart only support one input file')
+            raise FLVTool2WorkerException("qt-faststart only support one input file")
         Worker.add_output_file(self, path, params)
 
     def get_args(self):

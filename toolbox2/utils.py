@@ -19,18 +19,16 @@ def is_option_available(tool, option, regex=False):
     :return is_option_available
     :rtype bool
     """
-    logger = logging.getLogger('toolbox2')
+    logger = logging.getLogger("toolbox2")
 
     loader = toolbox2.Loader()
-    Action = loader.get_class('getcapability')
-    action = Action(logger,
-                    '/tmp/',
-                    None,
-                    {'tool': tool, 'option': option, 'regex': regex},
-                    {})
+    Action = loader.get_class("getcapability")
+    action = Action(
+        logger, "/tmp/", None, {"tool": tool, "option": option, "regex": regex}, {}
+    )
     success = action.run()
     if success:
-        logger.info('Tool %s does support option %s', tool, option)
+        logger.info("Tool %s does support option %s", tool, option)
     else:
-        logger.info('Tool %s does not support option %s', tool, option)
+        logger.info("Tool %s does not support option %s", tool, option)
     return success

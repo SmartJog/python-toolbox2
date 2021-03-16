@@ -10,7 +10,6 @@ class WorkerException(Toolbox2Exception):
 
 
 class Worker(object):
-
     class File(object):
         def __init__(self, path, params=None):
             self.path = path
@@ -49,8 +48,8 @@ class Worker(object):
         self.memory_limit = 0
         self.kill_timeout = COMMAND_DEFAULT_KILL_TIMEOUT
 
-        self.stdout = ''
-        self.stderr = ''
+        self.stdout = ""
+        self.stderr = ""
         self.error_lines = 1
 
     def add_input_file(self, path, params=None):
@@ -91,7 +90,7 @@ class Worker(object):
         args = []
         for key, value in list(self.params.items()):
             args.append(key)
-            if value != None and value != '':
+            if value != None and value != "":
                 args.append(value)
 
         return args
@@ -109,20 +108,20 @@ class Worker(object):
         Return the last lines from stderr. The number of lines returned
         could be configured with Worker.error_lines attribute.
         """
-        lines = self.stderr.split('\n')
+        lines = self.stderr.split("\n")
         lines.reverse()
 
         i = 0
         error_lines = []
         for line in lines:
-            if not line == '':
+            if not line == "":
                 i += 1
                 error_lines.append(line)
             if i >= self.error_lines:
                 break
 
         error_lines.reverse()
-        return '\n'.join(error_lines)
+        return "\n".join(error_lines)
 
     def _setup(self, base_dir):
         """
@@ -146,8 +145,8 @@ class Worker(object):
 
         args = self.get_process_args()
         args = [str(arg) for arg in args]
-        cmd = ' '.join(args)
-        self.log.info('Running command: %s', cmd)
+        cmd = " ".join(args)
+        self.log.info("Running command: %s", cmd)
 
         self.command = Command(base_dir)
         self.command.memory_limit = self.memory_limit

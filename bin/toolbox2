@@ -16,12 +16,16 @@ import toolbox2
 from toolbox2 import Loader, Toolbox2Exception
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    usage = 'usage: %prog [options]'
+    usage = "usage: %prog [options]"
     parser = OptionParser(usage=usage)
-    parser.add_option('-p', '--path', help='Path of file contaning a JSON encoded action description')
-    parser.add_option('-v', '--version', action='store_true', help='Print the Toolbox2 version')
+    parser.add_option(
+        "-p", "--path", help="Path of file contaning a JSON encoded action description"
+    )
+    parser.add_option(
+        "-v", "--version", action="store_true", help="Print the Toolbox2 version"
+    )
 
     (options, args) = parser.parse_args()
 
@@ -32,7 +36,7 @@ if __name__ == '__main__':
     loader = Loader()
 
     logging.basicConfig()
-    logger = logging.getLogger('toolbox2')
+    logger = logging.getLogger("toolbox2")
     logger.setLevel(logging.DEBUG)
 
     if options.path is not None:
@@ -40,20 +44,22 @@ if __name__ == '__main__':
             buf = fileobj.read()
             settings = json.loads(buf)
 
-        Action = loader.get_class(settings['action'])
-        action = Action(logger, '/tmp/', str(time.time()), settings['params'], settings['resources'])
+        Action = loader.get_class(settings["action"])
+        action = Action(
+            logger, "/tmp/", str(time.time()), settings["params"], settings["resources"]
+        )
 
         try:
-            logger.info('Running %s' % settings['action'])
+            logger.info("Running %s" % settings["action"])
             action.run()
             for index, resource in action.get_output_resources().iteritems():
-                logger.info('Output #%s: %s' % (index, resource))
+                logger.info("Output #%s: %s" % (index, resource))
 
-            logger.info('Params: %s' % action.params)
-            logger.info('Metadata: %s' % action.get_metadata())
+            logger.info("Params: %s" % action.params)
+            logger.info("Metadata: %s" % action.get_metadata())
 
         except Toolbox2Exception:
-            logging.exception('An error occured')
+            logging.exception("An error occured")
             sys.exit(1)
     else:
         parser.print_help()
