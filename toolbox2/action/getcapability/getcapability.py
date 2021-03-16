@@ -22,7 +22,7 @@ class GetCapabilityAction(Action):
 
     def __init__(self, log, basedir, id_, params=None, resources=None):
         # We don't need a basedir or an id for this action...
-        Action.__init__(self, log, ".", None, params, resources)
+        Action.__init__(self, log, "/tmp", None, params, resources)
         self.worker = None
         self.log = log
 
