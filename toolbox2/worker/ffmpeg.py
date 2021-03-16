@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import copy
-import os.path
 import math
 import socket
 import time
@@ -93,13 +93,13 @@ class FFmpegWorker(Worker):
     def _handle_output(self, stdout, stderr):
         Worker._handle_output(self, stdout, stderr)
 
-        res = re.findall(r"frame=\s*(\d+)", self.stderr)
+        res = re.findall(r"frame=\s*(\d+)", stderr)
         if len(res) > 0 and self.nb_frames > 0:
             frame = float(res[-1])
             self.progress = (frame / self.nb_frames) * 100
             if self.progress > 99:
                 self.progress = 99
-        res = re.findall(r"fps=\s*(\d+)", self.stderr)
+        res = re.findall(r"fps=\s*(\d+)", stderr)
         if res:
             self.fps = int(res[-1])
 
@@ -862,7 +862,7 @@ class FFmpegWorker(Worker):
             return
 
         if bitrate == 0:
-            if avinfo.audio_streams[0].get("sample_rate", 48000) < 44100:
+            if int(avinfo.audio_streams[0].get("sample_rate", 48000)) < 44100:
                 bitrate = "128"
             else:
                 bitrate = "384"
@@ -1330,15 +1330,15 @@ class FFmpegWorker(Worker):
             # Nothing to draw, stop right there
             return
 
-        # Put the text in a tmp file (this avoid dealing with escaping)
+        # Put the text in a tmp file (this avoids dealing with escaping)
         # The tmp file is placed in the work directory, so that it is deleted with it
         path = ""
         if text:
             fd, path = tempfile.mkstemp(
                 suffix="toolbox2_burn_text", dir=basedir, text=True
             )
-            os.write(fd, text)
-            os.close(fd)
+            with os.fdopen(fd, "w") as fp:
+                fp.write(text)
 
         fontsize = options.get("fontsize", 12)
         fontname = options.get("fontname", "vera")

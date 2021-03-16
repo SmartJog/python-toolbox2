@@ -109,7 +109,11 @@ class Command(object):
     def _read_no_intr(self, _file, size):
         while True:
             try:
-                return _file.read(size)
+                content = _file.read(size)
+                if content is not None:
+                    return content.decode()
+                else:
+                    return ""
             except (OSError, IOError) as e:
                 if e.errno == errno.EINTR:
                     continue
@@ -118,10 +122,7 @@ class Command(object):
                 else:
                     raise
 
-    def _read_all(
-        self,
-        _file,
-    ):
+    def _read_all(self, _file):
         buf = ""
         while True:
             content = self._read_no_intr(_file, self.read_size)

@@ -59,7 +59,7 @@ class FFprobeWorker(Worker):
         nb_video_streams = 0
         if self.params.get("-print_format") == "json":
             try:
-                self.metadata = json.loads(str(self.stdout, errors="ignore"))
+                self.metadata = json.loads(self.stdout)
             except ValueError as exc:
                 raise FFprobeWorkerException(
                     "FFProbe output could not be decoded: %s, %s" % (exc, self.stdout)
