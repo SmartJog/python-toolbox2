@@ -12,7 +12,7 @@ from toolbox2.action.transcode import *
 from toolbox2.action.getcapability import *
 
 
-__version__ = '0.10.7'
+__version__ = "0.10.8~dev"
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,21 +20,19 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 def get_internal_resource(category, resource):
     """Return the absolute path toward a resource"""
     # If installed properly on Unix
-    path = os.path.join(sys.prefix, 'share', category, resource)
+    path = os.path.join(sys.prefix, "share", category, resource)
     if not os.path.exists(path):
         # If simply installed via the setup.py (no specific root/prefix)
-        path = os.path.join(_ROOT,
-                            os.pardir,
-                            'share',
-                            category,
-                            resource)
+        path = os.path.join(_ROOT, os.pardir, "share", category, resource)
     return path
 
 
 def find_subclasses(cls, _seen=None):
 
     if not isinstance(cls, type):
-        raise TypeError('find_subclasses must be called with new-style classes, not %.100r' % cls)
+        raise TypeError(
+            "find_subclasses must be called with new-style classes, not %.100r" % cls
+        )
 
     if _seen is None:
         _seen = set()
@@ -65,22 +63,24 @@ class Loader(object):
         return cls._instance
 
     def __init__(self):
-        if not hasattr(self, 'actions'):
+        if not hasattr(self, "actions"):
             self.actions = {}
             for cls in find_subclasses(Action):
                 if cls.name in self.actions:
-                    raise LoaderException('Identifier %s already used for class: %s' % (cls.name, cls))
+                    raise LoaderException(
+                        "Identifier %s already used for class: %s" % (cls.name, cls)
+                    )
 
                 self.actions[cls.name] = {
-                    'name': cls.name,
-                    'description': cls.description,
-                    'category': cls.category,
-                    'required_params': cls.required_params,
-                    'class': cls,
+                    "name": cls.name,
+                    "description": cls.description,
+                    "category": cls.category,
+                    "required_params": cls.required_params,
+                    "class": cls,
                 }
 
     def get_class(self, name):
         try:
-            return self.actions[name]['class']
+            return self.actions[name]["class"]
         except KeyError:
-            raise LoaderException('Action %s does not exist' % name)
+            raise LoaderException("Action %s does not exist" % name)
