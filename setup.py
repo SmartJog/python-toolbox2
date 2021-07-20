@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import os
 import subprocess
 from distutils.command.build import build
