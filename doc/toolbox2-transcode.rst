@@ -6,7 +6,7 @@ toolbox2-transcode
 CLI for the toolbox2 transcode action
 -------------------------------------
 
-:Authors: Written an maintained by the good folks at the Arkena company
+:Authors: Written an maintained by the good folks at the CJI company
 :Version: 0.10.0
 :Date: |date|
 :Copyright: LGPL2+

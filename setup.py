@@ -31,8 +31,8 @@ data_files.append(("/etc/", ["conf/toolbox2.conf"]))
 
 setup(
     name="python-toolbox2",
-    author="The development team at Arkena",
-    author_email="opensource@arkena.com",
+    author="The development team at CJI",
+    author_email="opensource@cji.paris",
     description="Generic interface to describe and manage actions on media assets.",
     long_description=open("Readme.rst").read(),
     url="https://github.com/SmartJog/python-toolbox2/",

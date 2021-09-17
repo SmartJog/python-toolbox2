@@ -6,7 +6,7 @@ toolbox2
 Test and use the toolbox2 module
 --------------------------------
 
-:Authors: Written an maintained by the good folks at the Arkena company
+:Authors: Written an maintained by the good folks at the CJI company
 :Version: 0.10.0
 :Date: |date|
 :Copyright: LGPL2+

@@ -37,10 +37,10 @@ To install, simply run::
 Authors
 =======
 
-Toolbox2 was created at Arkena (ex-SmartJog) by Matthieu Bouron.
+Toolbox2 was created at CJI (ex-SmartJog) by Matthieu Bouron.
 The current maintainer for the project is Nicolas Delvaux.
 
 * Matthieu Bouron
-* Nicolas Delvaux <nicolas.delvaux@arkena.com>
-* Nicolas Gaullier <nicolas.gaullier@arkena.com>
+* Nicolas Delvaux <nicolas.delvaux@cji.paris>
+* Nicolas Gaullier <nicolas.gaullier@cji.paris>
 * M Delakis
