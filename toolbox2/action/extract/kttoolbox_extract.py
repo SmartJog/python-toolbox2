@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from toolbox2.action import Action, ActionException
@@ -15,10 +13,10 @@ class KTToolboxAction(Action):
     Extract subtitles from a gxf file using kt-toolbox from Keres Technologies.
     """
 
-    name = 'kttoolbox_extract'
-    engine = 'kt-toolbox'
-    category = 'extract'
-    description = 'kt-toolbox extract tool'
+    name = "kttoolbox_extract"
+    engine = "kt-toolbox"
+    category = "extract"
+    description = "kt-toolbox extract tool"
     required_params = {}
 
     def __init__(self, log, base_dir, _id, params=None, resources=None):
@@ -36,10 +34,10 @@ class KTToolboxAction(Action):
 
     def _setup(self):
 
-        #FIXME: check if input file is a gxf container
-        self.input_file = self.get_input_resource(1).get('path')
+        # FIXME: check if input file is a gxf container
+        self.input_file = self.get_input_resource(1).get("path")
         if self.input_file is None:
-            raise KTToolboxActionException('No specified path for input (index = 1)')
+            raise KTToolboxActionException("No specified path for input (index = 1)")
 
         worker = self._new_worker(KTToolboxWorker, self.kttoolbox_params)
         worker.add_input_file(self.input_file)
@@ -51,10 +49,12 @@ class KTToolboxAction(Action):
     def _finalize(self):
         index = 1
         for _id, path in list(self.kttoolbox_worker.stls.items()):
-            output = self.kttoolbox_params.get('teletext_track_output_path_%s' % _id, None)
+            output = self.kttoolbox_params.get(
+                "teletext_track_output_path_%s" % _id, None
+            )
 
             if output:
-                dest = os.path.realpath(self.tmp_dir + '/' + output)
+                dest = os.path.realpath(self.tmp_dir + "/" + output)
                 basedir = os.path.dirname(dest)
 
                 # Silent here if output directory is self.tmp_dir
@@ -67,11 +67,11 @@ class KTToolboxAction(Action):
                 path = dest
 
             rel_path = os.path.relpath(path, self.tmp_dir)
-            self.add_output_resource(index, {'path': path, 'rel_path': rel_path})
+            self.add_output_resource(index, {"path": path, "rel_path": rel_path})
 
             # Create entry if it does not exist.
             # User of kt-toolbox extract can retrieve specific STL file using it.
-            metadata = {'teletext_track_output_path_%s' % _id: path}
+            metadata = {"teletext_track_output_path_%s" % _id: path}
             self.kttoolbox_params.update(metadata)
             self.update_metadata(metadata)
 

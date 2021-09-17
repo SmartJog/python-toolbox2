@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 import json
 
@@ -14,30 +12,37 @@ class FFprobeWorker(Worker):
     """
     FFprobe worker.
     """
+
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
-        self.tool = 'ffprobe'
+        self.tool = "ffprobe"
         self.metadata = {}
-        self.params.update({
-            '-print_format': 'json',
-            '-show_format': None,
-            '-show_streams': None,
-        })
+        self.params.update(
+            {
+                "-print_format": "json",
+                "-show_format": None,
+                "-show_streams": None,
+            }
+        )
 
     def make_fullhelp(self):
         self.params = {
-            '-h': None,
+            "-h": None,
         }
 
     def count_frames(self):
-        self.params.update({
-            '-count_frames': None,
-        })
+        self.params.update(
+            {
+                "-count_frames": None,
+            }
+        )
 
     def count_packets(self):
-        self.params.update({
-            '-count_packets': None,
-        })
+        self.params.update(
+            {
+                "-count_packets": None,
+            }
+        )
 
     def get_args(self):
         args = Worker.get_args(self)
@@ -50,29 +55,35 @@ class FFprobeWorker(Worker):
     def _finalize(self):
         nb_audio_streams = 0
         nb_video_streams = 0
-        if self.params.get('-print_format') == 'json':
+        if self.params.get("-print_format") == "json":
             try:
-                self.metadata = json.loads(str(self.stdout, errors='ignore'))
+                self.metadata = json.loads(self.stdout)
             except ValueError as exc:
-                raise FFprobeWorkerException('FFProbe output could not be decoded: %s, %s' % (exc, self.stdout))
+                raise FFprobeWorkerException(
+                    "FFProbe output could not be decoded: %s, %s" % (exc, self.stdout)
+                )
 
-            for stream in self.metadata['streams']:
-                if stream['codec_type'] == 'video':
+            for stream in self.metadata["streams"]:
+                if stream["codec_type"] == "video":
                     nb_video_streams = nb_video_streams + 1
-                elif stream['codec_type'] == 'audio':
+                elif stream["codec_type"] == "audio":
                     nb_audio_streams = nb_audio_streams + 1
 
-            self.metadata['format']['nb_audio_streams'] = nb_audio_streams
-            self.metadata['format']['nb_video_streams'] = nb_video_streams
-            self.metadata['description'] = self._get_description()
+            self.metadata["format"]["nb_audio_streams"] = nb_audio_streams
+            self.metadata["format"]["nb_video_streams"] = nb_video_streams
+            self.metadata["description"] = self._get_description()
 
     def _get_description(self):
-        desc = ''
-        lines = self.stderr.split('\n')
+        desc = ""
+        lines = self.stderr.split("\n")
         for line in lines:
             line = line.strip()
-            if line.startswith('Input') or line.startswith('Duration') or line.startswith('Stream'):
-                if line.startswith('Input'):
-                    line = re.sub(', from.*', '', line)
-                desc += line + '\n'
+            if (
+                line.startswith("Input")
+                or line.startswith("Duration")
+                or line.startswith("Stream")
+            ):
+                if line.startswith("Input"):
+                    line = re.sub(", from.*", "", line)
+                desc += line + "\n"
         return desc.strip()

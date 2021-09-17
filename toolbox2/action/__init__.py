@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import time
 import math
@@ -10,7 +8,7 @@ from toolbox2.exception import Toolbox2Exception
 from toolbox2.worker import WorkerException
 
 
-TOOLBOX2_CONFIG_FILE = '/etc/toolbox2.conf'
+TOOLBOX2_CONFIG_FILE = "/etc/toolbox2.conf"
 
 
 class ActionException(Toolbox2Exception):
@@ -19,10 +17,10 @@ class ActionException(Toolbox2Exception):
 
 class Action(object):
 
-    name = ''
-    engine = ''
-    category = ''
-    description = ''
+    name = ""
+    engine = ""
+    category = ""
+    description = ""
     required_params = {}
 
     def __init__(self, log, base_dir, _id=None, params=None, resources=None):
@@ -52,11 +50,7 @@ class Action(object):
 
         self._cancel = False
 
-        self.resources = {
-            'inputs': {},
-            'outputs': {},
-            'metadata': {}
-        }
+        self.resources = {"inputs": {}, "outputs": {}, "metadata": {}}
 
         self.resources.update(resources or {})
 
@@ -71,19 +65,19 @@ class Action(object):
 
         try:
             self.conf = None
-            with open(TOOLBOX2_CONFIG_FILE, 'r') as fp:
+            with open(TOOLBOX2_CONFIG_FILE, "r") as fp:
                 self.conf = SafeConfigParser()
                 self.conf.readfp(fp)
         except (Exception, IOError) as exc:
-            self.log.warning('%s', exc)
+            self.log.warning("%s", exc)
 
         if self.id:
-            self.tmp_dir = os.path.join(self.base_dir, 'job-%s' % self.id)
+            self.tmp_dir = os.path.join(self.base_dir, "job-%s" % self.id)
         else:
             self.tmp_dir = self.base_dir
-        self.debug = self.params.get('debug', False)
+        self.debug = self.params.get("debug", False)
         self.last_callback = time.time()
-        self.callback_interval = self.params.get('callback_interval', 1)
+        self.callback_interval = self.params.get("callback_interval", 1)
 
         if not os.path.isdir(self.tmp_dir):
             os.makedirs(self.tmp_dir)
@@ -142,7 +136,7 @@ class Action(object):
                 self._callback(callback)
 
         if ret is None and self._cancel:
-            self.log.info('Killing the running worker...')
+            self.log.info("Killing the running worker...")
             worker.cancel()
         elif ret != 0:
             raise WorkerException(worker.get_error())
@@ -150,7 +144,6 @@ class Action(object):
             worker.progress = 100
         self._update_progress()
         self._callback(callback)
-
 
     def _update_progress(self):
         """
@@ -160,7 +153,9 @@ class Action(object):
         :type worker: toolbox2.worker.Worker
         """
         worker = self.workers[self.worker_idx]
-        self.progress = int((worker.progress + 100 * self.worker_idx) / len(self.workers))
+        self.progress = int(
+            (worker.progress + 100 * self.worker_idx) / len(self.workers)
+        )
 
     def _callback(self, user_callback):
         """
@@ -182,10 +177,10 @@ class Action(object):
         worker = worker_class(self.log, *args, **kwargs)
         try:
             if self.conf:
-                path = self.conf.get('tools', worker.tool)
+                path = self.conf.get("tools", worker.tool)
                 worker.tool = path
         except (configparser.NoSectionError, configparser.NoOptionError) as exc:
-            self.log.warning('%s', exc)
+            self.log.warning("%s", exc)
 
         return worker
 
@@ -209,7 +204,9 @@ class Action(object):
         if section not in self.resources:
             self.resources[section] = {}
         if index in self.resources[section]:
-            raise ActionException('Ressource (section = %s) (index = %s) already exist' % (section, index))
+            raise ActionException(
+                "Ressource (section = %s) (index = %s) already exist" % (section, index)
+            )
         self.resources[section][index] = resource
 
     def get_resource(self, section, index):
@@ -228,9 +225,12 @@ class Action(object):
         """
         index = str(index)
         if section not in self.resources:
-            raise ActionException('Section %s does not exist' % section)
+            raise ActionException("Section %s does not exist" % section)
         if index not in self.resources[section]:
-            raise ActionException('Ressource (section = %s) (index = %s) does not exist' % (section, index))
+            raise ActionException(
+                "Ressource (section = %s) (index = %s) does not exist"
+                % (section, index)
+            )
         return self.resources[section][index]
 
     def add_input_resource(self, index, resource):
@@ -247,7 +247,7 @@ class Action(object):
         :raise: ActionException
         """
 
-        return self.add_resource('inputs', index, resource)
+        return self.add_resource("inputs", index, resource)
 
     def get_input_resource(self, index):
         """
@@ -264,7 +264,7 @@ class Action(object):
         :rtype: dict
         """
 
-        return self.get_resource('inputs', index)
+        return self.get_resource("inputs", index)
 
     def add_output_resource(self, index, resource):
         """
@@ -280,7 +280,7 @@ class Action(object):
         :raise: ActionException
         """
 
-        return self.add_resource('outputs', index, resource)
+        return self.add_resource("outputs", index, resource)
 
     def get_output_resource(self, index):
         """
@@ -293,7 +293,7 @@ class Action(object):
         :return: resource
         :rtype: dict
         """
-        return self.get_resource('outputs', index)
+        return self.get_resource("outputs", index)
 
     def get_input_resources(self):
         """
@@ -302,7 +302,7 @@ class Action(object):
         :return resources
         :rtype: dict
         """
-        return self.resources['inputs']
+        return self.resources["inputs"]
 
     def get_output_resources(self):
         """
@@ -311,25 +311,25 @@ class Action(object):
         :return resources
         :rtype dict
         """
-        return self.resources['outputs']
+        return self.resources["outputs"]
 
     def get_metadata(self):
         """
         Return action metadata.
         """
-        return self.resources['metadata']
+        return self.resources["metadata"]
 
     def add_metadata(self, key, value):
         """
         Add key/value to metadata.
         """
-        self.resources['metadata'][key] = value
+        self.resources["metadata"][key] = value
 
     def update_metadata(self, metadata):
         """
         Update metadata.
         """
-        self.resources['metadata'].update(metadata)
+        self.resources["metadata"].update(metadata)
 
     def clean(self):
         """
@@ -340,7 +340,7 @@ class Action(object):
         try:
             shutil.rmtree(self.tmp_dir)
         except OSError:
-            self.log.exception('An error occured')
+            self.log.exception("An error occured")
 
     def cancel(self):
         """Cancel/abort the running action"""
@@ -362,7 +362,7 @@ class Action(object):
             self._execute(callback)
             self._finalize()
         except WorkerException as exc:
-            self.log.exception('An error occurred')
+            self.log.exception("An error occurred")
             raise ActionException(exc)
         finally:
             self.ended_at = time.time()

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from toolbox2.worker import Worker, WorkerException
 
 
@@ -10,16 +8,16 @@ class QtFastStartWorkerException(WorkerException):
 class QtFastStartWorker(Worker):
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
-        self.tool = 'qt-faststart'
+        self.tool = "qt-faststart"
 
     def add_input_file(self, path, params=None):
         if len(self.input_files) > 0:
-            raise QtFastStartWorkerException('qt-faststart only support one input file')
+            raise QtFastStartWorkerException("qt-faststart only support one input file")
         Worker.add_input_file(self, path, params)
 
     def add_output_file(self, path, params=None):
         if len(self.output_files) > 0:
-            raise QtFastStartWorkerException('qt-faststart only support one input file')
+            raise QtFastStartWorkerException("qt-faststart only support one input file")
         Worker.add_output_file(self, path, params)
 
     def get_args(self):

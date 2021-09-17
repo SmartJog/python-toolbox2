@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 import os
 import os.path
@@ -11,35 +9,36 @@ class Raw2BmxWorkerException(WorkerException):
 
 
 class Raw2BmxWorker(Worker):
-
     class InputFile(Worker.InputFile):
         def get_args(self):
             opts = []
-            codec = self.params.get('codec')
-            if codec == 'dnxhd':
-                opts += ['--vc3']
-            elif codec == 'dvvideo':
-                opts += ['--dv']
-            elif codec == 'imx':
-                opts += ['--d10']
-            elif codec == 'xdcamhd':
-                opts += ['--mpeg2lg']
-            elif codec == 'pcm':
-                opts += ['--wave']
+            codec = self.params.get("codec")
+            if codec == "dnxhd":
+                opts += ["--vc3"]
+            elif codec == "dvvideo":
+                opts += ["--dv"]
+            elif codec == "imx":
+                opts += ["--d10"]
+            elif codec == "xdcamhd":
+                opts += ["--mpeg2lg"]
+            elif codec == "pcm":
+                opts += ["--wave"]
             else:
-                raise Raw2BmxWorkerException('BMX worker does not support the %s codec yet' % codec)
+                raise Raw2BmxWorkerException(
+                    "BMX worker does not support the %s codec yet" % codec
+                )
 
             opts += [self.path]
             return opts
 
     class OutputFile(Worker.OutputFile):
         def get_args(self):
-            args = ['-o', self.path]
+            args = ["-o", self.path]
             return args
 
     def __init__(self, log, params=None):
         Worker.__init__(self, log, params)
-        self.tool = 'raw2bmx'
+        self.tool = "raw2bmx"
         self.kill_timeout = 5 * 3600
         self.inputs_size = 0
 
@@ -52,7 +51,7 @@ class Raw2BmxWorker(Worker):
 
     def add_output_file(self, path, params=None):
         if len(self.output_files) > 0:
-            raise Raw2BmxWorkerException('BMX tool only support one output file')
+            raise Raw2BmxWorkerException("BMX tool only support one output file")
         Worker.add_output_file(self, path, params)
 
     def get_args(self):
@@ -69,22 +68,24 @@ class Raw2BmxWorker(Worker):
         return args
 
     def set_timecode(self, timecode):
-        match = re.match(r'(\d{2}):(\d{2}):(\d{2})([:;])(\d{2})', timecode)
+        match = re.match(r"(\d{2}):(\d{2}):(\d{2})([:;])(\d{2})", timecode)
         if not match:
-            raise Raw2BmxWorkerException('Timecode must be something like hh:mm:ss[:|;]ff')
+            raise Raw2BmxWorkerException(
+                "Timecode must be something like hh:mm:ss[:|;]ff"
+            )
 
-        self.params.update({'-y': timecode})
+        self.params.update({"-y": timecode})
 
     def mux(self, basepath, options=None):
         if not options:
             options = {}
-        mapping = options.get('mapping', 'op1a')
-        if mapping == 'default' or mapping == 'rdd9':
-            mapping = 'op1a'
-        self.params.update({'-t': mapping})
+        mapping = options.get("mapping", "op1a")
+        if mapping == "default" or mapping == "rdd9":
+            mapping = "op1a"
+        self.params.update({"-t": mapping})
 
         if not len(self.input_files) > 0:
-            raise Raw2BmxWorkerException('No input file specified')
+            raise Raw2BmxWorkerException("No input file specified")
 
-        path = '%s%s' % (basepath, '.mxf')
+        path = "%s%s" % (basepath, ".mxf")
         self.add_output_file(path)
