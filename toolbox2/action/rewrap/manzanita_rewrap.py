@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from toolbox2.action import Action, ActionException

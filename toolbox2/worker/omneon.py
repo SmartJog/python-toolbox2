@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 import os.path
 from toolbox2.worker import Worker, WorkerException

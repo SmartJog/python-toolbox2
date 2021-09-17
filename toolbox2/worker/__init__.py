@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from toolbox2.command import Command
 from toolbox2.command import COMMAND_DEFAULT_KILL_TIMEOUT
 from toolbox2.exception import Toolbox2Exception

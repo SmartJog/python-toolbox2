@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from toolbox2.worker import Worker, WorkerException
 
 
