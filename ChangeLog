@@ -1,4 +1,4 @@
-Version 1.0.1~dev
+Version 1.0.1 Released on 2022/04/20
 
 	* No need to explicitly reset SIGPIPE handler on sub-processes
 	* Only use a preexec_fn when required
