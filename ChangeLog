@@ -1,6 +1,8 @@
 Version 1.0.1~dev
 
 	* No need to explicitly reset SIGPIPE handler on sub-processes
+	* Only use a preexec_fn when required
+	  This workarounds Python >= 3.8 support in a subinterpreters.
 
 Version 1.0.0 Released on 2021/09/17
 

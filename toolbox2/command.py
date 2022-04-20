@@ -45,13 +45,19 @@ class Command(object):
         if not os.path.isdir(self.base_dir):
             os.makedirs(self.base_dir)
 
+        # Only use a preexec_fn when required
+        # Note that since Python3.8 this is no longer supported in subinterpreters
+        preexec_fn = None
+        if self.memory_limit > 0:
+            preexec_fn = self._set_memory_limit
+
         self.last_read = time.time()
         self.process = subprocess.Popen(
             args,
             cwd=self.base_dir,
             bufsize=-1,
             close_fds=True,
-            preexec_fn=self._preexec_fn,
+            preexec_fn=preexec_fn,
             restore_signals=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
