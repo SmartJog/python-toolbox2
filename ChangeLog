@@ -1,6 +1,6 @@
 Version 1.0.1~dev
 
-	* TODO
+	* No need to explicitly reset SIGPIPE handler on sub-processes
 
 Version 1.0.0 Released on 2021/09/17
 

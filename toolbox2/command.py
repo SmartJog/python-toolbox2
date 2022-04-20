@@ -32,9 +32,6 @@ class Command(object):
     def set_read_size(self, read_size):
         self.read_size = read_size
 
-    def _reset_sigpipe_handler(self):
-        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
     def _set_memory_limit(self):
         if self.memory_limit > 0:
             resource.setrlimit(
@@ -42,7 +39,6 @@ class Command(object):
             )
 
     def _preexec_fn(self):
-        self._reset_sigpipe_handler()
         self._set_memory_limit()
 
     def run(self, args):
@@ -56,6 +52,7 @@ class Command(object):
             bufsize=-1,
             close_fds=True,
             preexec_fn=self._preexec_fn,
+            restore_signals=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
